@@ -3,7 +3,7 @@
     public class Booking
     {
         public string BookingId { get; set; }
-        public string UserId { get; set; } // Foreign key for User
+        public string Username { get; set; } // Foreign key for User
         public string SpaceId { get; set; } // Foreign key for WorkingSpace
         public DateTime BookingDate { get; set; }
         public DateTime StartTime { get; set; }

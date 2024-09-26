@@ -65,7 +65,6 @@ namespace Quik_BookingApp.Container
             }
         }
 
-
         public async Task<List<UserModal>> GetAll()
         {
             List<UserModal> _response = new List<UserModal>();
@@ -78,7 +77,7 @@ namespace Quik_BookingApp.Container
             
         }
 
-        public async Task<UserModal> GetByUserId(string userId)
+        public async Task<UserModal> GetByUserId(int userId)
         {
             try
             {
@@ -127,7 +126,7 @@ namespace Quik_BookingApp.Container
             return response;
         }
 
-        public async Task<APIResponse> userRegisteration(UserRegister userRegister)
+        public async Task<APIResponse> UserRegisteration(UserRegister userRegister)
         {
             APIResponse response = new APIResponse();
             int userid = 0;
@@ -183,90 +182,91 @@ namespace Quik_BookingApp.Container
 
         }
 
-        //public async Task<APIResponse> ResetPassword(string name, string oldpassword, string newpassword)
-        //{
-        //    APIResponse response = new APIResponse();
-        //    var _user = await this.context.Users.FirstOrDefaultAsync(item => item.Name == name &&
-        //    item.Password == oldpassword && item.Status == "Active");
-        //    if (_user != null)
-        //    {
-        //        var _pwdhistory = await Validatepwdhistory(name, newpassword);
-        //        if (_pwdhistory)
-        //        {
-        //            response.Result = "fail";
-        //            response.Message = "Don't use the same password that used in last 3 transaction";
-        //        }
-        //        else
-        //        {
-        //            _user.Password = newpassword;
-        //            await this.context.SaveChangesAsync();
-        //            await UpdatePWDManager(name, newpassword);
-        //            response.Result = "pass";
-        //            response.Message = "Password changed.";
-        //        }
-        //    }
-        //    else
-        //    {
-        //        response.Result = "fail";
-        //        response.Message = "Failed to validate old password.";
-        //    }
-        //    return response;
-        //}
+        public async Task<APIResponse> ResetPassword(string name, string oldpassword, string newpassword)
+        {
+            APIResponse response = new APIResponse();
+            var _user = await this.context.Users.FirstOrDefaultAsync(item => item.Name == name &&
+            item.Password == oldpassword && item.Status == "Active");
+            if (_user != null)
+            {
+                var _pwdhistory = await Validatepwdhistory(name, newpassword);
+                if (_pwdhistory)
+                {
+                    response.Result = "fail";
+                    response.Message = "Don't use the same password that used in last 3 transaction";
+                }
+                else
+                {
+                    _user.Password = newpassword;
+                    await this.context.SaveChangesAsync();
+                    await UpdatePWDManager(name, newpassword);
+                    response.Result = "pass";
+                    response.Message = "Password changed.";
+                }
+            }
+            else
+            {
+                response.Result = "fail";
+                response.Message = "Failed to validate old password.";
+            }
+            return response;
+        }
 
-        //public async Task<APIResponse> ForgetPassword(string name)
-        //{
-        //    APIResponse response = new APIResponse();
-        //    var _user = await this.context.Users.FirstOrDefaultAsync(item => item.Name == name && item.Status == "Active");
-        //    if (_user != null)
-        //    {
-        //        string otptext = Generaterandomnumber();
-        //        await UpdateOtp(name, otptext, "forgetpassword");
-        //        await SendOtpMail(_user.Email, otptext, _user.Name);
-        //        response.Result = "pass";
-        //        response.Message = "OTP sent";
+        public async Task<APIResponse> ForgetPassword(string name)
+        {
+            APIResponse response = new APIResponse();
+            var _user = await this.context.Users.FirstOrDefaultAsync(item => item.Name == name && item.Status == "Active");
+            if (_user != null)
+            {
+                string otptext = Generaterandomnumber();
+                await UpdateOtp(name, otptext, "forgetpassword");
+                await SendOtpMail(_user.Email, otptext, _user.Name);
+                response.Result = "pass";
+                response.Message = "OTP sent";
 
-        //    }
-        //    else
-        //    {
-        //        response.Result = "fail";
-        //        response.Message = "Invalid User";
-        //    }
-        //    return response;
-        //}
+            }
+            else
+            {
+                response.Result = "fail";
+                response.Message = "Invalid User";
+            }
+            return response;
+        }
 
-        //public async Task<APIResponse> UpdatePassword(string name, string Password, string Otptext)
-        //{
-        //    APIResponse response = new APIResponse();
+        public async Task<APIResponse> UpdatePassword(string name, string Password, string Otptext)
+        {
+            APIResponse response = new APIResponse();
 
-        //    bool otpvalidation = await ValidateOTP(name, Otptext);
-        //    if (otpvalidation)
-        //    {
-        //        bool pwdhistory = await Validatepwdhistory(name, Password);
-        //        if (pwdhistory)
-        //        {
-        //            response.Result = "fail";
-        //            response.Message = "Don't use the same password that used in last 3 transaction";
-        //        }
-        //        else
-        //        {
-        //            var _user = await this.context.Users.FirstOrDefaultAsync(item => item.Name == name && item.Status == "Active");
-        //            if (_user != null)
-        //            {
-        //                _user.Password = Password;
-        //                await this.context.SaveChangesAsync();
-        //                await UpdatePWDManager(name, Password);
-        //                response.Result = "pass";
-        //                response.Message = "Password changed";
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        response.Result = "fail";
-        //        response.Message = "Invalid OTP";
-        //    }
-        //    return response;
-        //}
+            bool otpvalidation = await ValidateOTP(name, Otptext);
+            if (otpvalidation)
+            {
+                bool pwdhistory = await Validatepwdhistory(name, Password);
+                if (pwdhistory)
+                {
+                    response.Result = "fail";
+                    response.Message = "Don't use the same password that used in last 3 transaction";
+                }
+                else
+                {
+                    var _user = await this.context.Users.FirstOrDefaultAsync(item => item.Name == name && item.Status == "Active");
+                    if (_user != null)
+                    {
+                        _user.Password = Password;
+                        await this.context.SaveChangesAsync();
+                        await UpdatePWDManager(name, Password);
+                        response.Result = "pass";
+                        response.Message = "Password changed";
+                    }
+                }
+            }
+            else
+            {
+                response.Result = "fail";
+                response.Message = "Invalid OTP";
+            }
+            return response;
+        }
+
         private async Task UpdateOtp(string username, string otptext, string otptype)
         {
             var _opt = new OtpManager()
@@ -317,23 +317,23 @@ namespace Quik_BookingApp.Container
 
         }
 
-        //private async Task<bool> Validatepwdhistory(string Username, string password)
-        //{
-        //    bool response = false;
-        //    var _pwd = await this.context.TblPwdMangers.Where(item => item.Username == Username).
-        //        OrderByDescending(p => p.ModifyDate).Take(3).ToListAsync();
-        //    if (_pwd.Count > 0)
-        //    {
-        //        var validate = _pwd.Where(o => o.Password == password);
-        //        if (validate.Any())
-        //        {
-        //            response = true;
-        //        }
-        //    }
+        private async Task<bool> Validatepwdhistory(string Username, string password)
+        {
+            bool response = false;
+            var _pwd = await this.context.PwdManagers.Where(item => item.Username == Username).
+                OrderByDescending(p => p.ModifyDate).Take(3).ToListAsync();
+            if (_pwd.Count > 0)
+            {
+                var validate = _pwd.Where(o => o.Password == password);
+                if (validate.Any())
+                {
+                    response = true;
+                }
+            }
 
-        //    return response;
+            return response;
 
-        //}
+        }
 
         public async Task<APIResponse> UpdateStatus(string name, string userstatus)
         {
