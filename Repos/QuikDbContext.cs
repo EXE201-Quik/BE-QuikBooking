@@ -61,7 +61,7 @@ namespace Quik_BookingApp.Repos
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.User)
                 .WithMany(u => u.Bookings)
-                .HasForeignKey(b => b.UserId)
+                .HasForeignKey(b => b.Username)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Booking>()
@@ -141,7 +141,7 @@ namespace Quik_BookingApp.Repos
                 new Booking
                 {
                     BookingId = "booking001",
-                    UserId = "john_doe",
+                    Username = "john_doe",
                     SpaceId = "space001",
                     BookingDate = DateTime.Now.Date,
                     StartTime = DateTime.Now.AddHours(1),

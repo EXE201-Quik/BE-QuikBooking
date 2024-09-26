@@ -71,7 +71,6 @@ namespace Quik_BookingApp.Container
                 _response = this.mapper.Map<List<WorkingSpace>, List<WorkingSpaceModal>>(_data);
             }
             return _response;
-
         }
 
         public async Task<WorkingSpaceModal> GetByUserId(string workingSpaceId)

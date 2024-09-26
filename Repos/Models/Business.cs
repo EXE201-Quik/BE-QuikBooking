@@ -13,5 +13,4 @@
         public User Owner { get; set; }
         public ICollection<WorkingSpace> WorkingSpaces { get; set; }
     }
-
 }

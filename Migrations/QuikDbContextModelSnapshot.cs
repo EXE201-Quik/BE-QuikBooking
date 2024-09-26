@@ -47,7 +47,7 @@ namespace QuikBookingApp.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -55,7 +55,7 @@ namespace QuikBookingApp.Migrations
 
                     b.HasIndex("SpaceId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("Username");
 
                     b.ToTable("Bookings");
 
@@ -63,13 +63,13 @@ namespace QuikBookingApp.Migrations
                         new
                         {
                             BookingId = "booking001",
-                            BookingDate = new DateTime(2024, 9, 21, 0, 0, 0, 0, DateTimeKind.Local),
-                            EndTime = new DateTime(2024, 9, 21, 17, 45, 14, 737, DateTimeKind.Local).AddTicks(3892),
+                            BookingDate = new DateTime(2024, 9, 25, 0, 0, 0, 0, DateTimeKind.Local),
+                            EndTime = new DateTime(2024, 9, 25, 18, 36, 18, 250, DateTimeKind.Local).AddTicks(6958),
                             SpaceId = "space001",
-                            StartTime = new DateTime(2024, 9, 21, 15, 45, 14, 737, DateTimeKind.Local).AddTicks(3887),
+                            StartTime = new DateTime(2024, 9, 25, 16, 36, 18, 250, DateTimeKind.Local).AddTicks(6953),
                             Status = "Confirmed",
                             TotalAmount = 50.00m,
-                            UserId = "john_doe"
+                            Username = "john_doe"
                         });
                 });
 
@@ -146,7 +146,7 @@ namespace QuikBookingApp.Migrations
                             PaymentId = "payment001",
                             Amount = 50.00m,
                             BookingId = "booking001",
-                            PaymentDate = new DateTime(2024, 9, 21, 14, 45, 14, 737, DateTimeKind.Local).AddTicks(3905),
+                            PaymentDate = new DateTime(2024, 9, 25, 15, 36, 18, 250, DateTimeKind.Local).AddTicks(6970),
                             PaymentMethod = "Credit Card"
                         });
                 });
@@ -419,7 +419,7 @@ namespace QuikBookingApp.Migrations
 
                     b.HasOne("Quik_BookingApp.Models.User", "User")
                         .WithMany("Bookings")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("Username")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
