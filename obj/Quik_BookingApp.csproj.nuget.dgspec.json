@@ -52,6 +52,14 @@
               "target": "Package",
               "version": "[4.0.3, )"
             },
+            "EFCore.AutomaticMigrations": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "MailKit": {
+              "target": "Package",
+              "version": "[4.7.1.1, )"
+            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[7.0.0, )"
@@ -83,6 +91,10 @@
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[7.0.12, )"
+            },
+            "MimeKit": {
+              "target": "Package",
+              "version": "[4.7.1, )"
             },
             "Serilog.AspNetCore": {
               "target": "Package",

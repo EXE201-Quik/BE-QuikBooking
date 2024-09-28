@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Quik_BookingApp.Helper;
 using Quik_BookingApp.Models;
 using Quik_BookingApp.Repos;
+using Quik_BookingApp.Repos.Request;
+using Quik_BookingApp.Repos.Response;
 using Quik_BookingApp.Service;
 
 namespace Quik_BookingApp.Controllers
@@ -35,9 +37,9 @@ namespace Quik_BookingApp.Controllers
         }
 
         [HttpGet("GetById/{workingSpaceId}")]
-        public async Task<IActionResult> GetById(string workingSpaceId)
+        public async Task<IActionResult> GetBySpaceId(string workingSpaceId)
         {
-            var data = await workingSpaceService.GetByUserId(workingSpaceId);
+            var data = await workingSpaceService.GetBySpaceId(workingSpaceId);
             if (data == null)
             {
                 return NotFound();
@@ -46,12 +48,12 @@ namespace Quik_BookingApp.Controllers
         }
 
         [HttpPost("Create")]
-        public async Task<IActionResult> Create([FromBody] User userAccount)
+        public async Task<IActionResult> Create([FromBody] WorkingSpaceRequestModel workingSpace)
         {
-            var response = await workingSpaceService.CreateUser(userAccount);
+            var response = await workingSpaceService.CreateWS(workingSpace);
             if (response.ResponseCode == 201)
             {
-                return CreatedAtAction(nameof(GetById), new { username = userAccount.Username }, response);
+                return CreatedAtAction(nameof(GetBySpaceId), new { id = response }, response);
             }
             return StatusCode(response.ResponseCode, response);
         }
@@ -185,7 +187,7 @@ namespace Quik_BookingApp.Controllers
 
         }
 
-        [HttpGet("download")]
+        [HttpGet("Download")]
         public async Task<IActionResult> download(string code)
         {
             // string Imageurl = string.Empty;
@@ -218,7 +220,7 @@ namespace Quik_BookingApp.Controllers
 
         }
 
-        [HttpGet("remove")]
+        [HttpGet("Remove")]
         public async Task<IActionResult> remove(string code)
         {
             // string Imageurl = string.Empty;
@@ -245,7 +247,7 @@ namespace Quik_BookingApp.Controllers
 
         }
 
-        [HttpGet("multiremove")]
+        [HttpGet("MultiRemove")]
         public async Task<IActionResult> multiremove(string code)
         {
             // string Imageurl = string.Empty;
@@ -357,7 +359,7 @@ namespace Quik_BookingApp.Controllers
         }
 
 
-        [HttpGet("dbdownload")]
+        [HttpGet("DbDownload")]
         public async Task<IActionResult> dbdownload(string code)
         {
 
