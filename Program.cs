@@ -4,13 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Quik_BookingApp.Container;
-
+using Quik_BookingApp.Extentions;
 using Quik_BookingApp.Modal;
 using Quik_BookingApp.Repos;
 
 using Quik_BookingApp.Service;
 using QuikBookingApp.Modal;
 using Serilog;
+using System;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -53,7 +54,9 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IBookingService, BookingService>();
 builder.Services.AddTransient<IWorkingSpaceService, WorkingSpaceService>();
+builder.Services.AddTransient<IBusinessService, BusinessService>();
 builder.Services.AddTransient<IRefreshHandler, RefreshHandler>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddDbContext<QuikDbContext>(o =>
 o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -100,6 +103,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    await using (var scope = app.Services.CreateAsyncScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<QuikDbContext>();
+        await dbContext.Database.MigrateAsync();
+    }
+
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -111,5 +120,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//await app.CreateDbIfNotExists();
 
 app.Run();

@@ -1,6 +1,7 @@
 ﻿using Quik_BookingApp.Helper;
 using Quik_BookingApp.Modal;
 using Quik_BookingApp.Models;
+using Quik_BookingApp.Repos.Request;
 
 
 namespace Quik_BookingApp.Service
@@ -8,9 +9,9 @@ namespace Quik_BookingApp.Service
     public interface IUserService
     {
         Task<List<UserModal>> GetAll();
-        Task<UserModal> GetByUserId(int userId);
+        Task<UserModal> GetByUserId(string username);
         Task<APIResponse> CreateUser(User user);
-        Task<APIResponse> ConfirmRegister(int userid, string username, string otptext);
+        Task<APIResponse> ConfirmRegister(string userid, string username, string otptext);
         Task<APIResponse> UserRegisteration(UserRegister userRegister);
         Task<APIResponse> ResetPassword(string username, string oldpassword, string newpassword);
         Task<APIResponse> ForgetPassword(string username);

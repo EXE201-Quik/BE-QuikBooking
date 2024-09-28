@@ -63,10 +63,10 @@ namespace QuikBookingApp.Migrations
                         new
                         {
                             BookingId = "booking001",
-                            BookingDate = new DateTime(2024, 9, 25, 0, 0, 0, 0, DateTimeKind.Local),
-                            EndTime = new DateTime(2024, 9, 25, 18, 36, 18, 250, DateTimeKind.Local).AddTicks(6958),
+                            BookingDate = new DateTime(2024, 9, 27, 0, 0, 0, 0, DateTimeKind.Local),
+                            EndTime = new DateTime(2024, 9, 27, 21, 22, 51, 343, DateTimeKind.Local).AddTicks(832),
                             SpaceId = "space001",
-                            StartTime = new DateTime(2024, 9, 25, 16, 36, 18, 250, DateTimeKind.Local).AddTicks(6953),
+                            StartTime = new DateTime(2024, 9, 27, 19, 22, 51, 343, DateTimeKind.Local).AddTicks(826),
                             Status = "Confirmed",
                             TotalAmount = 50.00m,
                             Username = "john_doe"
@@ -146,7 +146,7 @@ namespace QuikBookingApp.Migrations
                             PaymentId = "payment001",
                             Amount = 50.00m,
                             BookingId = "booking001",
-                            PaymentDate = new DateTime(2024, 9, 25, 15, 36, 18, 250, DateTimeKind.Local).AddTicks(6970),
+                            PaymentDate = new DateTime(2024, 9, 27, 18, 22, 51, 343, DateTimeKind.Local).AddTicks(847),
                             PaymentMethod = "Credit Card"
                         });
                 });

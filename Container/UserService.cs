@@ -6,6 +6,7 @@ using Quik_BookingApp.Modal;
 using Quik_BookingApp.Models;
 using Quik_BookingApp.Repos;
 using Quik_BookingApp.Repos.Models;
+using Quik_BookingApp.Repos.Request;
 using Quik_BookingApp.Service;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -77,12 +78,12 @@ namespace Quik_BookingApp.Container
             
         }
 
-        public async Task<UserModal> GetByUserId(int userId)
+        public async Task<UserModal> GetByUserId(string username)
         {
             try
             {
                 UserModal _response = new UserModal();
-                var data = await context.Users.FindAsync(userId);
+                var data = await context.Users.FindAsync(username);
                 if (data != null)
                 {
                     _response = this.mapper.Map<User,UserModal>(data);
@@ -96,7 +97,7 @@ namespace Quik_BookingApp.Container
             }
         }
 
-        public async Task<APIResponse> ConfirmRegister(int userid, string username, string otptext)
+        public async Task<APIResponse> ConfirmRegister(string userid, string username, string otptext)
         {
             APIResponse response = new APIResponse();
             bool otpresponse = await ValidateOTP(username, otptext);
@@ -107,7 +108,7 @@ namespace Quik_BookingApp.Container
             }
             else
             {
-                var _tempdata = await this.context.Tempusers.FirstOrDefaultAsync(item => item.Id == userid);
+                var _tempdata = await this.context.Tempusers.FirstOrDefaultAsync(item => item.Id.Equals(userid));
                 var _user = new User()
                 {
                     Name = _tempdata.Name,
@@ -122,67 +123,164 @@ namespace Quik_BookingApp.Container
                 response.Result = "pass";
                 response.Message = "Registered successfully.";
             }
-
             return response;
         }
 
         public async Task<APIResponse> UserRegisteration(UserRegister userRegister)
         {
             APIResponse response = new APIResponse();
-            int userid = 0;
             bool isvalid = true;
 
             try
             {
-                // duplicate user
-                var _user = await this.context.Users.Where(item => item.Name == userRegister.Username).ToListAsync();
-                if (_user.Count > 0)
+                // Check for duplicate username
+                var existingUser = await context.Users
+                    .Where(item => item.Username == userRegister.Username)
+                    .FirstOrDefaultAsync();
+                if (existingUser != null)
                 {
                     isvalid = false;
-                    response.Result = "fail";
-                    response.Message = "duplicate username";
+                    response.ResponseCode = 409;
+                    response.Result = "Failed";
+                    response.Message = "Username already exists";
                 }
 
-                // duplicate email
-                var _useremail = await this.context.Users.Where(item => item.Email == userRegister.Email).ToListAsync();
-                if (_useremail.Count > 0)
+                // Check for duplicate email
+                var existingEmail = await context.Users
+                    .Where(item => item.Email == userRegister.Email)
+                    .FirstOrDefaultAsync();
+                if (existingEmail != null)
                 {
                     isvalid = false;
-                    response.Result = "fail";
-                    response.Message = "duplicate email";
+                    response.ResponseCode = 409;
+                    response.Result = "Failed";
+                    response.Message = "Email already exists";
                 }
 
-
-                if (userRegister != null && isvalid)
+                if (isvalid)
                 {
-                    var _tempuser = new Tempuser()
-                    {
-                        Name = userRegister.Name,
-                        Email = userRegister.Email,
-                        Password = userRegister.Password,
-                        Phone = userRegister.PhoneNumber,
-                    };
-                    await this.context.Tempusers.AddAsync(_tempuser);
-                    await this.context.SaveChangesAsync();
-                    userid = _tempuser.Id;
-                    string otptext = Generaterandomnumber();
-                    await UpdateOtp(userRegister.Username, otptext, "register");
-                    await SendOtpMail(userRegister.Email, otptext, userRegister.Name);
-                    response.Result = "pass";
-                    response.Message = userid.ToString();
-                }
+                    // Map UserRegister to User entity
+                    var newUser = mapper.Map<User>(userRegister);
 
+                    // Hash the password before saving (ensure you have a method to hash passwords)
+                    newUser.Password = HashPassword(userRegister.Password);
+
+                    newUser.OTPVerified = false;
+                    newUser.IsActive = true;
+                    newUser.IsLocked = false;
+                    newUser.Role = "User";  // Default role, can be modified as per your logic
+                    newUser.ImageId = "default-image-id";  // Default ImageId if needed
+                    newUser.Status = "Pending";            // Default Status value
+
+                    _logger.LogInformation("Registering new user: {Username}, {Email}", newUser.Username, newUser.Email);
+
+                    // Add new user to the context
+                    await context.Users.AddAsync(newUser);
+                    await context.SaveChangesAsync();
+
+                    // Send OTP (your existing logic)
+                    string otpText = Generaterandomnumber();
+                    await UpdateOtp(newUser.Username, otpText, "Register");
+                    await SendOtpMail(newUser.Email, otpText, newUser.Name);
+
+                    response.ResponseCode = 200;
+                    response.Result = "Success";
+                    response.Message = "User registered successfully";
+                }
+            }
+            catch (DbUpdateException dbEx)
+            {
+                var innerExceptionMessage = dbEx.InnerException != null ? dbEx.InnerException.Message : dbEx.Message;
+                _logger.LogError(dbEx, "Database error during user registration: {Message}", innerExceptionMessage);
+
+                response.ResponseCode = 500;
+                response.Result = "Failed";
+                response.Message = "Database error: " + innerExceptionMessage;
+                return response;
             }
             catch (Exception ex)
             {
-                response.Result = "fail";
+                var innerExceptionMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                _logger.LogError(ex, "Error during user registration: {Message}", innerExceptionMessage);
+
+                response.ResponseCode = 500;
+                response.Result = "Failed";
+                response.Message = "Error: " + innerExceptionMessage;
+                return response;
             }
 
-            return response;
 
+            return response;
         }
 
-        public async Task<APIResponse> ResetPassword(string name, string oldpassword, string newpassword)
+        private string HashPassword(string password)
+        {
+            // Use a proper hashing algorithm, e.g., BCrypt or SHA256
+            return BCrypt.Net.BCrypt.HashPassword(password); // Example using BCrypt
+        }
+    
+
+    //public async Task<APIResponse> UserRegisteration(UserRegister userRegister)
+    //{
+    //    APIResponse response = new APIResponse();
+    //    string username = "";
+    //    bool isvalid = true;
+
+    //    try
+    //    {
+    //        // duplicate user
+    //        var _user = await this.context.Users.Where(item => item.Username == userRegister.Username).ToListAsync();
+    //        if (_user.Count > 0)
+    //        {
+    //            isvalid = false;
+    //            response.ResponseCode = 409;
+    //            response.Result = "Failed";
+    //            response.Message = "Duplicate username";
+    //        }
+
+    //        // duplicate email
+    //        var _useremail = await this.context.Users.Where(item => item.Email == userRegister.Email).ToListAsync();
+    //        if (_useremail.Count > 0)
+    //        {
+    //            isvalid = false;
+    //            response.ResponseCode = 409;
+    //            response.Result = "Failed";
+    //            response.Message = "Duplicate email";
+    //        }
+
+
+    //        if (userRegister == null && isvalid)
+    //        {
+    //            var _tempuser = new Tempuser()
+    //            {
+    //                Id = Guid.NewGuid().ToString(),
+    //                Name = userRegister.Name,
+    //                Email = userRegister.Email,
+    //                Password = userRegister.Password,
+    //                Phone = userRegister.PhoneNumber,
+    //            };
+    //            await this.context.Tempusers.AddAsync(_tempuser);
+    //            await this.context.SaveChangesAsync();
+    //            username = _tempuser.Id;
+    //            string otptext = Generaterandomnumber();
+    //            await UpdateOtp(userRegister.Username, otptext, "Register");
+    //            await SendOtpMail(userRegister.Email, otptext, userRegister.Name);
+    //            response.ResponseCode = 200;
+    //            response.Result = "Pass";
+    //            response.Message = username.ToString();
+    //        }
+
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        response.Result = "Failed";
+    //    }
+
+    //    return response;
+
+    //}
+
+    public async Task<APIResponse> ResetPassword(string name, string oldpassword, string newpassword)
         {
             APIResponse response = new APIResponse();
             var _user = await this.context.Users.FirstOrDefaultAsync(item => item.Name == name &&
@@ -330,9 +428,7 @@ namespace Quik_BookingApp.Container
                     response = true;
                 }
             }
-
             return response;
-
         }
 
         public async Task<APIResponse> UpdateStatus(string name, string userstatus)

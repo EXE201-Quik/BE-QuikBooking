@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Quik_BookingApp.Helper;
-using Quik_BookingApp.Modal;
 using Quik_BookingApp.Models;
 using Quik_BookingApp.Repos;
+using Quik_BookingApp.Repos.Request;
+using Quik_BookingApp.Repos.Response;
 using Quik_BookingApp.Service;
 
 namespace Quik_BookingApp.Container
@@ -21,68 +22,81 @@ namespace Quik_BookingApp.Container
             this._logger = logger;
         }
 
-        public async Task<APIResponse> CreateUser(User user)
+        public async Task<APIResponse> CreateWS(WorkingSpaceRequestModel ws)
         {
             try
             {
-                if (user == null)
+                if (ws == null)
                 {
                     return new APIResponse
                     {
                         ResponseCode = 400,
                         Result = "Failure",
-                        Message = "User cannot be null"
+                        Message = "Working space cannot be null"
                     };
                 }
 
+                var workingSpace = new WorkingSpace
+                {
+                    SpaceId = Guid.NewGuid().ToString(),
+                    BusinessId = ws.BusinessId,
+                    ImageId = ws.ImageId,
+                    Title = ws.Title,
+                    Description = ws.Description,
+                    PricePerHour = ws.PricePerHour,
+                    Capacity = ws.Capacity,
+                    Location = ws.Location,
+                    Bookings = new List<Booking>(),
+                };
+
                 // Add the user to the database
-                await context.Users.AddAsync(user);
+                await context.WorkingSpaces.AddAsync(workingSpace);
                 await context.SaveChangesAsync();
 
                 // Create a response with the newly created user
-                var workingSpaceModal = mapper.Map<WorkingSpaceModal>(user);
+                var workingSpaceModal = mapper.Map<WorkingSpaceResponse>(workingSpace);
 
                 return new APIResponse
                 {
                     ResponseCode = 201,
                     Result = "Success",
-                    Message = "User created successfully.",
+                    Message = "Working space created successfully.",
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating user.");
+                _logger.LogError(ex, "Error creating working space.");
                 return new APIResponse
                 {
                     ResponseCode = 500,
                     Result = "Failure",
-                    Message = "Error creating user."
+                    Message = "Error creating working space."
                 };
             }
         }
 
 
-        public async Task<List<WorkingSpaceModal>> GetAll()
+        public async Task<List<WorkingSpaceRequestModel>> GetAll()
         {
-            List<WorkingSpaceModal> _response = new List<WorkingSpaceModal>();
+            List<WorkingSpaceRequestModel> _response = new List<WorkingSpaceRequestModel>();
             var _data = await this.context.WorkingSpaces.ToListAsync();
             if (_data != null)
             {
-                _response = this.mapper.Map<List<WorkingSpace>, List<WorkingSpaceModal>>(_data);
+                _response = this.mapper.Map<List<WorkingSpace>, List<WorkingSpaceRequestModel>>(_data);
             }
             return _response;
         }
 
-        public async Task<WorkingSpaceModal> GetByUserId(string workingSpaceId)
+        public async Task<WorkingSpaceRequestModel> GetBySpaceId(string spaceId)
         {
             try
             {
-                var workingSpace = await context.WorkingSpaces.FindAsync(workingSpaceId);
+                var workingSpace = await context.WorkingSpaces.FindAsync(spaceId);
                 if (workingSpace == null)
                 {
                     return null;
                 }
-                var workingSpaceModal = mapper.Map<WorkingSpaceModal>(workingSpace);
+                var workingSpaceModal = mapper.Map<WorkingSpaceRequestModel>(workingSpace);
                 return workingSpaceModal;
             }
             catch (Exception ex)
