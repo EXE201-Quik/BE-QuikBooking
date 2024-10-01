@@ -17,34 +17,55 @@ namespace Quik_BookingApp.Container
         }
         public async Task SendEmailAsync(MailRequest mailrequest)
         {
+            if (string.IsNullOrEmpty(mailrequest.ToEmail))
+            {
+                throw new ArgumentNullException(nameof(mailrequest.ToEmail), "Recipient email cannot be null or empty.");
+            }
+
             var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse(emailSettings.Email);
             email.To.Add(MailboxAddress.Parse(mailrequest.ToEmail));
-            email.Subject = mailrequest.Subject;
+            email.Subject = mailrequest.Subject ?? "No Subject";
             var builder = new BodyBuilder();
 
 
-            byte[] fileBytes;
             if (System.IO.File.Exists("Attachment/dummy.pdf"))
             {
-                FileStream file = new FileStream("Attachment/dummy.pdf", FileMode.Open, FileAccess.Read);
-                using (var ms = new MemoryStream())
+                try
                 {
-                    file.CopyTo(ms);
-                    fileBytes = ms.ToArray();
+                    using (FileStream file = new FileStream("Attachment/dummy.pdf", FileMode.Open, FileAccess.Read))
+                    {
+                        byte[] fileBytes;
+                        using (var ms = new MemoryStream())
+                        {
+                            await file.CopyToAsync(ms);
+                            fileBytes = ms.ToArray();
+                        }
+                        builder.Attachments.Add("attachment.pdf", fileBytes, ContentType.Parse("application/pdf"));  // Set correct MIME type
+                        builder.Attachments.Add("attachment2.pdf", fileBytes, ContentType.Parse("application/pdf"));
+                    }
                 }
-                builder.Attachments.Add("attachment.pdf", fileBytes, ContentType.Parse("application/octet-stream"));
-                builder.Attachments.Add("attachment2.pdf", fileBytes, ContentType.Parse("application/octet-stream"));
+                catch (Exception ex)
+                {
+                    throw new IOException("Error attaching file", ex);
+                }
             }
 
-            builder.HtmlBody = mailrequest.Body;
+            builder.HtmlBody = mailrequest.Body ?? "No content";
             email.Body = builder.ToMessageBody();
 
-            using var smtp = new SmtpClient();
-            smtp.Connect(emailSettings.Host, emailSettings.Port, SecureSocketOptions.StartTls);
-            smtp.Authenticate(emailSettings.Email, emailSettings.Password);
-            await smtp.SendAsync(email);
-            smtp.Disconnect(true);
+            try
+            {
+                using var smtp = new SmtpClient();
+                await smtp.ConnectAsync(emailSettings.Host, emailSettings.Port, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(emailSettings.Email, emailSettings.Password);
+                await smtp.SendAsync(email);
+                await smtp.DisconnectAsync(true);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Error sending email", ex);
+            }
         }
     }
 }

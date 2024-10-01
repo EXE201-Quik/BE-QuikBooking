@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Quik_BookingApp.Models;
 using Quik_BookingApp.Repos.Request;
+using Swashbuckle.AspNetCore.Annotations;
 
 
 namespace Quik_BookingApp.Controllers
@@ -16,12 +17,21 @@ namespace Quik_BookingApp.Controllers
         private readonly IUserService userService;
         private readonly IEmailService emailService;
 
+        /// <summary>
+        ///  <see cref="UserController"/> class.
+        /// </summary>
+        /// <param name="userService">An instance of the user service for accessing user data.</param>
+        /// <param name="emailService">An instance of the email service for sending emails.</param>
+        
         public UserController(IUserService userService, IEmailService emailService)
         {
             this.userService = userService;
             this.emailService = emailService;
         }
 
+        [SwaggerOperation(
+            Summary = "Get all of user"
+        )]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {

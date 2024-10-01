@@ -18,12 +18,14 @@ namespace Quik_BookingApp.Container
         public readonly QuikDbContext context;
         public readonly IMapper mapper;
         public readonly ILogger<UserService> _logger;
+        public readonly IEmailService emailService;
 
-        public UserService(QuikDbContext context, IMapper mapper, ILogger<UserService> logger)
+        public UserService(QuikDbContext context, IMapper mapper, ILogger<UserService> logger, IEmailService emailService)
         {
             this.context = context;
             this.mapper = mapper;
             this._logger = logger;
+            this.emailService = emailService;
         }
 
         public async Task<APIResponse> CreateUser(User user)
@@ -75,7 +77,7 @@ namespace Quik_BookingApp.Container
                 _response = this.mapper.Map<List<User>, List<UserModal>>(_data);
             }
             return _response;
-            
+
         }
 
         public async Task<UserModal> GetByUserId(string username)
@@ -86,7 +88,7 @@ namespace Quik_BookingApp.Container
                 var data = await context.Users.FindAsync(username);
                 if (data != null)
                 {
-                    _response = this.mapper.Map<User,UserModal>(data);
+                    _response = this.mapper.Map<User, UserModal>(data);
                 }
                 return _response;
             }
@@ -218,69 +220,9 @@ namespace Quik_BookingApp.Container
             // Use a proper hashing algorithm, e.g., BCrypt or SHA256
             return BCrypt.Net.BCrypt.HashPassword(password); // Example using BCrypt
         }
-    
-
-    //public async Task<APIResponse> UserRegisteration(UserRegister userRegister)
-    //{
-    //    APIResponse response = new APIResponse();
-    //    string username = "";
-    //    bool isvalid = true;
-
-    //    try
-    //    {
-    //        // duplicate user
-    //        var _user = await this.context.Users.Where(item => item.Username == userRegister.Username).ToListAsync();
-    //        if (_user.Count > 0)
-    //        {
-    //            isvalid = false;
-    //            response.ResponseCode = 409;
-    //            response.Result = "Failed";
-    //            response.Message = "Duplicate username";
-    //        }
-
-    //        // duplicate email
-    //        var _useremail = await this.context.Users.Where(item => item.Email == userRegister.Email).ToListAsync();
-    //        if (_useremail.Count > 0)
-    //        {
-    //            isvalid = false;
-    //            response.ResponseCode = 409;
-    //            response.Result = "Failed";
-    //            response.Message = "Duplicate email";
-    //        }
 
 
-    //        if (userRegister == null && isvalid)
-    //        {
-    //            var _tempuser = new Tempuser()
-    //            {
-    //                Id = Guid.NewGuid().ToString(),
-    //                Name = userRegister.Name,
-    //                Email = userRegister.Email,
-    //                Password = userRegister.Password,
-    //                Phone = userRegister.PhoneNumber,
-    //            };
-    //            await this.context.Tempusers.AddAsync(_tempuser);
-    //            await this.context.SaveChangesAsync();
-    //            username = _tempuser.Id;
-    //            string otptext = Generaterandomnumber();
-    //            await UpdateOtp(userRegister.Username, otptext, "Register");
-    //            await SendOtpMail(userRegister.Email, otptext, userRegister.Name);
-    //            response.ResponseCode = 200;
-    //            response.Result = "Pass";
-    //            response.Message = username.ToString();
-    //        }
-
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        response.Result = "Failed";
-    //    }
-
-    //    return response;
-
-    //}
-
-    public async Task<APIResponse> ResetPassword(string name, string oldpassword, string newpassword)
+        public async Task<APIResponse> ResetPassword(string name, string oldpassword, string newpassword)
         {
             APIResponse response = new APIResponse();
             var _user = await this.context.Users.FirstOrDefaultAsync(item => item.Name == name &&
@@ -412,6 +354,21 @@ namespace Quik_BookingApp.Container
 
         private async Task SendOtpMail(string useremail, string OtpText, string Name)
         {
+            var mailrequest = new MailRequest();
+            mailrequest.ToEmail = useremail;
+            mailrequest.Subject = "Thank for registering : OTP";
+            mailrequest.Body = GenerateEmailBody(Name, OtpText);
+        }
+
+        private string GenerateEmailBody(string name, string otpText)
+        {
+            string emailbody = "<div style='width:100%;background-color:grey'>";
+            emailbody += "<hi>Hi " + name + ", Thank for registering</h1>";
+            emailbody += "<h2>Please enter OTP text and complete the registration</h2>";
+            emailbody += "<h2>OTP Text is :" + otpText + "</h2>";
+            emailbody += "</div>";
+
+            return emailbody;
 
         }
 
