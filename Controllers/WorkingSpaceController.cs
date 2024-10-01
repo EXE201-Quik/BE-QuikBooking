@@ -7,6 +7,7 @@ using Quik_BookingApp.Repos;
 using Quik_BookingApp.Repos.Request;
 using Quik_BookingApp.Repos.Response;
 using Quik_BookingApp.Service;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Quik_BookingApp.Controllers
 {
@@ -25,6 +26,10 @@ namespace Quik_BookingApp.Controllers
             this.workingSpaceService = workingSpaceService;
         }
 
+        [SwaggerOperation(
+             Summary = "Retrieve all workign space",
+             Description = "Returns a list of all working spaces. If no workign space are found, it returns a 404 Not Found response."
+         )]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
@@ -36,6 +41,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
+        [SwaggerOperation(
+             Summary = "Retrieve user by wsId",
+             Description = "This API allows you to get WS details by providing a wsId. If the WS is not found, a 404 Not Found response will be returned."
+        )]
         [HttpGet("GetById/{workingSpaceId}")]
         public async Task<IActionResult> GetBySpaceId(string workingSpaceId)
         {

@@ -5,6 +5,7 @@ using Quik_BookingApp.Models;
 using Quik_BookingApp.Repos;
 using Quik_BookingApp.Repos.Request;
 using Quik_BookingApp.Service;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Quik_BookingApp.Controllers
 {
@@ -21,7 +22,10 @@ namespace Quik_BookingApp.Controllers
             this._dbContext = _dbContext;
         }
 
-        //GET: api/Booking
+        [SwaggerOperation(
+            Summary = "Retrieve all bookings",
+            Description = "Gets a list of all bookings. If no bookings are found, a 404 Not Found response is returned."
+        )]
         [HttpGet("GetAllBookings")]
         public async Task<IActionResult> GetAllBookings()
         {
@@ -33,7 +37,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
-        //POST: api/CreateBooking
+        [SwaggerOperation(
+            Summary = "Create a new booking",
+            Description = "Creates a new booking using the provided booking data."
+        )]
         [HttpPost("CreateBooking")]
         public async Task<IActionResult> CreateBooking([FromBody] BookingRequestModel bookingDto)
         {
@@ -53,7 +60,10 @@ namespace Quik_BookingApp.Controllers
             }
         }
 
-        // GET: api/Booking/{id}
+        [SwaggerOperation(
+            Summary = "Retrieve a booking by ID",
+            Description = "Gets a booking's details by providing the booking ID. If the booking is not found, a 404 Not Found response is returned."
+        )]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBookingById(string id)
         {
@@ -66,10 +76,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(booking);
         }
 
-        
-
-
-        // PUT: api/Booking/{id}
+        [SwaggerOperation(
+            Summary = "Update a booking",
+            Description = "Updates a booking by ID. The booking ID must match the provided booking data."
+        )]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBooking(string id, [FromBody] Booking bookingDto)
         {
@@ -94,7 +104,10 @@ namespace Quik_BookingApp.Controllers
             }
         }
 
-        // DELETE: api/Booking/{id}
+        [SwaggerOperation(
+            Summary = "Delete a booking",
+            Description = "Deletes a booking by its ID. Returns 204 No Content on success, or appropriate error messages if something goes wrong."
+        )]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBooking(string id)
         {

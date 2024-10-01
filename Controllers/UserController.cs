@@ -30,8 +30,9 @@ namespace Quik_BookingApp.Controllers
         }
 
         [SwaggerOperation(
-            Summary = "Get all of user"
-        )]
+             Summary = "Retrieve all users",
+             Description = "Returns a list of all users. If no users are found, it returns a 404 Not Found response."
+         )]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
@@ -43,6 +44,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
+        [SwaggerOperation(
+             Summary = "Retrieve user by username",
+             Description = "This API allows you to get user details by providing a username. If the user is not found, a 404 Not Found response will be returned."
+        )]
         [HttpGet("GetById/{username}")]
         public async Task<IActionResult> GetById(string username)
         {
@@ -54,6 +59,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
+        [SwaggerOperation(
+           Summary = "Create a new user",
+           Description = "Creates a new user using the details provided in the request body. If successful, returns a 201 Created response."
+       )]
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] User userAccount)
         {
@@ -65,6 +74,10 @@ namespace Quik_BookingApp.Controllers
             return StatusCode(response.ResponseCode, response);
         }
 
+        [SwaggerOperation(
+            Summary = "Register a new user",
+            Description = "Registers a new user by processing the user registration request. Returns the result of the registration process."
+        )]
         [HttpPost("UserRegisteration")]
         public async Task<IActionResult> UserRegisteration(UserRegister userRegister)
         {
@@ -72,6 +85,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
+        [SwaggerOperation(
+            Summary = "Confirm user registration",
+            Description = "Confirms a user’s registration by verifying the provided OTP."
+        )]
         [HttpPost("ConfirmRegisteration")]
         public async Task<IActionResult> ConfirmRegisteration(string userid, string username, string otptext)
         {
@@ -79,6 +96,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
+        [SwaggerOperation(
+            Summary = "Reset user password",
+            Description = "Resets a user’s password by verifying the old password and updating it to a new password."
+        )]
         [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword(string username, string oldpassword, string newpassword)
         {
@@ -86,6 +107,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
+        [SwaggerOperation(
+            Summary = "Forgot password",
+            Description = "Handles forgotten password cases. Initiates the process to reset the user's password."
+        )]
         [HttpPost("ForgetPassword")]
         public async Task<IActionResult> ForgetPassword(string username)
         {
@@ -93,6 +118,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
+        [SwaggerOperation(
+            Summary = "Update user password",
+            Description = "Updates the user’s password by verifying an OTP and setting a new password."
+        )]
         [HttpPost("UpdatePassword")]
         public async Task<IActionResult> UpdatePassword(string username, string password, string otptext)
         {
@@ -100,6 +129,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
+        [SwaggerOperation(
+            Summary = "Update user status",
+            Description = "Updates the status of a user by providing the username and the new status value."
+        )]
         [HttpPost("UpdateStatus")]
         public async Task<IActionResult> UpdateStatus(string username, string status)
         {
@@ -107,6 +140,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
+        [SwaggerOperation(
+            Summary = "Update user role",
+            Description = "Updates the role of a user by providing the username and the new role."
+        )]
         [HttpPost("UpdateRole")]
         public async Task<IActionResult> UpdateRole(string username, string role)
         {
@@ -114,6 +151,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
+        [SwaggerOperation(
+           Summary = "Send email",
+           Description = "Sends an email using the pre-configured mail request data."
+        )]
         [HttpPost("SendMail")]
         public async Task<IActionResult> SendMail()
         {

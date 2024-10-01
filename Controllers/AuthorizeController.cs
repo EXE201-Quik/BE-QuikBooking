@@ -7,6 +7,7 @@ using Quik_BookingApp.Modal;
 using Quik_BookingApp.Repos;
 using Quik_BookingApp.Service;
 using QuikBookingApp.Modal;
+using Swashbuckle.AspNetCore.Annotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -26,6 +27,11 @@ namespace LearnAPI.Controllers
             this.jwtSettings = options.Value;
             this.refresh = refresh;
         }
+
+        [SwaggerOperation(
+            Summary = "Generate JWT token",
+            Description = "Generates a JWT token and a refresh token if the provided user credentials are valid."
+        )]
         [HttpPost("GenerateToken")]
         public async Task<IActionResult> GenerateToken([FromBody] UserCred userCred)
         {
@@ -57,6 +63,10 @@ namespace LearnAPI.Controllers
 
         }
 
+        [SwaggerOperation(
+            Summary = "Generate new JWT using refresh token",
+            Description = "Generates a new JWT token if the provided refresh token is valid."
+        )]
         [HttpPost("GenerateRefreshToken")]
         public async Task<IActionResult> GenerateToken([FromBody] TokenResponse token)
         {
