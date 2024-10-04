@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Quik_BookingApp.Container;
+using Quik_BookingApp.DAO;
 using Quik_BookingApp.Extentions;
+using Quik_BookingApp.Helper;
 using Quik_BookingApp.Modal;
-using Quik_BookingApp.Repos;
-
+using Quik_BookingApp.Repos.Interface;
 using Quik_BookingApp.Service;
 using QuikBookingApp.Modal;
 using Serilog;
@@ -23,6 +23,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.EnableAnnotations();
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Quik_BookingApp API", Version = "v1" });
 
     // Configure Swagger to use JWT Bearer
@@ -51,9 +52,11 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection(""));
+
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IBookingService, BookingService>();
-builder.Services.AddTransient<IWorkingSpaceService, WorkingSpaceService>();
+builder.Services.AddScoped<IWorkingSpaceService, WorkingSpaceService>();
 builder.Services.AddTransient<IBusinessService, BusinessService>();
 builder.Services.AddTransient<IRefreshHandler, RefreshHandler>();
 builder.Services.AddTransient<IEmailService, EmailService>();
@@ -120,6 +123,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseRouting();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers(); 
+});
 
 //await app.CreateDbIfNotExists();
 

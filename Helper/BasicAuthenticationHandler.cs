@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Quik_BookingApp.Repos;
+using Quik_BookingApp.DAO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Security.Claims;

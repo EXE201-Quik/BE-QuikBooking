@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Quik_BookingApp.Repos;
-using Quik_BookingApp.Service;
+using Quik_BookingApp.DAO;
+using Quik_BookingApp.Repos.Interface;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Quik_BookingApp.Controllers
 {
@@ -18,7 +19,10 @@ namespace Quik_BookingApp.Controllers
             this._dbContext = _dbContext;
         }
 
-        //GET: api/Business
+        [SwaggerOperation(
+            Summary = "Retrieve all businesses",
+            Description = "Gets a list of all registered businesses. If no businesses are found, a 404 Not Found response is returned."
+        )]
         [HttpGet("GetAllBusiness")]
         public async Task<IActionResult> GetAllBusiness()
         {
@@ -30,7 +34,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
-        // GET: api/Business/{id}
+        [SwaggerOperation(
+            Summary = "Retrieve a business by ID",
+            Description = "Gets a business's details by providing the business ID. If the business is not found, a 404 Not Found response is returned."
+        )]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBusinessById(string id)
         {

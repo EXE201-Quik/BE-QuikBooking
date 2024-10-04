@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Quik_BookingApp.BOs.Request;
+using Quik_BookingApp.DAO;
+using Quik_BookingApp.DAO.Models;
 using Quik_BookingApp.Helper;
-using Quik_BookingApp.Models;
-using Quik_BookingApp.Repos;
-using Quik_BookingApp.Repos.Request;
-using Quik_BookingApp.Repos.Response;
-using Quik_BookingApp.Service;
-
+using Quik_BookingApp.Repos.Interface;
+using Swashbuckle.AspNetCore.Annotations;
 namespace Quik_BookingApp.Controllers
 {
     [Route("api/[controller]")]
@@ -25,6 +24,10 @@ namespace Quik_BookingApp.Controllers
             this.workingSpaceService = workingSpaceService;
         }
 
+        [SwaggerOperation(
+             Summary = "Retrieve all workign space",
+             Description = "Returns a list of all working spaces. If no workign space are found, it returns a 404 Not Found response."
+         )]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
@@ -36,6 +39,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
+        [SwaggerOperation(
+             Summary = "Retrieve user by wsId",
+             Description = "This API allows you to get WS details by providing a wsId. If the WS is not found, a 404 Not Found response will be returned."
+        )]
         [HttpGet("GetById/{workingSpaceId}")]
         public async Task<IActionResult> GetBySpaceId(string workingSpaceId)
         {
@@ -47,13 +54,18 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
+        [SwaggerOperation(
+             Summary = "Retrieve user by wsId",
+             Description = "This API allows you to get WS details by providing a wsId. If the WS is not found, a 404 Not Found response will be returned."
+        )]
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] WorkingSpaceRequestModel workingSpace)
         {
             var response = await workingSpaceService.CreateWS(workingSpace);
             if (response.ResponseCode == 201)
             {
-                return CreatedAtAction(nameof(GetBySpaceId), new { id = response }, response);
+                return CreatedAtAction(nameof(GetBySpaceId), new { workingSpaceId = workingSpace.SpaceId }, response);
+
             }
             return StatusCode(response.ResponseCode, response);
         }
@@ -65,30 +77,55 @@ namespace Quik_BookingApp.Controllers
             APIResponse response = new APIResponse();
             try
             {
-                string Filepath = GetFilepath(code);
-                if (!System.IO.Directory.Exists(Filepath))
+                // Define the file path
+                string filePath = GetFilepath(code);
+                if (!System.IO.Directory.Exists(filePath))
                 {
-                    System.IO.Directory.CreateDirectory(Filepath);
+                    System.IO.Directory.CreateDirectory(filePath);
                 }
 
-                string imagepath = Filepath + "\\" + code + ".png";
-                if (System.IO.File.Exists(imagepath))
+                // Define the image path and delete if it exists
+                string imageFileName = $"{code}.png";
+                string imagePath = Path.Combine(filePath, imageFileName);
+                if (System.IO.File.Exists(imagePath))
                 {
-                    System.IO.File.Delete(imagepath);
+                    System.IO.File.Delete(imagePath);
                 }
-                using (FileStream stream = System.IO.File.Create(imagepath))
+
+                // Save the image to the specified path
+                using (FileStream stream = new FileStream(imagePath, FileMode.Create))
                 {
                     await formFile.CopyToAsync(stream);
-                    response.ResponseCode = 200;
-                    response.Result = "pass";
                 }
+
+                // Prepare image URL (relative or absolute based on your setup)
+                string imageUrl = $"/Upload/workingspace/{code}/{imageFileName}";
+
+                // Create an instance of ImageWS and save to the database
+                var imageWS = new ImageWS
+                {
+                    WorkingSpaceName = "Your Working Space Name", // Set as appropriate
+                    WSCode = code,
+                    WSImages = System.IO.File.ReadAllBytes(imagePath)
+                };
+
+                // Assuming _context is your database context
+                context.Images.Add(imageWS);
+                await context.SaveChangesAsync();
+
+                // Set the response
+                response.ResponseCode = 200;
+                response.Result = "pass";
+                response.Message = $"Image uploaded and saved to database with path: {imageUrl}";
             }
             catch (Exception ex)
             {
                 response.Message = ex.Message;
             }
+
             return Ok(response);
         }
+
 
         [HttpPut("MultiUploadImage")]
         public async Task<IActionResult> MultiUploadImage(IFormFileCollection filecollection, string code)
@@ -290,7 +327,7 @@ namespace Quik_BookingApp.Controllers
                     using (MemoryStream stream = new MemoryStream())
                     {
                         await file.CopyToAsync(stream);
-                        this.context.Images.Add(new Repos.Models.ImageWS()
+                        this.context.Images.Add(new DAO.Models.ImageWS()
                         {
                             WSCode = code,
                             WSImages = stream.ToArray()

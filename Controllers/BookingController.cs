@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Quik_BookingApp.Container;
-using Quik_BookingApp.Models;
-using Quik_BookingApp.Repos;
-using Quik_BookingApp.Repos.Request;
-using Quik_BookingApp.Service;
+using Quik_BookingApp.BOs.Request;
+using Quik_BookingApp.BOs.Response;
+using Quik_BookingApp.DAO;
+using Quik_BookingApp.Repos.Interface;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Quik_BookingApp.Controllers
 {
@@ -21,7 +21,10 @@ namespace Quik_BookingApp.Controllers
             this._dbContext = _dbContext;
         }
 
-        //GET: api/Booking
+        [SwaggerOperation(
+            Summary = "Retrieve all bookings",
+            Description = "Gets a list of all bookings. If no bookings are found, a 404 Not Found response is returned."
+        )]
         [HttpGet("GetAllBookings")]
         public async Task<IActionResult> GetAllBookings()
         {
@@ -33,7 +36,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(data);
         }
 
-        //POST: api/CreateBooking
+        [SwaggerOperation(
+            Summary = "Create a new booking",
+            Description = "Tạo mới booking không cần truyền bookingId"
+        )]
         [HttpPost("CreateBooking")]
         public async Task<IActionResult> CreateBooking([FromBody] BookingRequestModel bookingDto)
         {
@@ -45,7 +51,7 @@ namespace Quik_BookingApp.Controllers
             try
             {
                 var createdBooking = await _service.BookSpace(bookingDto);
-                return CreatedAtAction(nameof(GetBookingById), new { id = createdBooking }, createdBooking);
+                return CreatedAtAction(nameof(GetBookingById), new { id = bookingDto.BookingId }, createdBooking);
             }
             catch (Exception ex)
             {
@@ -53,7 +59,10 @@ namespace Quik_BookingApp.Controllers
             }
         }
 
-        // GET: api/Booking/{id}
+        [SwaggerOperation(
+            Summary = "Retrieve a booking by ID",
+            Description = "Gets a booking's details by providing the booking ID. If the booking is not found, a 404 Not Found response is returned."
+        )]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBookingById(string id)
         {
@@ -66,12 +75,12 @@ namespace Quik_BookingApp.Controllers
             return Ok(booking);
         }
 
-        
-
-
-        // PUT: api/Booking/{id}
+        [SwaggerOperation(
+            Summary = "Update a booking",
+            Description = "Updates a booking by ID. The booking ID must match the provided booking data."
+        )]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBooking(string id, [FromBody] Booking bookingDto)
+        public async Task<IActionResult> UpdateBooking(string id, [FromBody] BookingResponseModel bookingDto)
         {
             if (id != bookingDto.BookingId)
             {
@@ -94,7 +103,10 @@ namespace Quik_BookingApp.Controllers
             }
         }
 
-        // DELETE: api/Booking/{id}
+        [SwaggerOperation(
+            Summary = "Delete a booking",
+            Description = "Deletes a booking by its ID. Returns 204 No Content on success, or appropriate error messages if something goes wrong."
+        )]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBooking(string id)
         {
@@ -102,16 +114,16 @@ namespace Quik_BookingApp.Controllers
             {
                 var result = await _service.DeleteBooking(id);
 
-                if (result.ResponseCode == 404) // Check if booking not found
+                if (result.ResponseCode == 404) 
                 {
-                    return NotFound(result.Message); // Use the message from the response
+                    return NotFound(result.Message); 
                 }
-                else if (result.ResponseCode == 500) // Check for server error
+                else if (result.ResponseCode == 500) 
                 {
-                    return StatusCode(500, result.Message); // Use the message from the response
+                    return StatusCode(500, result.Message); 
                 }
 
-                return NoContent(); // 204 No Content
+                return NoContent(); 
             }
             catch (Exception ex)
             {
