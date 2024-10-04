@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Quik_BookingApp.Repos;
-using Quik_BookingApp.Service;
+using Quik_BookingApp.DAO;
+using Quik_BookingApp.Repos.Interface;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Quik_BookingApp.Controllers

@@ -288,3 +288,4 @@ D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\System.Formats.Asn1.d
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\System.Security.Cryptography.Pkcs.dll
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Security.Cryptography.Pkcs.dll
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\Swashbuckle.AspNetCore.Annotations.dll
+D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\Quik_BookingApp.staticwebassets.runtime.json

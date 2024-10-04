@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Quik_BookingApp.Repos;
+using Quik_BookingApp.DAO;
 
 #nullable disable
 
@@ -22,7 +22,7 @@ namespace QuikBookingApp.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Quik_BookingApp.Models.Booking", b =>
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.Booking", b =>
                 {
                     b.Property<string>("BookingId")
                         .HasColumnType("nvarchar(450)");
@@ -30,8 +30,21 @@ namespace QuikBookingApp.Migrations
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("DepositAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("NumberOfPeople")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("RemainingAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("SpaceId")
                         .IsRequired()
@@ -63,17 +76,21 @@ namespace QuikBookingApp.Migrations
                         new
                         {
                             BookingId = "booking001",
-                            BookingDate = new DateTime(2024, 9, 27, 0, 0, 0, 0, DateTimeKind.Local),
-                            EndTime = new DateTime(2024, 9, 27, 21, 22, 51, 343, DateTimeKind.Local).AddTicks(832),
+                            BookingDate = new DateTime(2024, 10, 4, 0, 0, 0, 0, DateTimeKind.Local),
+                            DepositAmount = 20000m,
+                            EndTime = new DateTime(2024, 10, 4, 14, 27, 11, 514, DateTimeKind.Local).AddTicks(5285),
+                            NumberOfPeople = 4,
+                            PaymentId = "payment001",
+                            RemainingAmount = 180000m,
                             SpaceId = "space001",
-                            StartTime = new DateTime(2024, 9, 27, 19, 22, 51, 343, DateTimeKind.Local).AddTicks(826),
+                            StartTime = new DateTime(2024, 10, 4, 12, 27, 11, 514, DateTimeKind.Local).AddTicks(5280),
                             Status = "Confirmed",
-                            TotalAmount = 50.00m,
+                            TotalAmount = 200000m,
                             Username = "john_doe"
                         });
                 });
 
-            modelBuilder.Entity("Quik_BookingApp.Models.Business", b =>
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.Business", b =>
                 {
                     b.Property<string>("BusinessId")
                         .HasColumnType("nvarchar(450)");
@@ -115,7 +132,63 @@ namespace QuikBookingApp.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Quik_BookingApp.Models.Payment", b =>
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.ImageWS", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"));
+
+                    b.Property<string>("WSCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("WSImages")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("WorkingSpaceName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ImageId");
+
+                    b.ToTable("Images");
+                });
+
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.OtpManager", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Expiration")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OtpText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OtpType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OtpManagers");
+                });
+
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.Payment", b =>
                 {
                     b.Property<string>("PaymentId")
                         .HasColumnType("nvarchar(450)");
@@ -134,9 +207,26 @@ namespace QuikBookingApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VNPayResponseCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VNPayTransactionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("PaymentId");
 
-                    b.HasIndex("BookingId");
+                    b.HasIndex("BookingId")
+                        .IsUnique();
 
                     b.ToTable("Payments");
 
@@ -146,12 +236,87 @@ namespace QuikBookingApp.Migrations
                             PaymentId = "payment001",
                             Amount = 50.00m,
                             BookingId = "booking001",
-                            PaymentDate = new DateTime(2024, 9, 27, 18, 22, 51, 343, DateTimeKind.Local).AddTicks(847),
-                            PaymentMethod = "Credit Card"
+                            PaymentDate = new DateTime(2024, 10, 4, 11, 27, 11, 514, DateTimeKind.Local).AddTicks(5303),
+                            PaymentMethod = "Credit Card",
+                            PaymentStatus = "Success",
+                            PaymentUrl = "https://example.com/payment/payment001",
+                            VNPayResponseCode = "00",
+                            VNPayTransactionId = "VNPay12345"
                         });
                 });
 
-            modelBuilder.Entity("Quik_BookingApp.Models.User", b =>
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.PwdManager", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PwdManagers");
+                });
+
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.TblRefreshToken", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("TokenId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "TokenId");
+
+                    b.ToTable("TblRefreshtokens");
+                });
+
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.Tempuser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tempusers");
+                });
+
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.User", b =>
                 {
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(450)");
@@ -228,7 +393,7 @@ namespace QuikBookingApp.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Quik_BookingApp.Models.WorkingSpace", b =>
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.WorkingSpace", b =>
                 {
                     b.Property<string>("SpaceId")
                         .HasColumnType("nvarchar(450)");
@@ -279,145 +444,15 @@ namespace QuikBookingApp.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Quik_BookingApp.Repos.Models.ImageWS", b =>
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.Booking", b =>
                 {
-                    b.Property<int>("ImageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"));
-
-                    b.Property<string>("WSCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("WSImages")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("WorkingSpaceName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ImageId");
-
-                    b.ToTable("Images");
-                });
-
-            modelBuilder.Entity("Quik_BookingApp.Repos.Models.OtpManager", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Expiration")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("OtpText")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OtpType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OtpManagers");
-                });
-
-            modelBuilder.Entity("Quik_BookingApp.Repos.Models.PwdManager", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ModifyDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PwdManagers");
-                });
-
-            modelBuilder.Entity("Quik_BookingApp.Repos.Models.TblRefreshToken", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("TokenId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("RefreshToken")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId", "TokenId");
-
-                    b.ToTable("TblRefreshtokens");
-                });
-
-            modelBuilder.Entity("Quik_BookingApp.Repos.Models.Tempuser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tempusers");
-                });
-
-            modelBuilder.Entity("Quik_BookingApp.Models.Booking", b =>
-                {
-                    b.HasOne("Quik_BookingApp.Models.WorkingSpace", "WorkingSpace")
+                    b.HasOne("Quik_BookingApp.DAO.Models.WorkingSpace", "WorkingSpace")
                         .WithMany("Bookings")
                         .HasForeignKey("SpaceId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Quik_BookingApp.Models.User", "User")
+                    b.HasOne("Quik_BookingApp.DAO.Models.User", "User")
                         .WithMany("Bookings")
                         .HasForeignKey("Username")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -428,9 +463,9 @@ namespace QuikBookingApp.Migrations
                     b.Navigation("WorkingSpace");
                 });
 
-            modelBuilder.Entity("Quik_BookingApp.Models.Business", b =>
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.Business", b =>
                 {
-                    b.HasOne("Quik_BookingApp.Models.User", "Owner")
+                    b.HasOne("Quik_BookingApp.DAO.Models.User", "Owner")
                         .WithMany("Businesses")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -439,20 +474,20 @@ namespace QuikBookingApp.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("Quik_BookingApp.Models.Payment", b =>
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.Payment", b =>
                 {
-                    b.HasOne("Quik_BookingApp.Models.Booking", "Booking")
-                        .WithMany("Payments")
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                    b.HasOne("Quik_BookingApp.DAO.Models.Booking", "Booking")
+                        .WithOne("Payment")
+                        .HasForeignKey("Quik_BookingApp.DAO.Models.Payment", "BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Booking");
                 });
 
-            modelBuilder.Entity("Quik_BookingApp.Models.WorkingSpace", b =>
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.WorkingSpace", b =>
                 {
-                    b.HasOne("Quik_BookingApp.Models.Business", "Business")
+                    b.HasOne("Quik_BookingApp.DAO.Models.Business", "Business")
                         .WithMany("WorkingSpaces")
                         .HasForeignKey("BusinessId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -461,24 +496,25 @@ namespace QuikBookingApp.Migrations
                     b.Navigation("Business");
                 });
 
-            modelBuilder.Entity("Quik_BookingApp.Models.Booking", b =>
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.Booking", b =>
                 {
-                    b.Navigation("Payments");
+                    b.Navigation("Payment")
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("Quik_BookingApp.Models.Business", b =>
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.Business", b =>
                 {
                     b.Navigation("WorkingSpaces");
                 });
 
-            modelBuilder.Entity("Quik_BookingApp.Models.User", b =>
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.User", b =>
                 {
                     b.Navigation("Bookings");
 
                     b.Navigation("Businesses");
                 });
 
-            modelBuilder.Entity("Quik_BookingApp.Models.WorkingSpace", b =>
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.WorkingSpace", b =>
                 {
                     b.Navigation("Bookings");
                 });

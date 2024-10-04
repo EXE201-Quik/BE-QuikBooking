@@ -1,6 +1,6 @@
 ﻿using EFCore.AutomaticMigrations;
 using Microsoft.EntityFrameworkCore;
-using Quik_BookingApp.Repos;
+using Quik_BookingApp.DAO;
 
 namespace Quik_BookingApp.Extentions
 {

@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Quik_BookingApp.Service;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Quik_BookingApp.Models;
-using Quik_BookingApp.Repos.Request;
 using Swashbuckle.AspNetCore.Annotations;
+using Quik_BookingApp.DAO.Models;
+using Quik_BookingApp.BOs.Request;
+using Quik_BookingApp.Repos.Interface;
 
 
 namespace Quik_BookingApp.Controllers

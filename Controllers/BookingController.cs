@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Quik_BookingApp.Container;
-using Quik_BookingApp.Models;
-using Quik_BookingApp.Repos;
-using Quik_BookingApp.Repos.Request;
-using Quik_BookingApp.Service;
+using Quik_BookingApp.BOs.Request;
+using Quik_BookingApp.BOs.Response;
+using Quik_BookingApp.DAO;
+using Quik_BookingApp.Repos.Interface;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Quik_BookingApp.Controllers
@@ -39,7 +38,7 @@ namespace Quik_BookingApp.Controllers
 
         [SwaggerOperation(
             Summary = "Create a new booking",
-            Description = "Creates a new booking using the provided booking data."
+            Description = "Tạo mới booking không cần truyền bookingId"
         )]
         [HttpPost("CreateBooking")]
         public async Task<IActionResult> CreateBooking([FromBody] BookingRequestModel bookingDto)
@@ -52,7 +51,7 @@ namespace Quik_BookingApp.Controllers
             try
             {
                 var createdBooking = await _service.BookSpace(bookingDto);
-                return CreatedAtAction(nameof(GetBookingById), new { id = createdBooking }, createdBooking);
+                return CreatedAtAction(nameof(GetBookingById), new { id = bookingDto.BookingId }, createdBooking);
             }
             catch (Exception ex)
             {
@@ -81,7 +80,7 @@ namespace Quik_BookingApp.Controllers
             Description = "Updates a booking by ID. The booking ID must match the provided booking data."
         )]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBooking(string id, [FromBody] Booking bookingDto)
+        public async Task<IActionResult> UpdateBooking(string id, [FromBody] BookingResponseModel bookingDto)
         {
             if (id != bookingDto.BookingId)
             {
@@ -115,16 +114,16 @@ namespace Quik_BookingApp.Controllers
             {
                 var result = await _service.DeleteBooking(id);
 
-                if (result.ResponseCode == 404) // Check if booking not found
+                if (result.ResponseCode == 404) 
                 {
-                    return NotFound(result.Message); // Use the message from the response
+                    return NotFound(result.Message); 
                 }
-                else if (result.ResponseCode == 500) // Check for server error
+                else if (result.ResponseCode == 500) 
                 {
-                    return StatusCode(500, result.Message); // Use the message from the response
+                    return StatusCode(500, result.Message); 
                 }
 
-                return NoContent(); // 204 No Content
+                return NoContent(); 
             }
             catch (Exception ex)
             {
