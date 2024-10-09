@@ -1,4 +1,5 @@
 ﻿using Quik_BookingApp.BOs.Request;
+using Quik_BookingApp.BOs.Response;
 using Quik_BookingApp.DAO.Models;
 using Quik_BookingApp.Helper;
 using Quik_BookingApp.Modal;
@@ -9,9 +10,10 @@ namespace Quik_BookingApp.Repos.Interface
     public interface IUserService
     {
         Task<List<UserModal>> GetAll();
+        Task<List<BookingRequestModel>> GetBookingsOfUser(string username);
         Task<UserModal> GetByUserId(string username);
         Task<APIResponse> CreateUser(User user);
-        Task<APIResponse> ConfirmRegister(string userid, string username, string otptext);
+        Task<APIResponse> ConfirmRegister(string userid, string username, int otptext);
         Task<APIResponse> UserRegisteration(UserRegister userRegister);
         Task<APIResponse> ResetPassword(string username, string oldpassword, string newpassword);
         Task<APIResponse> ForgetPassword(string username);

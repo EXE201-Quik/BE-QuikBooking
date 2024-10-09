@@ -16,6 +16,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//Call firebase initailization
+FirebaseInitializer.InitializeFirebase();
+
 // Add services to the container.
 
 builder.Services.AddControllers();

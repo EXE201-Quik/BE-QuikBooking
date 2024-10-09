@@ -6,6 +6,8 @@ using Swashbuckle.AspNetCore.Annotations;
 using Quik_BookingApp.DAO.Models;
 using Quik_BookingApp.BOs.Request;
 using Quik_BookingApp.Repos.Interface;
+using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace Quik_BookingApp.Controllers
@@ -42,6 +44,27 @@ namespace Quik_BookingApp.Controllers
                 return NotFound();
             }
             return Ok(data);
+        }
+
+        [HttpGet("GetBookingsOfUser")]
+        public async Task<IActionResult> GetBookingsOfUser(string username)
+        {
+            try
+            {
+                var data = await userService.GetBookingsOfUser(username);
+
+                if(data == null || data.Any())
+                {
+                    throw new Exception("No booking of this user");
+                }
+
+                return Ok(data);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+            
         }
 
         [SwaggerOperation(
@@ -90,10 +113,23 @@ namespace Quik_BookingApp.Controllers
             Description = "Confirms a user’s registration by verifying the provided OTP."
         )]
         [HttpPost("ConfirmRegisteration")]
-        public async Task<IActionResult> ConfirmRegisteration(string userid, string username, string otptext)
+        public async Task<IActionResult> ConfirmRegisteration(string userid, string username, int otptext)
         {
             var data = await this.userService.ConfirmRegister(userid, username, otptext);
             return Ok(data);
+        }
+
+        private string GenerateOtp(int length = 6)
+        {
+            var random = new Random();
+            var otp = new StringBuilder();
+
+            for (int i = 0; i < length; i++)
+            {
+                otp.Append(random.Next(0, 10)); 
+            }
+
+            return otp.ToString();
         }
 
         [SwaggerOperation(
@@ -155,8 +191,8 @@ namespace Quik_BookingApp.Controllers
            Summary = "Send email",
            Description = "Sends an email using the pre-configured mail request data."
         )]
-        [HttpPost("SendMail")]
-        public async Task<IActionResult> SendMail()
+        [HttpPost("SendMail/{username}")]
+        public async Task<IActionResult> SendMail(string username)
         {
             try
             {

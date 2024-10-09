@@ -41,7 +41,7 @@ namespace Quik_BookingApp.Service
                             await file.CopyToAsync(ms);
                             fileBytes = ms.ToArray();
                         }
-                        builder.Attachments.Add("attachment.pdf", fileBytes, ContentType.Parse("application/pdf"));  // Set correct MIME type
+                        builder.Attachments.Add("attachment.pdf", fileBytes, ContentType.Parse("application/pdf"));  
                         builder.Attachments.Add("attachment2.pdf", fileBytes, ContentType.Parse("application/pdf"));
                     }
                 }

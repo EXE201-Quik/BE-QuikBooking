@@ -33,6 +33,33 @@ namespace Quik_BookingApp.Service
             return _response;
         }
 
+        public async Task<List<WorkingSpaceResponse>> GetListWSOfBusiness(string businessId)
+        {
+            try
+            {
+                // Retrieve the list of working spaces for the specified businessId
+                var workingSpaces = await _context.WorkingSpaces
+                    .Where(ws => ws.BusinessId == businessId) 
+                    .ToListAsync();
+
+                if (workingSpaces == null || !workingSpaces.Any())
+                {
+                    throw new Exception("No working spaces found for this business.");
+                }
+
+                // Map to response model (assuming you have AutoMapper configured)
+                var _response = _mapper.Map<List<WorkingSpaceResponse>>(workingSpaces);
+
+                return _response;
+            }
+            catch (Exception ex)
+            {
+                // It's a good practice to log the exception here
+                throw new Exception("An error occurred while retrieving working spaces: " + ex.Message);
+            }
+        }
+
+
         public async Task<BusinessResponseModel> GetBusinessById(string bid)
         {
             try

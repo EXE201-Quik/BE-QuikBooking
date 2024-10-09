@@ -2,11 +2,11 @@
 {
     public class VNPayPaymentRequestModel
     {
-        public string OrderId { get; set; }
-        public decimal Amount { get; set; }
+        public string OrderType { get; set; }
+        public double Amount { get; set; }
         public string OrderDescription { get; set; }
-        public string BankCode { get; set; }
-        public string Language { get; set; }
+        public string Name { get; set; }
+        public string UserId { get; set; }
     }
 
 }

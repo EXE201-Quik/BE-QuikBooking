@@ -28,6 +28,19 @@ namespace Quik_BookingApp.Service
         }
 
         //can sua lai
+        /*## Payment Revise
+        - Được 
+        Quy ước sẵn mức phí hoa hồng cho 1 người/ đơn là một mức giá cố định.
+
+        VD: Phí cho 1 người/ đơn = 4k ⇒ Nhóm 5 người/ đơn = 20k (đặt trước)
+
+        - Tiền này được xem là tiền cọc mà khách hàng buộc phải thanh toán để hoàn thành đơn giao dịch đặt trước thành công.
+        - Tiền cọc này sẽ là tiền hoa hồng của Quik cần thu từ quán.
+        - Khi khách hàng tới WS sẽ thanh toán phần tiền đặt phòng còn lại.
+
+        VD: Đơn của khách sum=200k, vậy thì số tiền khách cần trả là 200k-20k=180k
+        */
+
         public async Task<APIResponse> BookSpace(BookingRequestModel bookingRequest)
         {
             try
@@ -116,7 +129,7 @@ namespace Quik_BookingApp.Service
             }
         }
 
-        
+
         public async Task<BusinessResponseModel> GetBookingById(string bookingId)
         {
             try
@@ -124,42 +137,42 @@ namespace Quik_BookingApp.Service
                 var booking = await _context.Bookings.FindAsync(bookingId);
                 if (booking == null)
                 {
-                    return null; 
+                    return null;
                 }
-                var bookingModal = _mapper.Map<BusinessResponseModel>(booking); 
+                var bookingModal = _mapper.Map<BusinessResponseModel>(booking);
                 return bookingModal;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving booking by ID."); 
+                _logger.LogError(ex, "Error retrieving booking by ID.");
                 return null;
             }
         }
 
-        
+
         public async Task<List<BookingResponseModel>> GetAllBookings()
         {
             List<BookingResponseModel> _response = new List<BookingResponseModel>();
-            var _data = await _context.Bookings.ToListAsync(); 
+            var _data = await _context.Bookings.ToListAsync();
             if (_data != null)
             {
-                _response = _mapper.Map<List<Booking>, List<BookingResponseModel>>(_data); 
+                _response = _mapper.Map<List<Booking>, List<BookingResponseModel>>(_data);
             }
             return _response;
         }
 
-        
+
         public async Task<BusinessResponseModel> UpdateBooking(string bookingId, BookingResponseModel bookingRequest)
         {
             try
             {
-                var booking = await _context.Bookings.FindAsync(bookingId); 
+                var booking = await _context.Bookings.FindAsync(bookingId);
                 if (booking == null)
                 {
-                    throw new Exception("Booking not found."); 
+                    throw new Exception("Booking not found.");
                 }
 
-                var workingSpace = await _context.WorkingSpaces.FindAsync(bookingRequest.SpaceId); 
+                var workingSpace = await _context.WorkingSpaces.FindAsync(bookingRequest.SpaceId);
                 if (workingSpace == null)
                 {
                     throw new Exception("Working space not found.");
@@ -168,9 +181,9 @@ namespace Quik_BookingApp.Service
                 booking.SpaceId = bookingRequest.SpaceId;
                 booking.StartTime = bookingRequest.StartTime;
                 booking.EndTime = bookingRequest.EndTime;
-                booking.TotalAmount = (booking.EndTime - booking.StartTime).Hours * workingSpace.PricePerHour; 
+                booking.TotalAmount = (booking.EndTime - booking.StartTime).Hours * workingSpace.PricePerHour;
 
-                
+
                 _context.Bookings.Update(booking);
                 await _context.SaveChangesAsync();
 
@@ -180,14 +193,14 @@ namespace Quik_BookingApp.Service
                     throw new Exception("Business not found.");
                 }
 
-                var businessResponse = _mapper.Map<BusinessResponseModel>(business); 
+                var businessResponse = _mapper.Map<BusinessResponseModel>(business);
 
                 return businessResponse;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while updating the booking.");
-                throw; 
+                throw;
             }
         }
 

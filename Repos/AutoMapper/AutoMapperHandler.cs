@@ -19,6 +19,7 @@ namespace Quik_BookingApp.Modal
                 .ForMember(dest => dest.Password, opt => opt.Ignore()) // Password will be hashed manually
                 .ForMember(dest => dest.Role, opt => opt.Ignore());    // Default role will be set in the service
             CreateMap<Payment, VNPayPaymentRequestModel>();
+            CreateMap<WorkingSpace, WorkingSpaceResponse>();
         }
     }
 }

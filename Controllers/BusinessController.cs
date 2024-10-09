@@ -35,6 +35,33 @@ namespace Quik_BookingApp.Controllers
         }
 
         [SwaggerOperation(
+             Summary = "Retrieve all working spaces of a business",
+             Description = "Gets a list of all working spaces. If no working spaces are found, a 404 Not Found response is returned."
+        )]
+        [HttpGet("GetWSsOfBusiness")]
+        public async Task<IActionResult> GetListWSOfBusiness(string businessId)
+        {
+            try
+            {
+                var data = await _service.GetListWSOfBusiness(businessId);
+
+                // If no data is found, return a NotFound response
+                if (data == null || !data.Any())
+                {
+                    return NotFound("No working spaces found for this business.");
+                }
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+                return StatusCode(500, "An error occurred while processing your request: " + ex.Message);
+            }
+        }
+
+
+        [SwaggerOperation(
             Summary = "Retrieve a business by ID",
             Description = "Gets a business's details by providing the business ID. If the business is not found, a 404 Not Found response is returned."
         )]
