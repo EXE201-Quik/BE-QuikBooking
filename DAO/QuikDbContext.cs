@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Quik_BookingApp.DAO.Models;
 
@@ -21,6 +22,7 @@ namespace Quik_BookingApp.DAO
         public DbSet<Tempuser> Tempusers { get; set; }
         public DbSet<OtpManager> OtpManagers { get; set; }
         public DbSet<PwdManager> PwdManagers { get; set; }
+        public DbSet<Amenity> Amenities { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -44,41 +46,53 @@ namespace Quik_BookingApp.DAO
             modelBuilder.Entity<Tempuser>().HasKey(tu => tu.Id);
             modelBuilder.Entity<OtpManager>().HasKey(om => om.Id);
             modelBuilder.Entity<PwdManager>().HasKey(pm => pm.Id);
+            modelBuilder.Entity<Amenity>().HasKey(a => a.AmenityId);
             modelBuilder.Entity<TblRefreshToken>().HasKey(rt => new { rt.UserId, rt.TokenId });
 
             // Định nghĩa các mối quan hệ giữa các thực thể
             modelBuilder.Entity<Business>()
-                .HasOne(b => b.Owner) // Một Business có một Owner
-                .WithMany(u => u.Businesses) // Một User có thể sở hữu nhiều Business
+                .HasOne(b => b.Owner)
+                .WithMany(u => u.Businesses)
                 .HasForeignKey(b => b.OwnerId)
-                .OnDelete(DeleteBehavior.NoAction); // Không xóa khi Owner bị xóa
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<WorkingSpace>()
-                .HasOne(ws => ws.Business) // Một WorkingSpace thuộc về một Business
-                .WithMany(b => b.WorkingSpaces) // Một Business có nhiều WorkingSpaces
+                .HasOne(ws => ws.Business)
+                .WithMany(b => b.WorkingSpaces)
                 .HasForeignKey(ws => ws.BusinessId)
-                .OnDelete(DeleteBehavior.NoAction); // Không xóa khi Business bị xóa
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<WorkingSpace>()
+                .HasMany(ws => ws.Images)
+                .WithOne(iws => iws.WorkingSpace)
+                .HasForeignKey(iws => iws.SpaceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<WorkingSpace>()
+                .HasMany(ws => ws.Amenities) // Define the relationship with Amenity
+                .WithOne()
+                .HasForeignKey(a => a.SpaceId)
+                .OnDelete(DeleteBehavior.Cascade); // Cascade delete for amenities
 
             modelBuilder.Entity<Booking>()
-                .HasOne(b => b.User) // Một Booking thuộc về một User
-                .WithMany(u => u.Bookings) // Một User có nhiều Booking
+                .HasOne(b => b.User)
+                .WithMany(u => u.Bookings)
                 .HasForeignKey(b => b.Username)
-                .OnDelete(DeleteBehavior.NoAction); // Không xóa khi User bị xóa
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Booking>()
-                .HasOne(b => b.WorkingSpace) // Một Booking thuộc về một WorkingSpace
-                .WithMany(ws => ws.Bookings) // Một WorkingSpace có nhiều Booking
+                .HasOne(b => b.WorkingSpace)
+                .WithMany(ws => ws.Bookings)
                 .HasForeignKey(b => b.SpaceId)
-                .OnDelete(DeleteBehavior.NoAction); // Không xóa khi WorkingSpace bị xóa
+                .OnDelete(DeleteBehavior.NoAction);
 
-            // Định nghĩa mối quan hệ giữa Booking và Payment
             modelBuilder.Entity<Booking>()
-                .HasOne(b => b.Payment) // Một Booking có một Payment
-                .WithOne(p => p.Booking) // Mỗi Payment thuộc về một Booking
-                .HasForeignKey<Payment>(p => p.BookingId) // Khóa ngoại trong Payment
-                .OnDelete(DeleteBehavior.Cascade); // Xóa Booking cũng sẽ xóa Payment
+                .HasOne(b => b.Payment)
+                .WithOne(p => p.Booking)
+                .HasForeignKey<Payment>(p => p.BookingId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Seed dữ liệu cho User
+            // Seed dữ liệu (nếu cần)
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
@@ -110,7 +124,6 @@ namespace Quik_BookingApp.DAO
                 }
             );
 
-            // Seed dữ liệu cho Business
             modelBuilder.Entity<Business>().HasData(
                 new Business
                 {
@@ -123,13 +136,12 @@ namespace Quik_BookingApp.DAO
                 }
             );
 
-            // Seed dữ liệu cho WorkingSpace
             modelBuilder.Entity<WorkingSpace>().HasData(
                 new WorkingSpace
                 {
                     SpaceId = "space001",
-                    BusinessId = "business001",
                     ImageId = "img_space001",
+                    BusinessId = "business001",
                     Title = "Cozy Private Office",
                     Description = "A private office space for up to 4 people.",
                     PricePerHour = 25.00M,
@@ -138,7 +150,34 @@ namespace Quik_BookingApp.DAO
                 }
             );
 
-            // Seed dữ liệu cho Booking
+            modelBuilder.Entity<Amenity>().HasData(
+                new Amenity
+                {
+                    SpaceId = "space001",
+                    AmenityId = "facility1",
+                    AmenityText = "Air conditioner free"
+                },
+                new Amenity
+                {
+                    SpaceId = "space001",
+                    AmenityId = "facility2",
+                    AmenityText = "Wifi's room free"
+                });
+
+            // Seed dữ liệu cho ImageWS
+            modelBuilder.Entity<ImageWS>().HasData(
+                new ImageWS
+                {
+                    ImageId = "img_space001", // Đảm bảo ImageId là chuỗi
+                    SpaceId = "space001",
+                    WorkingSpaceName = "Cozy Private Office",
+                    ImageUrl = "https://example.com/images/space001_image1.jpg",
+                    WSCode = "WS001",
+                    WSImages = null
+                }
+
+            );
+
             modelBuilder.Entity<Booking>().HasData(
                 new Booking
                 {
@@ -153,11 +192,10 @@ namespace Quik_BookingApp.DAO
                     TotalAmount = 200000,
                     DepositAmount = 20000,
                     RemainingAmount = 180000,
-                    Status = "Confirmed"
+                    Status = "Hoàn tất"
                 }
             );
 
-            // Seed dữ liệu cho Payment
             modelBuilder.Entity<Payment>().HasData(
                 new Payment
                 {
@@ -166,10 +204,10 @@ namespace Quik_BookingApp.DAO
                     Amount = 50.00M,
                     PaymentMethod = "Credit Card",
                     PaymentDate = DateTime.Now,
-                    PaymentStatus = "Success", // Trạng thái thanh toán
-                    VNPayTransactionId = "VNPay12345", // ID giao dịch VNPay
-                    VNPayResponseCode = "00", // Mã phản hồi VNPay
-                    PaymentUrl = "https://example.com/payment/payment001" // URL thanh toán
+                    PaymentStatus = "Success",
+                    VNPayTransactionId = "VNPay12345",
+                    VNPayResponseCode = "00",
+                    PaymentUrl = "https://example.com/payment/payment001"
                 }
             );
         }

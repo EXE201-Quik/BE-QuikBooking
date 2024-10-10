@@ -18,12 +18,16 @@ namespace Quik_BookingApp.Service
         public readonly QuikDbContext context;
         public readonly IMapper mapper;
         public readonly ILogger<WorkingSpaceService> _logger;
+        public readonly IFirebaseService _firebase;
+        public readonly IConfiguration _configuration;
 
-        public WorkingSpaceService(QuikDbContext context, IMapper mapper, ILogger<WorkingSpaceService> logger)
+        public WorkingSpaceService(QuikDbContext context, IMapper mapper, ILogger<WorkingSpaceService> logger,IFirebaseService firebaseService, IConfiguration configuration)
         {
             this.context = context;
             this.mapper = mapper;
-            _logger = logger;
+            this._logger = logger;
+            this._firebase = firebaseService ?? throw new ArgumentNullException(nameof(firebaseService));
+            this._configuration = configuration;
         }
 
         public async Task<APIResponse> CreateWS(WorkingSpaceRequestModel ws)
@@ -55,18 +59,59 @@ namespace Quik_BookingApp.Service
                     };
                 }
 
+                // Create a new working space instance
                 var workingSpace = new WorkingSpace
                 {
                     SpaceId = Guid.NewGuid().ToString(),
                     BusinessId = business.BusinessId,
-                    ImageId = ws.ImageId,
+                    ImageId = Guid.NewGuid().ToString(),
                     Title = ws.Title,
                     Description = ws.Description,
                     PricePerHour = ws.PricePerHour,
                     Capacity = ws.Capacity,
                     Location = ws.Location,
                     Bookings = new List<Booking>(),
+                    Images = new List<ImageWS>() // Initialize Images list
                 };
+
+                // Check if an image is uploaded
+                if (ws.Image != null && ws.Image.Length > 0)
+                {
+                    // Upload the image to Firebase
+                    var uploadResult = await _firebase.UploadFileToFirebase(ws.Image, $"workingspaces/{ws.Title}_{DateTime.Now.Ticks}");
+
+                    if (uploadResult.Status == 200)
+                    {
+                        // Create a new ImageWS object and set the ImageUrl
+                        var newImageWS = new ImageWS
+                        {
+                            ImageUrl = uploadResult.Data.ToString(), 
+                        };
+                        workingSpace.Images.Add(newImageWS); 
+
+                        _logger.LogInformation("Image uploaded successfully to Firebase for working space: {Title}", ws.Title);
+                    }
+                    else
+                    {
+                        return new APIResponse
+                        {
+                            ResponseCode = 500,
+                            Result = "Failure",
+                            Message = "Failed to upload image to Firebase."
+                        };
+                    }
+                }
+                else
+                {
+                    // Use a default image if no image is uploaded
+                    var defaultImageWS = new ImageWS
+                    {
+                        ImageUrl = _configuration["DefaultImageUrl"] // This should be configured in appsettings.json or environment variables
+                    };
+                    workingSpace.Images.Add(defaultImageWS); // Add to Images collection
+
+                    _logger.LogInformation("No image uploaded, using default image for working space: {Title}", ws.Title);
+                }
 
                 // Log the new working space creation details
                 _logger.LogInformation("Creating working space: {Title} for Business ID: {BusinessId}", workingSpace.Title, workingSpace.BusinessId);
@@ -113,6 +158,9 @@ namespace Quik_BookingApp.Service
 
 
 
+
+
+
         public async Task<List<WorkingSpaceRequestModel>> GetAll()
         {
             List<WorkingSpaceRequestModel> _response = new List<WorkingSpaceRequestModel>();
@@ -124,17 +172,24 @@ namespace Quik_BookingApp.Service
             return _response;
         }
 
-        public async Task<WorkingSpaceRequestModel> GetBySpaceId(string spaceId)
+        public async Task<WorkingSpaceResponseAmenities> GetBySpaceId(string spaceId)
         {
             try
             {
-                var workingSpace = await context.WorkingSpaces.FindAsync(spaceId);
+                // Include amenities when retrieving the working space
+                var workingSpace = await context.WorkingSpaces
+                                                .Include(ws => ws.Amenities)
+                                                .FirstOrDefaultAsync(ws => ws.SpaceId == spaceId);
+
                 if (workingSpace == null)
                 {
                     return null;
                 }
-                var workingSpaceModal = mapper.Map<WorkingSpaceRequestModel>(workingSpace);
-                return workingSpaceModal;
+
+                // Map the working space and amenities to the response model
+                var workingSpaceModel = mapper.Map<WorkingSpaceResponseAmenities>(workingSpace);
+
+                return workingSpaceModel;
             }
             catch (Exception ex)
             {
@@ -142,5 +197,6 @@ namespace Quik_BookingApp.Service
                 return null;
             }
         }
+
     }
 }

@@ -4,7 +4,7 @@ namespace Quik_BookingApp.DAO.Models
     public class WorkingSpace
     {
         public string SpaceId { get; set; }
-        public string BusinessId { get; set; } // Foreign key for Business
+        public string BusinessId { get; set; } 
         public string ImageId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
@@ -14,6 +14,8 @@ namespace Quik_BookingApp.DAO.Models
 
         public Business Business { get; set; }
         public ICollection<Booking> Bookings { get; set; }
+        public ICollection<Amenity> Amenities { get; set; }
+        public ICollection<ImageWS> Images { get; set; }
     }
 
 }

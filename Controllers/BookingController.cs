@@ -131,6 +131,84 @@ namespace Quik_BookingApp.Controllers
             }
         }
 
+
+        [SwaggerOperation(
+             Summary = "All booking Hoàn Tất",
+             Description = "Gets a list of all working spaces. If no working spaces are found, a 404 Not Found response is returned."
+        )]
+        [HttpGet("GetBookingOfHoanTat/{username}")]
+        public async Task<IActionResult> GetBookingOfHoanTat(string username)
+        {
+            try
+            {
+                var data = await _service.GetBookingOfHoanTat(username);
+
+                // If no data is found, return a NotFound response
+                if (data == null || !data.Any())
+                {
+                    return NotFound("No bookings found for this username.");
+                }
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+                return StatusCode(500, "An error occurred while processing your request: " + ex.Message);
+            }
+        }
+
+        [SwaggerOperation(
+             Summary = "All booking Sắp Tới",
+             Description = "Gets a list of all working spaces. If no working spaces are found, a 404 Not Found response is returned."
+        )]
+        [HttpGet("GetBookingOfSapToi/{username}")]
+        public async Task<IActionResult> GetBookingOfSapToi(string username)
+        {
+            try
+            {
+                var data = await _service.GetBookingOfSapToi(username);
+
+                // If no data is found, return a NotFound response
+                if (data == null || !data.Any())
+                {
+                    return NotFound("No bookings found for this username.");
+                }
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+                return StatusCode(500, "An error occurred while processing your request: " + ex.Message);
+            }
+        }
+
+        [SwaggerOperation(
+             Summary = "All booking Đã Hủy",
+             Description = "Gets a list of all working spaces. If no working spaces are found, a 404 Not Found response is returned."
+        )]
+        [HttpGet("GetBookingOfDaHuy/{username}")]
+        public async Task<IActionResult> GetBookingOfDaHuy(string username)
+        {
+            try
+            {
+                var data = await _service.GetBookingOfDaHuy(username);
+
+                // If no data is found, return a NotFound response
+                if (data == null || !data.Any())
+                {
+                    return NotFound("No bookings found for this username.");
+                }
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+                return StatusCode(500, "An error occurred while processing your request: " + ex.Message);
+            }
+        }
     }
 }
 

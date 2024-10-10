@@ -34,46 +34,46 @@ namespace Quik_BookingApp.Controllers
             this.workingSpaceService = workingSpaceService;
         }
 
-        [HttpPost]
-        private async Task<IActionResult> Index(FileUploadViewModel file)
-        {
-            var fileUpload = file.File;
-            if (fileUpload.Length > 0)
-            {
-                var fs = fileUpload.OpenReadStream();
+        //[HttpPost]
+        //private async Task<IActionResult> Index(FileUploadViewModel file)
+        //{
+        //    var fileUpload = file.File;
+        //    if (fileUpload.Length > 0)
+        //    {
+        //        var fs = fileUpload.OpenReadStream();
 
-                // Firebase authentication
-                var authProvider = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+        //        // Firebase authentication
+        //        var authProvider = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
                 
                  
-                var auth = await authProvider.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+        //        var auth = await authProvider.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
 
-                // Cancellation token
-                var cancellation = new CancellationTokenSource();
+        //        // Cancellation token
+        //        var cancellation = new CancellationTokenSource();
 
-                // Uploading to Firebase Storage
-                var upload = new FirebaseStorage(Bucket, new FirebaseStorageOptions
-                {
-                    AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken),
-                    ThrowOnCancel = true
-                })
-                    .Child("assets")
-                    .Child($"{Path.GetFileNameWithoutExtension(fileUpload.FileName)}{Path.GetExtension(fileUpload.FileName)}")
-                    .PutAsync(fs, cancellation.Token);
+        //        // Uploading to Firebase Storage
+        //        var upload = new FirebaseStorage(Bucket, new FirebaseStorageOptions
+        //        {
+        //            AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken),
+        //            ThrowOnCancel = true
+        //        })
+        //            .Child("assets")
+        //            .Child($"{Path.GetFileNameWithoutExtension(fileUpload.FileName)}{Path.GetExtension(fileUpload.FileName)}")
+        //            .PutAsync(fs, cancellation.Token);
 
-                try
-                {
-                    var downloadUrl = await upload;
-                    return Ok(new { link = downloadUrl });
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"**********{ex}**********");
-                    return StatusCode(500, "An error occurred while uploading the file.");
-                }
-            }
-            return BadRequest("File is empty");
-        }
+        //        try
+        //        {
+        //            var downloadUrl = await upload;
+        //            return Ok(new { link = downloadUrl });
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Debug.WriteLine($"**********{ex}**********");
+        //            return StatusCode(500, "An error occurred while uploading the file.");
+        //        }
+        //    }
+        //    return BadRequest("File is empty");
+        //}
 
 
         [SwaggerOperation(
@@ -107,11 +107,11 @@ namespace Quik_BookingApp.Controllers
         }
 
         [SwaggerOperation(
-             Summary = "Retrieve user by wsId",
-             Description = "This API allows you to get WS details by providing a wsId. If the WS is not found, a 404 Not Found response will be returned."
+             Summary = "New a working space",
+             Description = "This API allows you to create a WS without input spaceId and ImageId"
         )]
         [HttpPost("Create")]
-        public async Task<IActionResult> Create([FromBody] WorkingSpaceRequestModel workingSpace)
+        public async Task<IActionResult> Create([FromForm] WorkingSpaceRequestModel workingSpace)
         {
             var response = await workingSpaceService.CreateWS(workingSpace);
             if (response.ResponseCode == 201)

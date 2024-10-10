@@ -1,5 +1,6 @@
 ﻿using Firebase.Auth;
 using Firebase.Storage;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using Quik_BookingApp.Helper;
 using Quik_BookingApp.Repos.Interface;
@@ -11,12 +12,19 @@ namespace Quik_BookingApp.Service
 {
     public class FirebaseService : IFirebaseService
     {
-        private FirebaseConfiguration _firebaseConfiguration;
+
+        private static string ApiKey = "AIzaSyCIROgMN-g5iIsG9d9fCB88PTOWTqhNknk";
+        private static string Bucket = "quik-a8158.appspot.com";
+        private static string AuthEmail = "huylqse173543@fpt.edu.vn";
+        private static string AuthPassword = "123456";
+
+
+        private readonly FirebaseConfiguration _firebaseConfiguration;
         private readonly IConfiguration _configuration;
-        public FirebaseService(IConfiguration configuration, FirebaseConfiguration firebaseConfiguration)
+        public FirebaseService(IConfiguration configuration, IOptions<FirebaseConfiguration> firebaseConfiguration)
         {
-            _firebaseConfiguration = firebaseConfiguration;
-            _configuration = configuration;
+            this._firebaseConfiguration = firebaseConfiguration.Value;
+            this._configuration = configuration;
         }
 
         public async Task<IServiceResult> DeleteFileFromFirebase(string pathFileName)
@@ -24,8 +32,8 @@ namespace Quik_BookingApp.Service
             var _result = new ServiceResult();
             try
             {
-                var auth = new FirebaseAuthProvider (new FirebaseConfig(_firebaseConfiguration.ApiKey));
-                var account = await auth.SignInWithEmailAndPasswordAsync(_firebaseConfiguration.AuthEmail, _firebaseConfiguration.AuthPassword);
+                var auth = new FirebaseAuthProvider (new FirebaseConfig(ApiKey));
+                var account = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
                 var storage = new FirebaseStorage(
              _firebaseConfiguration.Bucket,
              new FirebaseStorageOptions
@@ -51,7 +59,7 @@ namespace Quik_BookingApp.Service
             //var a = pathFileName.Split("/");
             var a = pathFileName.Split("/o/")[1];
             //pathFileName = $"{a[0]}%2F{a[1]}";
-            var api = $"https://firebasestorage.googleapis.com/v0/b/cloudfunction-yt-2b3df.appspot.com/o?name={a}";
+            var api = $"https://console.firebase.google.com/u/2/project/quik-a8158/storage/quik-a8158.appspot.com/files?{a}";
             if (string.IsNullOrEmpty(pathFileName))
             {
                 return string.Empty;
@@ -83,8 +91,8 @@ namespace Quik_BookingApp.Service
             if (isValid)
             {
                 var stream = file!.OpenReadStream();
-                var auth = new FirebaseAuthProvider(new FirebaseConfig(_firebaseConfiguration.ApiKey));
-                var account = await auth.SignInWithEmailAndPasswordAsync(_firebaseConfiguration.AuthEmail, _firebaseConfiguration.AuthPassword);
+                var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                var account = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
                 string destinationPath = $"{pathFileName}";
 
                 var task = new FirebaseStorage(
@@ -117,8 +125,8 @@ namespace Quik_BookingApp.Service
             var _result = new ServiceResult();
             var uploadResults = new List<string>();
 
-            var auth = new FirebaseAuthProvider(new FirebaseConfig(_firebaseConfiguration.ApiKey));
-            var account = await auth.SignInWithEmailAndPasswordAsync(_firebaseConfiguration.AuthEmail, _firebaseConfiguration.AuthPassword);
+            var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+            var account = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
             var storage = new FirebaseStorage(
                 _firebaseConfiguration.Bucket,
                 new FirebaseStorageOptions
