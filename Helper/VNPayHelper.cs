@@ -26,9 +26,9 @@ namespace Quik_BookingApp.Helper
             vnpay.AddRequestData("vnp_Amount", (model.Amount * 100).ToString()); // VNPay tính theo đơn vị VND x100
             vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
             vnpay.AddRequestData("vnp_CurrCode", "VND");
-            vnpay.AddRequestData("vnp_TxnRef", model.OrderId);
+            //vnpay.AddRequestData("vnp_TxnRef", model.OrderId);
             vnpay.AddRequestData("vnp_OrderInfo", model.OrderDescription);
-            vnpay.AddRequestData("vnp_Locale", model.Language ?? "vn");
+            //vnpay.AddRequestData("vnp_Locale", model.Language ?? "vn");
             vnpay.AddRequestData("vnp_ReturnUrl", returnUrl);
 
             var paymentUrl = vnpay.CreateRequestUrl(vnpayUrl, hashSecret);

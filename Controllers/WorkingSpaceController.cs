@@ -7,22 +7,74 @@ using Quik_BookingApp.DAO.Models;
 using Quik_BookingApp.Helper;
 using Quik_BookingApp.Repos.Interface;
 using Swashbuckle.AspNetCore.Annotations;
+using Firebase.Storage;
+using System;
+using System.Diagnostics;
+using Firebase.Auth;
+
 namespace Quik_BookingApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class WorkingSpaceController : ControllerBase
     {
+        private static string ApiKey = "AIzaSyCIROgMN-g5iIsG9d9fCB88PTOWTqhNknk";
+        private static string Bucket = "quik-a8158.appspot.com";
+        private static string AuthEmail = "huylqse173543@fpt.edu.vn";
+        private static string AuthPassword = "123456";
+
         private readonly IWebHostEnvironment environment;
         private readonly QuikDbContext context;
         private readonly IWorkingSpaceService workingSpaceService;
 
-        public WorkingSpaceController(IWebHostEnvironment environment, QuikDbContext context,IWorkingSpaceService workingSpaceService)
+        public WorkingSpaceController(IWebHostEnvironment environment, QuikDbContext context, IWorkingSpaceService workingSpaceService)
         {
             this.environment = environment;
             this.context = context;
             this.workingSpaceService = workingSpaceService;
         }
+
+        [HttpPost]
+        private async Task<IActionResult> Index(FileUploadViewModel file)
+        {
+            var fileUpload = file.File;
+            if (fileUpload.Length > 0)
+            {
+                var fs = fileUpload.OpenReadStream();
+
+                // Firebase authentication
+                var authProvider = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                
+                 
+                var auth = await authProvider.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                // Cancellation token
+                var cancellation = new CancellationTokenSource();
+
+                // Uploading to Firebase Storage
+                var upload = new FirebaseStorage(Bucket, new FirebaseStorageOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken),
+                    ThrowOnCancel = true
+                })
+                    .Child("assets")
+                    .Child($"{Path.GetFileNameWithoutExtension(fileUpload.FileName)}{Path.GetExtension(fileUpload.FileName)}")
+                    .PutAsync(fs, cancellation.Token);
+
+                try
+                {
+                    var downloadUrl = await upload;
+                    return Ok(new { link = downloadUrl });
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"**********{ex}**********");
+                    return StatusCode(500, "An error occurred while uploading the file.");
+                }
+            }
+            return BadRequest("File is empty");
+        }
+
 
         [SwaggerOperation(
              Summary = "Retrieve all workign space",
@@ -71,52 +123,65 @@ namespace Quik_BookingApp.Controllers
         }
 
 
+
+
+
         [HttpPut("UploadImage")]
         public async Task<IActionResult> UploadImage(IFormFile formFile, string code)
         {
             APIResponse response = new APIResponse();
             try
             {
-                // Define the file path
-                string filePath = GetFilepath(code);
-                if (!System.IO.Directory.Exists(filePath))
+                // Check if the formFile is null or empty
+                if (formFile == null || formFile.Length == 0)
                 {
-                    System.IO.Directory.CreateDirectory(filePath);
+                    response.ResponseCode = 400;
+                    response.Message = "No file uploaded.";
+                    return BadRequest(response);
                 }
 
-                // Define the image path and delete if it exists
+                // Prepare the Firebase storage path
                 string imageFileName = $"{code}.png";
-                string imagePath = Path.Combine(filePath, imageFileName);
-                if (System.IO.File.Exists(imagePath))
-                {
-                    System.IO.File.Delete(imagePath);
-                }
+                string imagePathInStorage = $"Upload/workingspace/{code}/{imageFileName}";
 
-                // Save the image to the specified path
-                using (FileStream stream = new FileStream(imagePath, FileMode.Create))
+                // Create a new FirebaseStorage instance using your Firebase project details
+                var firebaseStorage = new FirebaseStorage("https://console.firebase.google.com/u/2/project/quik-a8158/storage/quik-a8158.appspot.com/files", // Replace with your Firebase storage URL
+                    new FirebaseStorageOptions
+                    {
+                        AuthTokenAsyncFactory = () => Task.FromResult("https://oauth2.googleapis.com/token"), // Replace with your token
+                        ThrowOnCancel = true
+                    });
+
+                // Upload the file to Firebase Storage
+                using (var stream = new MemoryStream())
                 {
                     await formFile.CopyToAsync(stream);
+                    stream.Position = 0; // Reset stream position
+
+                    var uploadTask = await firebaseStorage
+                        .Child(imagePathInStorage)
+                        .PutAsync(stream);
+
+                    // Prepare the image URL
+                    string imageUrl = uploadTask; // This returns the URL of the uploaded image
+
+                    // Create an instance of ImageWS and save to the database
+                    var imageWS = new ImageWS
+                    {
+                        WorkingSpaceName = "Your Working Space Name", // Set as appropriate
+                        WSCode = code,
+                        WSImages = stream.ToArray() // Get the byte array directly
+                    };
+
+                    // Assuming _context is your database context
+                    context.Images.Add(imageWS);
+                    await context.SaveChangesAsync();
+
+                    // Set the response
+                    response.ResponseCode = 200;
+                    response.Result = "pass";
+                    response.Message = $"Image uploaded to Firebase and saved to database with URL: {imageUrl}";
                 }
-
-                // Prepare image URL (relative or absolute based on your setup)
-                string imageUrl = $"/Upload/workingspace/{code}/{imageFileName}";
-
-                // Create an instance of ImageWS and save to the database
-                var imageWS = new ImageWS
-                {
-                    WorkingSpaceName = "Your Working Space Name", // Set as appropriate
-                    WSCode = code,
-                    WSImages = System.IO.File.ReadAllBytes(imagePath)
-                };
-
-                // Assuming _context is your database context
-                context.Images.Add(imageWS);
-                await context.SaveChangesAsync();
-
-                // Set the response
-                response.ResponseCode = 200;
-                response.Result = "pass";
-                response.Message = $"Image uploaded and saved to database with path: {imageUrl}";
             }
             catch (Exception ex)
             {
@@ -125,6 +190,8 @@ namespace Quik_BookingApp.Controllers
 
             return Ok(response);
         }
+
+
 
 
         [HttpPut("MultiUploadImage")]

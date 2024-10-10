@@ -79,6 +79,26 @@ namespace Quik_BookingApp.Service
 
         }
 
+        public async Task<List<BookingRequestModel>> GetBookingsOfUser(string username)
+        {
+            try
+            {
+                var bookings = await context.Users.Where(u => u.Username == username).ToListAsync();
+
+                if(bookings == null || !bookings.Any())
+                {
+                    throw new Exception("No booking with this user");
+                }
+
+                var response = mapper.Map<List<BookingRequestModel>>(bookings);
+                return response;
+            }
+            catch(Exception ex) 
+            {
+                throw new Exception("An error occured while retieving bookings" + ex.Message);
+            }
+        }
+
         public async Task<UserModal> GetByUserId(string username)
         {
             try
@@ -98,10 +118,10 @@ namespace Quik_BookingApp.Service
             }
         }
 
-        public async Task<APIResponse> ConfirmRegister(string userid, string username, string otptext)
+        public async Task<APIResponse> ConfirmRegister(string userid, string username, int otptext)
         {
             APIResponse response = new APIResponse();
-            bool otpresponse = await ValidateOTP(username, otptext);
+            bool otpresponse = await ValidateOTP(username, otptext.ToString());
             if (!otpresponse)
             {
                 response.Result = "fail";
@@ -186,7 +206,7 @@ namespace Quik_BookingApp.Service
 
                     response.ResponseCode = 200;
                     response.Result = "Success";
-                    response.Message = "User registered successfully";
+                    response.Message = otpText;
                 }
             }
             catch (DbUpdateException dbEx)
@@ -368,7 +388,6 @@ namespace Quik_BookingApp.Service
             emailbody += "</div>";
 
             return emailbody;
-
         }
 
         private async Task<bool> Validatepwdhistory(string Username, string password)
@@ -423,7 +442,7 @@ namespace Quik_BookingApp.Service
                 response.Message = "Invalid User";
             }
             return response;
-        }
+        }   
 
     }
 }

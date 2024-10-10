@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Quik_BookingApp.BOs.Request;
 
 using Quik_BookingApp.Helper;
+using Quik_BookingApp.Repos.Interface;
+using Quik_BookingApp.Service;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Quik_BookingApp.Controllers
 {
@@ -12,47 +15,65 @@ namespace Quik_BookingApp.Controllers
     {
         private readonly VNPayHelper _vnPayHelper;
         private readonly IConfiguration _configuration;
+        private readonly IBookingService bookingService;
+        private readonly VnPayService _vnPayService;
 
-        public PaymentController(VNPayHelper vnPayHelper, IConfiguration configuration)
+        public PaymentController(IBookingService bookingService)
         {
-            _vnPayHelper = vnPayHelper;
-            _configuration = configuration;
+            this.bookingService = bookingService;
         }
 
-        [HttpPost("vnpay")]
-        public IActionResult CreateVNPayPayment([FromBody] VNPayPaymentRequestModel request)
+        [HttpPost]
+        public async Task<IActionResult> CreatePaymentUrl([FromBody] VNPayPaymentRequestModel model)
         {
-            var paymentUrl = _vnPayHelper.CreatePaymentUrl(request, HttpContext);
-            return Ok(new { paymentUrl });
+            var paymentUrl = _vnPayService.CreatePaymentUrl(model, HttpContext);
+            //var paymentUrl = VnPayService.CreatePaymentUrl(model, HttpContext);
+            return Ok(paymentUrl);
         }
 
-        [HttpGet("vnpay_return")]
-        public IActionResult VNPayReturn()
+        [HttpGet("payment-callback")]
+        public async Task<IActionResult> PaymentCallback()
         {
-            // Xử lý phản hồi từ VNPay
-            var vnpayData = Request.Query;
-            var vnpay = new VnPayLibrary();
+            var response = _vnPayService.PaymentExecute(Request.Query);
+            var paymentResponseModel = response;
 
-            foreach (var (key, value) in vnpayData)
+            // Parse order description để lấy rentalId từ chuỗi trả về
+            var parts = paymentResponseModel.OrderDescription?.Split(' ') ?? new string[0];
+            Guid rentalId = Guid.Empty;
+
+            if (parts.Length > 1)
             {
-                if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
+                Guid.TryParse(parts[1], out rentalId);
+            }
+
+            // Nếu thanh toán thành công
+            if (response.Success)
+            {
+                var paymentRequest = new CreatePaymentRequest
                 {
-                    vnpay.AddResponseData(key, value);
-                }
+                    PaymentStatus = "Success",
+                    Amount = 100000,
+                    BookingId = "Booking",
+                };
+                //await bookingService.paymentService.AddPayment(paymentRequest);
+
+                // Redirect người dùng đến trang thanh toán thành công trên frontend
+                return Redirect($"http://localhost:1024/payment-status?status=success&rentalId={rentalId}");
             }
-
-            var hashSecret = _configuration["VNPaySettings:HashSecret"];
-            var isValidSignature = vnpay.ValidateSignature(vnpay.GetResponseData(), hashSecret);
-
-            if (isValidSignature)
+            else
             {
-                // Xử lý thành công
-                return Ok(new { status = "Success", message = "Thanh toán thành công!" });
+                //var paymentRequest = new CreatePaymentRequest
+                //{
+                //    PaymentStatus = PaymentStatus.Deleted,
+                //    Amount = paymentResponseModel.AmountOfRental,
+                //    RentalId = rentalId,
+                //};
+
+                //await _serviceManager.paymentService.AddPayment(paymentRequest);
+
+                // Redirect người dùng đến trang thanh toán thất bại trên frontend
+                return Redirect($"http://localhost:1024/payment-status?status=failed&rentalId={rentalId}");
             }
-
-            return BadRequest(new { status = "Failed", message = "Chữ ký không hợp lệ!" });
         }
-
-
     }
 }
