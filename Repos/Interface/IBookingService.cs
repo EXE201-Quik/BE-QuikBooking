@@ -12,5 +12,8 @@ namespace Quik_BookingApp.Repos.Interface
         Task<BusinessResponseModel> GetBookingById(string bookingId);
         Task<BusinessResponseModel> UpdateBooking(string bookingId, BookingResponseModel bookingRequest);
         Task<APIResponse> DeleteBooking(string bookingId);
+        Task<List<BookingResponseModel>> GetBookingOfHoanTat(string username);
+        Task<List<BookingResponseModel>> GetBookingOfSapToi(string username);
+        Task<List<BookingResponseModel>> GetBookingOfDaHuy(string username);
     }
 }

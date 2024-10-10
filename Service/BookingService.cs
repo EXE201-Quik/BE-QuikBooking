@@ -60,6 +60,7 @@ namespace Quik_BookingApp.Service
                 // Tính tổng chi phí dựa trên giá không gian và thời gian
                 var durationInHours = (bookingRequest.EndTime - bookingRequest.StartTime).TotalHours;
                 var totalAmount = space.PricePerHour * (decimal)durationInHours;
+                
 
                 // Tạo Booking trước
                 var booking = new Booking
@@ -76,6 +77,7 @@ namespace Quik_BookingApp.Service
                     RemainingAmount = totalAmount - CommissionPerPerson * bookingRequest.NumberOfPeople,
                     Status = "Pending",
                     PaymentId = Guid.NewGuid().ToString(),
+                   
                 };
 
                 var payment = new Payment
@@ -204,7 +206,7 @@ namespace Quik_BookingApp.Service
             }
         }
 
-        // Xóa đặt chỗ
+
         public async Task<APIResponse> DeleteBooking(string bookingId)
         {
             try
@@ -239,6 +241,171 @@ namespace Quik_BookingApp.Service
                     Result = "Failed",
                     Message = "Error occurred while deleting the booking.",
                 };
+            }
+        }
+
+        public async Task<List<BookingResponseModel>> GetBookingOfHoanTat(string username)
+        {
+            try
+            {
+                // Retrieve the list of bookings for the specified user with status 'Hoàn Tất'
+                var bookings = await _context.Bookings
+                    .Where(b => b.Username == username && b.Status.Equals("Hoàn Tất"))
+                    .ToListAsync();
+
+                if (bookings == null || !bookings.Any())
+                {
+                    throw new Exception("No completed bookings found for this user.");
+                }
+
+                var bookingResponseList = new List<BookingResponseModel>();
+
+                foreach (var booking in bookings)
+                {
+                    // Fetch the WorkingSpace associated with each booking
+                    var workingSpace = await _context.WorkingSpaces.FindAsync(booking.SpaceId);
+                    if (workingSpace == null)
+                    {
+                        throw new Exception($"Working space with ID {booking.SpaceId} not found.");
+                    }
+
+                    // Map the booking and working space data into BookingResponseModel
+                    var bookingResponse = new BookingResponseModel
+                    {
+                        BookingId = booking.BookingId,
+                        Username = booking.Username,
+                        SpaceId = booking.SpaceId,
+                        PaymentId = booking.PaymentId,
+                        BookingDate = booking.BookingDate,
+                        StartTime = booking.StartTime,
+                        EndTime = booking.EndTime,
+                        NumberOfPeople = booking.NumberOfPeople,
+                        TotalAmount = booking.TotalAmount,
+                        DepositAmount = booking.DepositAmount,
+                        RemainingAmount = booking.RemainingAmount,
+                        Status = booking.Status,
+                        Location = workingSpace.Location 
+                    };
+
+                    bookingResponseList.Add(bookingResponse);
+                }
+
+                return bookingResponseList;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and rethrow it
+                throw new Exception("An error occurred while retrieving completed bookings: " + ex.Message);
+            }
+        }
+
+        public async Task<List<BookingResponseModel>> GetBookingOfSapToi(string username)
+        {
+            try
+            {
+                // Retrieve the list of bookings for the specified user with status 'Hoàn tất'
+                var bookings = await _context.Bookings
+                    .Where(b => b.Username == username && b.Status.Equals("Sắp tới"))
+                    .ToListAsync();
+
+                if (bookings == null || !bookings.Any())
+                {
+                    throw new Exception("No completed bookings found for this user.");
+                }
+
+                var bookingResponseList = new List<BookingResponseModel>();
+
+                foreach (var booking in bookings)
+                {
+                    // Fetch the WorkingSpace associated with each booking
+                    var workingSpace = await _context.WorkingSpaces.FindAsync(booking.SpaceId);
+                    if (workingSpace == null)
+                    {
+                        throw new Exception($"Working space with ID {booking.SpaceId} not found.");
+                    }
+
+                    // Map the booking and working space data into BookingResponseModel
+                    var bookingResponse = new BookingResponseModel
+                    {
+                        BookingId = booking.BookingId,
+                        Username = booking.Username,
+                        SpaceId = booking.SpaceId,
+                        PaymentId = booking.PaymentId,
+                        BookingDate = booking.BookingDate,
+                        StartTime = booking.StartTime,
+                        EndTime = booking.EndTime,
+                        NumberOfPeople = booking.NumberOfPeople,
+                        TotalAmount = booking.TotalAmount,
+                        DepositAmount = booking.DepositAmount,
+                        RemainingAmount = booking.RemainingAmount,
+                        Status = booking.Status,
+                        Location = workingSpace.Location
+                    };
+
+                    bookingResponseList.Add(bookingResponse);
+                }
+
+                return bookingResponseList;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and rethrow it
+                throw new Exception("An error occurred while retrieving completed bookings: " + ex.Message);
+            }
+        }
+
+        public async Task<List<BookingResponseModel>> GetBookingOfDaHuy(string username)
+        {
+            try
+            {
+                // Retrieve the list of bookings for the specified user with status 'Hoàn tất'
+                var bookings = await _context.Bookings
+                    .Where(b => b.Username == username && b.Status.Equals("Đã hủy"))
+                    .ToListAsync();
+
+                if (bookings == null || !bookings.Any())
+                {
+                    throw new Exception("No completed bookings found for this user.");
+                }
+
+                var bookingResponseList = new List<BookingResponseModel>();
+
+                foreach (var booking in bookings)
+                {
+                    // Fetch the WorkingSpace associated with each booking
+                    var workingSpace = await _context.WorkingSpaces.FindAsync(booking.SpaceId);
+                    if (workingSpace == null)
+                    {
+                        throw new Exception($"Working space with ID {booking.SpaceId} not found.");
+                    }
+
+                    // Map the booking and working space data into BookingResponseModel
+                    var bookingResponse = new BookingResponseModel
+                    {
+                        BookingId = booking.BookingId,
+                        Username = booking.Username,
+                        SpaceId = booking.SpaceId,
+                        PaymentId = booking.PaymentId,
+                        BookingDate = booking.BookingDate,
+                        StartTime = booking.StartTime,
+                        EndTime = booking.EndTime,
+                        NumberOfPeople = booking.NumberOfPeople,
+                        TotalAmount = booking.TotalAmount,
+                        DepositAmount = booking.DepositAmount,
+                        RemainingAmount = booking.RemainingAmount,
+                        Status = booking.Status,
+                        Location = workingSpace.Location 
+                    };
+
+                    bookingResponseList.Add(bookingResponse);
+                }
+
+                return bookingResponseList;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and rethrow it
+                throw new Exception("An error occurred while retrieving completed bookings: " + ex.Message);
             }
         }
     }

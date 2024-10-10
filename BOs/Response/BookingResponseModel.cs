@@ -13,6 +13,7 @@
         public decimal TotalAmount { get; set; }
         public decimal DepositAmount { get; set; }
         public decimal RemainingAmount { get; set; }
+        public string Location { get; set; }
         public string Status { get; set; }
     }
 }
