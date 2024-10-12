@@ -11,6 +11,7 @@ using Firebase.Storage;
 using System;
 using System.Diagnostics;
 using Firebase.Auth;
+using Quik_BookingApp.Service;
 
 namespace Quik_BookingApp.Controllers
 {
@@ -122,6 +123,25 @@ namespace Quik_BookingApp.Controllers
             return StatusCode(response.ResponseCode, response);
         }
 
+        [SwaggerOperation(
+             Summary = "Get List theo room type",
+             Description = "Lấy list theo 4 loại:\r\n- Không gian làm việc chung \r\n- Phòng họp\r\n- Study hub\r\n- Không gian văn phòng"
+        )]
+        [HttpGet("roomtype/{roomType}")]
+        public async Task<ActionResult<List<WorkingSpaceRequestModel>>> GetWSOfRoomType(string roomType)
+        {
+            var result = await workingSpaceService.GetWSOfRoomType(roomType);
+            if (result == null)
+            {
+                return NotFound(new APIResponse
+                {
+                    ResponseCode = 404,
+                    Result = "Failure",
+                    Message = "No working spaces found for the specified room type."
+                });
+            }
+            return Ok(result);
+        }
 
 
 
@@ -190,7 +210,6 @@ namespace Quik_BookingApp.Controllers
 
             return Ok(response);
         }
-
 
 
 

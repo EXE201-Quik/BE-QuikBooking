@@ -73,9 +73,8 @@ namespace QuikBookingApp.Migrations
                     b.Property<int>("NumberOfPeople")
                         .HasColumnType("int");
 
-                    b.Property<string>("PaymentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("PaymentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("RemainingAmount")
                         .HasColumnType("decimal(18,2)");
@@ -110,14 +109,14 @@ namespace QuikBookingApp.Migrations
                         new
                         {
                             BookingId = "booking001",
-                            BookingDate = new DateTime(2024, 10, 10, 0, 0, 0, 0, DateTimeKind.Local),
+                            BookingDate = new DateTime(2024, 10, 12, 0, 0, 0, 0, DateTimeKind.Local),
                             DepositAmount = 20000m,
-                            EndTime = new DateTime(2024, 10, 10, 19, 54, 36, 789, DateTimeKind.Local).AddTicks(2723),
+                            EndTime = new DateTime(2024, 10, 12, 19, 16, 10, 662, DateTimeKind.Local).AddTicks(6279),
                             NumberOfPeople = 4,
-                            PaymentId = "payment001",
+                            PaymentId = new Guid("02d56bd5-35fa-4edd-95b1-ba8b2ea77c8d"),
                             RemainingAmount = 180000m,
                             SpaceId = "space001",
-                            StartTime = new DateTime(2024, 10, 10, 17, 54, 36, 789, DateTimeKind.Local).AddTicks(2715),
+                            StartTime = new DateTime(2024, 10, 12, 17, 16, 10, 662, DateTimeKind.Local).AddTicks(6272),
                             Status = "Hoàn tất",
                             TotalAmount = 200000m,
                             Username = "john_doe"
@@ -145,9 +144,6 @@ namespace QuikBookingApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<double>("Rating")
-                        .HasColumnType("float");
-
                     b.HasKey("BusinessId");
 
                     b.HasIndex("OwnerId");
@@ -161,8 +157,7 @@ namespace QuikBookingApp.Migrations
                             BusinessName = "Jane's Workspace",
                             Description = "A cozy working space for startups.",
                             Location = "123 Main Street",
-                            OwnerId = "jane_business",
-                            Rating = 4.5
+                            OwnerId = "jane_business"
                         });
                 });
 
@@ -240,11 +235,12 @@ namespace QuikBookingApp.Migrations
 
             modelBuilder.Entity("Quik_BookingApp.DAO.Models.Payment", b =>
                 {
-                    b.Property<string>("PaymentId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("PaymentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
 
                     b.Property<string>("BookingId")
                         .IsRequired()
@@ -283,15 +279,15 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            PaymentId = "payment001",
-                            Amount = 50.00m,
+                            PaymentId = new Guid("89f12688-27fe-4863-b336-198b97929780"),
+                            Amount = 50000.0,
                             BookingId = "booking001",
-                            PaymentDate = new DateTime(2024, 10, 10, 16, 54, 36, 789, DateTimeKind.Local).AddTicks(2738),
+                            PaymentDate = new DateTime(2024, 10, 12, 16, 16, 10, 662, DateTimeKind.Local).AddTicks(6297),
                             PaymentMethod = "Credit Card",
                             PaymentStatus = "Success",
-                            PaymentUrl = "https://example.com/payment/payment001",
-                            VNPayResponseCode = "00",
-                            VNPayTransactionId = "VNPay12345"
+                            PaymentUrl = "toexample@gmail.com",
+                            VNPayResponseCode = "OK",
+                            VNPayTransactionId = "VNPay001"
                         });
                 });
 
@@ -470,6 +466,10 @@ namespace QuikBookingApp.Migrations
                     b.Property<decimal>("PricePerHour")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("RoomType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -489,8 +489,57 @@ namespace QuikBookingApp.Migrations
                             Description = "A private office space for up to 4 people.",
                             ImageId = "img_space001",
                             Location = "123 Main Street, Room 101",
-                            PricePerHour = 25.00m,
+                            PricePerHour = 25000m,
+                            RoomType = "Không gian văn phòng",
                             Title = "Cozy Private Office"
+                        },
+                        new
+                        {
+                            SpaceId = "space002",
+                            BusinessId = "business001",
+                            Capacity = 10,
+                            Description = "An open workspace for freelancers and small teams.",
+                            ImageId = "img_space002",
+                            Location = "123 Main Street, Room 102",
+                            PricePerHour = 15000m,
+                            RoomType = "Không gian làm việc chung",
+                            Title = "Modern Shared Workspace"
+                        },
+                        new
+                        {
+                            SpaceId = "space003",
+                            BusinessId = "business001",
+                            Capacity = 20,
+                            Description = "A spacious conference room equipped with A/V facilities.",
+                            ImageId = "img_space003",
+                            Location = "123 Main Street, Room 201",
+                            PricePerHour = 50000m,
+                            RoomType = "Phòng họp",
+                            Title = "Conference Room A"
+                        },
+                        new
+                        {
+                            SpaceId = "space004",
+                            BusinessId = "business001",
+                            Capacity = 8,
+                            Description = "A quiet study hub with individual workstations.",
+                            ImageId = "img_space004",
+                            Location = "123 Main Street, Room 103",
+                            PricePerHour = 10000m,
+                            RoomType = "Study hub",
+                            Title = "Study Hub"
+                        },
+                        new
+                        {
+                            SpaceId = "space005",
+                            BusinessId = "business001",
+                            Capacity = 2,
+                            Description = "A premium office space with stunning views.",
+                            ImageId = "img_space005",
+                            Location = "123 Main Street, Room 104",
+                            PricePerHour = 75000m,
+                            RoomType = "Không gian văn phòng",
+                            Title = "Executive Office"
                         });
                 });
 

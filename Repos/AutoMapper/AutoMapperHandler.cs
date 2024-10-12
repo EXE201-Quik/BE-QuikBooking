@@ -22,6 +22,13 @@ namespace Quik_BookingApp.Modal
             CreateMap<WorkingSpace, WorkingSpaceResponse>();
             CreateMap<Amenity, AmenityRequestModel>();
             CreateMap<WorkingSpace, WorkingSpaceResponseAmenities>();
+            CreateMap<User, UserResponseModel>();
+            //CreateMap<SignupModel, User>()
+            //    // Default value: False
+            //    .ForMember(dest => dest.EmailVerified, opt => opt.MapFrom(src => false))
+            //    .ForMember(dest => dest.EmailVerificationToken, opt => opt.MapFrom(src => src.EmailVerifiedToken));
+
+            CreateMap<Payment, CreatePaymentRequest>();
         }
     }
 }

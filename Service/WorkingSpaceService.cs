@@ -70,6 +70,7 @@ namespace Quik_BookingApp.Service
                     PricePerHour = ws.PricePerHour,
                     Capacity = ws.Capacity,
                     Location = ws.Location,
+                    RoomType = ws.RoomType,
                     Bookings = new List<Booking>(),
                     Images = new List<ImageWS>() // Initialize Images list
                 };
@@ -197,6 +198,59 @@ namespace Quik_BookingApp.Service
                 return null;
             }
         }
+
+
+        public async Task<List<WorkingSpaceRequestModel>> GetWSOfRoomType(string roomType)
+        {
+            try
+            {
+                roomType = roomType.Trim();
+
+                if (roomType.Equals("Không gian làm việc", StringComparison.OrdinalIgnoreCase))
+                {
+                    var workingSpaces = await context.WorkingSpaces
+                        .Where(ws => ws.RoomType.Equals("Không gian làm việc", StringComparison.OrdinalIgnoreCase))
+                        .ToListAsync();
+
+                    return mapper.Map<List<WorkingSpaceRequestModel>>(workingSpaces);
+                }
+                else if (roomType.Equals("Phòng họp", StringComparison.OrdinalIgnoreCase))
+                {
+                    var workingSpaces = await context.WorkingSpaces
+                        .Where(ws => ws.RoomType.Equals("Phòng họp", StringComparison.OrdinalIgnoreCase))
+                        .ToListAsync();
+
+                    return mapper.Map<List<WorkingSpaceRequestModel>>(workingSpaces);
+                }
+                else if (roomType.Equals("Không gian chung", StringComparison.OrdinalIgnoreCase))
+                {
+                    var workingSpaces = await context.WorkingSpaces
+                        .Where(ws => ws.RoomType.Equals("Không gian chung", StringComparison.OrdinalIgnoreCase))
+                        .ToListAsync();
+
+                    return mapper.Map<List<WorkingSpaceRequestModel>>(workingSpaces);
+                }
+                else if (roomType.Equals("Văn phòng riêng", StringComparison.OrdinalIgnoreCase))
+                {
+                    var workingSpaces = await context.WorkingSpaces
+                        .Where(ws => ws.RoomType.Equals("Văn phòng riêng", StringComparison.OrdinalIgnoreCase))
+                        .ToListAsync();
+
+                    return mapper.Map<List<WorkingSpaceRequestModel>>(workingSpaces);
+                }
+                else
+                {
+                    _logger.LogWarning("Room type not recognized: {RoomType}", roomType);
+                    return new List<WorkingSpaceRequestModel>();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving working space by room type.");
+                return null;
+            }
+        }
+
 
     }
 }

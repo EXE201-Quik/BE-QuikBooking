@@ -10,6 +10,6 @@ namespace Quik_BookingApp.Repos.Interface
         Task<List<WorkingSpaceRequestModel>> GetAll();
         Task<WorkingSpaceResponseAmenities> GetBySpaceId(string spaceId);
         Task<APIResponse> CreateWS(WorkingSpaceRequestModel ws);
-
+        Task<List<WorkingSpaceRequestModel>> GetWSOfRoomType(string roomType);
     }
 }

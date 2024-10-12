@@ -3,8 +3,8 @@ using Firebase.Storage;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using Quik_BookingApp.Helper;
+using Quik_BookingApp.Modal;
 using Quik_BookingApp.Repos.Interface;
-using Quik_BookingApp.Share;
 using RestSharp;
 using System.Net;
 

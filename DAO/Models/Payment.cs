@@ -2,12 +2,14 @@
 {
     public class Payment
     {
-        public string PaymentId { get; set; }
+        public Guid PaymentId { get; set; }
         public string BookingId { get; set; } // Foreign key for Booking
-        public decimal Amount { get; set; }
+
+        public double Amount { get; set; }
         public string PaymentMethod { get; set; } // E.g., VNPay, Credit Card, PayPal
         public DateTime PaymentDate { get; set; }
         public string PaymentStatus { get; set; } // E.g., Success, Failed, Pending
+
         public string VNPayTransactionId { get; set; } // VNPay's transaction reference
         public string VNPayResponseCode { get; set; } // VNPay's response code
         public string PaymentUrl { get; set; } // Optional: Store generated VNPay URL
