@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Quik_BookingApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+baf567e698516707b47a5d5ed843a5fb76914a27")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+043ce58773d647fff1456024f67f69598828128e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Quik_BookingApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Quik_BookingApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

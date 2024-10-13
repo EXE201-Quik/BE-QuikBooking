@@ -4,6 +4,7 @@ using Quik_BookingApp.BOs.Response;
 using Quik_BookingApp.DAO;
 using Quik_BookingApp.Helper;
 using Quik_BookingApp.Repos.Interface;
+using System.Web;
 
 namespace Quik_BookingApp.Service
 {
@@ -18,23 +19,21 @@ namespace Quik_BookingApp.Service
         public string CreatePaymentUrl(double amount, string bookingId, string name)
         {
             var pay = new VnPayLibrary();
-
-            // Thêm các tham số yêu cầu từ VNPay
             pay.AddRequestData("vnp_Version", "2.1.0");
             pay.AddRequestData("vnp_Command", "pay");
             pay.AddRequestData("vnp_TmnCode", vnp_TmnCode);
-            pay.AddRequestData("vnp_Amount", ((long)amount * 100).ToString()); // Số tiền phải nhân với 100
-            pay.AddRequestData("vnp_TxnRef", bookingId.ToString());
-            pay.AddRequestData("vnp_OrderInfo", "Thanh toan cho booking #" + bookingId);
+            pay.AddRequestData("vnp_Amount", ((long)amount * 100).ToString());
+            pay.AddRequestData("vnp_TxnRef", Uri.EscapeDataString(bookingId));
+            pay.AddRequestData("vnp_OrderInfo", Uri.EscapeDataString("Thanh toan cho booking #" + bookingId));
             pay.AddRequestData("vnp_Locale", "vn");
-            pay.AddRequestData("vnp_ReturnUrl", "YourReturnUrl"); // Địa chỉ trả về sau khi thanh toán
-            pay.AddRequestData("vnp_IpAddr", "YourIpAddress"); // IP của người dùng
+            pay.AddRequestData("vnp_ReturnUrl", Uri.EscapeDataString("https://www.yourdomain.com/"));
+            pay.AddRequestData("vnp_IpAddr", Uri.EscapeDataString("123.123.123.123"));
             pay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
 
-            // Tạo URL
             var paymentUrl = pay.CreateRequestUrl(vnp_Url, vnp_HashSecret);
             return paymentUrl;
         }
+
 
         // Xác thực chữ ký bảo mật từ VNPay
         public bool ValidateSignature(VNPayCallbackModel model)
