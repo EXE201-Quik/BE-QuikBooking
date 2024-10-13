@@ -1,6 +1,5 @@
 ﻿using Quik_BookingApp.BOs.Request;
 
-
 namespace Quik_BookingApp.Helper
 {
     public class VNPayHelper
@@ -23,17 +22,14 @@ namespace Quik_BookingApp.Helper
             vnpay.AddRequestData("vnp_Version", "2.1.0");
             vnpay.AddRequestData("vnp_Command", "pay");
             vnpay.AddRequestData("vnp_TmnCode", tmnCode);
-            vnpay.AddRequestData("vnp_Amount", (model.Amount * 100).ToString()); // VNPay tính theo đơn vị VND x100
+            vnpay.AddRequestData("vnp_Amount", (model.Amount * 100).ToString()); // VNPay calculates in VND x100
             vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
             vnpay.AddRequestData("vnp_CurrCode", "VND");
-            //vnpay.AddRequestData("vnp_TxnRef", model.OrderId);
-            vnpay.AddRequestData("vnp_OrderInfo", model.OrderDescription);
-            //vnpay.AddRequestData("vnp_Locale", model.Language ?? "vn");
+            vnpay.AddRequestData("vnp_OrderInfo", $"{model.Name} - Booking {model.BookingId}"); // Includes Name and BookingId in the description
             vnpay.AddRequestData("vnp_ReturnUrl", returnUrl);
 
-            var paymentUrl = vnpay.CreateRequestUrl(vnpayUrl, hashSecret);
-            return paymentUrl;
+            var paymentUrl = vnpay.CreateRequestUrl(vnpayUrl, hashSecret); // Generate the payment URL
+            return paymentUrl; // Return the payment URL
         }
     }
-
 }

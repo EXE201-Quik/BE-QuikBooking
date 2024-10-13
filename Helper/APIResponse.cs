@@ -7,6 +7,14 @@
         public string Message { get; set; }
     }
 
+    public class APIResponseData
+    {
+        public int ResponseCode { get; set; }
+        public string Result { get; set; }
+        public string Message { get; set; }
+        public object Data {  get; set; }
+    }
+
     public interface IServiceResult
     {
         int Status { get; set; }

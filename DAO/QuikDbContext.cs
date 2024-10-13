@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Quik_BookingApp.DAO.Models;
 
@@ -49,7 +48,7 @@ namespace Quik_BookingApp.DAO
             modelBuilder.Entity<Amenity>().HasKey(a => a.AmenityId);
             modelBuilder.Entity<TblRefreshToken>().HasKey(rt => new { rt.UserId, rt.TokenId });
 
-            // Định nghĩa các mối quan hệ giữa các thực thể
+            
             modelBuilder.Entity<Business>()
                 .HasOne(b => b.Owner)
                 .WithMany(u => u.Businesses)
@@ -69,10 +68,10 @@ namespace Quik_BookingApp.DAO
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<WorkingSpace>()
-                .HasMany(ws => ws.Amenities) // Define the relationship with Amenity
+                .HasMany(ws => ws.Amenities) 
                 .WithOne()
                 .HasForeignKey(a => a.SpaceId)
-                .OnDelete(DeleteBehavior.Cascade); // Cascade delete for amenities
+                .OnDelete(DeleteBehavior.Cascade); 
 
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.User)
@@ -92,7 +91,6 @@ namespace Quik_BookingApp.DAO
                 .HasForeignKey<Payment>(p => p.BookingId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Seed dữ liệu (nếu cần)
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
@@ -131,8 +129,7 @@ namespace Quik_BookingApp.DAO
                     BusinessName = "Jane's Workspace",
                     OwnerId = "jane_business",
                     Location = "123 Main Street",
-                    Description = "A cozy working space for startups.",
-                    Rating = 4.5
+                    Description = "A cozy working space for startups."
                 }
             );
 
@@ -141,12 +138,61 @@ namespace Quik_BookingApp.DAO
                 {
                     SpaceId = "space001",
                     ImageId = "img_space001",
-                    BusinessId = "business001",
+                    BusinessId = "business001", // Đã đổi thành business001
                     Title = "Cozy Private Office",
                     Description = "A private office space for up to 4 people.",
-                    PricePerHour = 25.00M,
+                    PricePerHour = 25000,
+                    RoomType = "Không gian văn phòng",
                     Capacity = 4,
                     Location = "123 Main Street, Room 101"
+                },
+                new WorkingSpace
+                {
+                    SpaceId = "space002",
+                    ImageId = "img_space002",
+                    BusinessId = "business001",
+                    Title = "Modern Shared Workspace",
+                    Description = "An open workspace for freelancers and small teams.",
+                    PricePerHour = 15000,
+                    RoomType = "Không gian làm việc chung",
+                    Capacity = 10,
+                    Location = "123 Main Street, Room 102"
+                },
+                new WorkingSpace
+                {
+                    SpaceId = "space003",
+                    ImageId = "img_space003",
+                    BusinessId = "business001",
+                    Title = "Conference Room A",
+                    Description = "A spacious conference room equipped with A/V facilities.",
+                    PricePerHour = 50000,
+                    RoomType = "Phòng họp",
+                    Capacity = 20,
+                    Location = "123 Main Street, Room 201"
+                },
+                new WorkingSpace
+                {
+                    SpaceId = "space004",
+                    ImageId = "img_space004",
+                    BusinessId = "business001",
+                    Title = "Study Hub",
+                    Description = "A quiet study hub with individual workstations.",
+                    PricePerHour = 10000,
+                    RoomType = "Study hub",
+                    Capacity = 8,
+                    Location = "123 Main Street, Room 103"
+                },
+                new WorkingSpace
+                {
+                    SpaceId = "space005",
+                    ImageId = "img_space005",
+                    BusinessId = "business001",
+                    Title = "Executive Office",
+                    Description = "A premium office space with stunning views.",
+                    PricePerHour = 75000,
+                    RoomType = "Không gian văn phòng",
+                    Capacity = 2,
+                    Location = "123 Main Street, Room 104"
                 }
             );
 
@@ -164,27 +210,25 @@ namespace Quik_BookingApp.DAO
                     AmenityText = "Wifi's room free"
                 });
 
-            // Seed dữ liệu cho ImageWS
             modelBuilder.Entity<ImageWS>().HasData(
                 new ImageWS
                 {
-                    ImageId = "img_space001", // Đảm bảo ImageId là chuỗi
+                    ImageId = "img_space001",
                     SpaceId = "space001",
                     WorkingSpaceName = "Cozy Private Office",
                     ImageUrl = "https://example.com/images/space001_image1.jpg",
                     WSCode = "WS001",
                     WSImages = null
                 }
-
             );
 
             modelBuilder.Entity<Booking>().HasData(
                 new Booking
                 {
                     BookingId = "booking001",
+                    PaymentId = Guid.NewGuid(),
                     Username = "john_doe",
                     SpaceId = "space001",
-                    PaymentId = "payment001",
                     BookingDate = DateTime.Now.Date,
                     StartTime = DateTime.Now.AddHours(1),
                     EndTime = DateTime.Now.AddHours(3),
@@ -198,16 +242,16 @@ namespace Quik_BookingApp.DAO
 
             modelBuilder.Entity<Payment>().HasData(
                 new Payment
-                {
-                    PaymentId = "payment001",
+                { 
+                    PaymentId = Guid.NewGuid(),
                     BookingId = "booking001",
-                    Amount = 50.00M,
+                    Amount = 50000,
                     PaymentMethod = "Credit Card",
                     PaymentDate = DateTime.Now,
                     PaymentStatus = "Success",
-                    VNPayTransactionId = "VNPay12345",
-                    VNPayResponseCode = "00",
-                    PaymentUrl = "https://example.com/payment/payment001"
+                    VNPayTransactionId = "VNPay001",
+                    VNPayResponseCode = "OK",
+                    PaymentUrl = "toexample@gmail.com"
                 }
             );
         }

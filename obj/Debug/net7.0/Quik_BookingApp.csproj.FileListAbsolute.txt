@@ -305,3 +305,5 @@ D:\EXE202\Quik_BookingApp\Quik_BookingApp\obj\Debug\net7.0\refint\Quik_BookingAp
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\obj\Debug\net7.0\Quik_BookingApp.pdb
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\obj\Debug\net7.0\Quik_BookingApp.genruntimeconfig.cache
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\obj\Debug\net7.0\ref\Quik_BookingApp.dll
+D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll

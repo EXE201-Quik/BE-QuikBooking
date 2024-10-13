@@ -41,7 +41,7 @@ namespace Quik_BookingApp.Service
         VD: Đơn của khách sum=200k, vậy thì số tiền khách cần trả là 200k-20k=180k
         */
 
-        public async Task<APIResponse> BookSpace(BookingRequestModel bookingRequest)
+        public async Task<APIResponseData> BookSpace(BookingRequestModel bookingRequest)
         {
             try
             {
@@ -49,17 +49,19 @@ namespace Quik_BookingApp.Service
                 if (space == null)
                 {
                     _logger.LogWarning("Working space with ID {SpaceId} not found.", bookingRequest.SpaceId);
-                    return new APIResponse
+                    return new APIResponseData
                     {
                         ResponseCode = 404,
                         Result = "Failed",
                         Message = "Working space not found.",
+                        
                     };
                 }
 
                 // Tính tổng chi phí dựa trên giá không gian và thời gian
                 var durationInHours = (bookingRequest.EndTime - bookingRequest.StartTime).TotalHours;
                 var totalAmount = space.PricePerHour * (decimal)durationInHours;
+
                 
 
                 // Tạo Booking trước
@@ -75,35 +77,53 @@ namespace Quik_BookingApp.Service
                     TotalAmount = totalAmount,
                     DepositAmount = CommissionPerPerson * bookingRequest.NumberOfPeople,
                     RemainingAmount = totalAmount - CommissionPerPerson * bookingRequest.NumberOfPeople,
-                    Status = "Pending",
-                    PaymentId = Guid.NewGuid().ToString(),
+                    Status = "Sắp tới",
+                    //PaymentId = Guid.NewGuid().ToString(),
                    
                 };
 
-                var payment = new Payment
-                {
-                    PaymentId = booking.PaymentId,
-                    BookingId = booking.BookingId,
-                    Amount = booking.DepositAmount,
-                    PaymentMethod = "VNPay",
-                    PaymentDate = DateTime.Now,
-                    PaymentStatus = "Pending",
-                    VNPayTransactionId = "huyquang",
-                    VNPayResponseCode = "huyquang",
-                    PaymentUrl = "huyquang"
-                };
+                //var payment = new Payment
+                //{
+                //    PaymentId = booking.PaymentId,
+                //    BookingId = booking.BookingId,
+                //    Amount = booking.DepositAmount,
+                //    PaymentMethod = "VNPay",
+                //    PaymentDate = DateTime.Now,
+                //    PaymentStatus = "Pending",
+                //    VNPayTransactionId = Guid.NewGuid().ToString(),
+                //    VNPayResponseCode = Guid.NewGuid().ToString(),
+                //    PaymentUrl = null
+                //};
 
                 _context.Bookings.Add(booking);
-                _context.Payments.Add(payment);
+                //_context.Payments.Add(payment);
                 await _context.SaveChangesAsync();
 
                 _logger.LogInformation("Booking created successfully for user {UserId} and space {SpaceId}.", bookingRequest.Username, bookingRequest.SpaceId);
 
-                return new APIResponse
+                var bookingResponse = new BookingResponseModel
+                {
+                    BookingId = booking.BookingId,
+                    Username = booking.Username,
+                    SpaceId = booking.SpaceId,
+                    StartTime = booking.StartTime,
+                    EndTime = booking.EndTime,
+                    NumberOfPeople = booking.NumberOfPeople,
+                    BookingDate = booking.BookingDate,
+                    TotalAmount = booking.TotalAmount,
+                    DepositAmount = booking.DepositAmount,
+                    RemainingAmount = booking.RemainingAmount,
+                    Status = booking.Status,
+                    Location = space.Location,
+                    PaymentId = Guid.NewGuid(),
+                };
+
+                return new APIResponseData
                 {
                     ResponseCode = 201,
                     Result = "Success",
                     Message = "Booking created successfully with PaymentId.",
+                    Data = bookingResponse
                 };
             }
             catch (DbUpdateException dbEx)
@@ -111,22 +131,24 @@ namespace Quik_BookingApp.Service
                 var innerExceptionMessage = dbEx.InnerException != null ? dbEx.InnerException.Message : dbEx.Message;
                 _logger.LogError(dbEx, "Database error while creating booking: {Message}", innerExceptionMessage);
 
-                return new APIResponse
+                return new APIResponseData
                 {
                     ResponseCode = 500,
                     Result = "Failed",
-                    Message = "Database error: " + innerExceptionMessage
+                    Message = "Database error: " + innerExceptionMessage,
+                    Data = dbEx
                 };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while creating the booking.");
 
-                return new APIResponse
+                return new APIResponseData
                 {
                     ResponseCode = 500,
                     Result = "Failed",
-                    Message = "An unexpected error occurred: " + ex.Message
+                    Message = "An unexpected error occurred: " + ex.Message,
+                    Data = ex
                 };
             }
         }

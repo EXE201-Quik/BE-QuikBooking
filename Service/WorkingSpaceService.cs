@@ -70,6 +70,7 @@ namespace Quik_BookingApp.Service
                     PricePerHour = ws.PricePerHour,
                     Capacity = ws.Capacity,
                     Location = ws.Location,
+                    RoomType = ws.RoomType,
                     Bookings = new List<Booking>(),
                     Images = new List<ImageWS>() // Initialize Images list
                 };
@@ -197,6 +198,46 @@ namespace Quik_BookingApp.Service
                 return null;
             }
         }
+
+
+        public async Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForWorkingAreaAsync()
+        {
+            return await GetWorkingSpacesByRoomTypeAsync("Không gian làm việc chung");
+        }
+
+        public async Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForMeetingRoomAsync()
+        {
+            return await GetWorkingSpacesByRoomTypeAsync("Phòng họp");
+        }
+
+        public async Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForCommonSpaceAsync()
+        {
+            return await GetWorkingSpacesByRoomTypeAsync("Study hub");
+        }
+
+        public async Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForPrivateOfficeAsync()
+        {
+            return await GetWorkingSpacesByRoomTypeAsync("Không gian văn phòng");
+        }
+
+        private async Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesByRoomTypeAsync(string roomType)
+        {
+            try
+            {
+                var workingSpaces = await context.WorkingSpaces
+                    .Where(ws => ws.RoomType.ToLower() == roomType.ToLower()) // Use ToLower() for case-insensitive comparison
+                    .ToListAsync();
+
+                return mapper.Map<List<WorkingSpaceRequestModel>>(workingSpaces);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving working spaces of room type: {RoomType}", roomType);
+                return null;
+            }
+        }
+
+
 
     }
 }

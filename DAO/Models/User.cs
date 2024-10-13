@@ -1,4 +1,6 @@
-﻿namespace Quik_BookingApp.DAO.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Quik_BookingApp.DAO.Models
 {
     public class User
     {
@@ -13,6 +15,12 @@
         public bool IsActive { get; set; }
         public bool IsLocked { get; set; }
         public string Status { get; set; }
+
+        //[Column("emailVerified")]
+        //public bool EmailVerified { get; set; }
+
+        //[Column("emailVerifiedToken")]
+        //public string? EmailVerificationToken { get; set; }
 
         public ICollection<Booking> Bookings { get; set; }
         public ICollection<Business> Businesses { get; set; }

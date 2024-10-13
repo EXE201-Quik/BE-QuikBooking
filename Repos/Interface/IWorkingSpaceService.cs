@@ -11,5 +11,9 @@ namespace Quik_BookingApp.Repos.Interface
         Task<WorkingSpaceResponseAmenities> GetBySpaceId(string spaceId);
         Task<APIResponse> CreateWS(WorkingSpaceRequestModel ws);
 
+        Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForWorkingAreaAsync();
+        Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForMeetingRoomAsync();
+        Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForCommonSpaceAsync();
+        Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForPrivateOfficeAsync();
     }
 }

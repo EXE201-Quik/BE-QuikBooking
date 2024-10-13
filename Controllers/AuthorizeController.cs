@@ -12,7 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace LearnAPI.Controllers
+namespace Quik_BookingApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -35,7 +35,7 @@ namespace LearnAPI.Controllers
         [HttpPost("GenerateToken")]
         public async Task<IActionResult> GenerateToken([FromBody] UserCred userCred)
         {
-            var user = await this.context.Users.FirstOrDefaultAsync(item => item.Username == userCred.Username && item.Password == userCred.Password);
+            var user = await this.context.Users.FirstOrDefaultAsync(item => item.Email == userCred.Email && item.Password == userCred.Password);
             if (user != null)
             {
                 //generate token
@@ -53,7 +53,7 @@ namespace LearnAPI.Controllers
                 };
                 var token = tokenhandler.CreateToken(tokendesc);
                 var finaltoken = tokenhandler.WriteToken(token);
-                return Ok(new TokenResponse() { Token = finaltoken, RefreshToken = await this.refresh.GenerateToken(userCred.Username) });
+                return Ok(new TokenResponse() { Token = finaltoken, RefreshToken = await this.refresh.GenerateToken(userCred.Email) });
 
             }
             else

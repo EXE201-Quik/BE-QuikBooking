@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Quik_BookingApp.BOs.Request;
 using Quik_BookingApp.DAO;
 using Quik_BookingApp.DAO.Models;
+using Quik_BookingApp.Enums;
 using Quik_BookingApp.Helper;
 using Quik_BookingApp.Modal;
 using Quik_BookingApp.Repos.Interface;
@@ -18,14 +19,89 @@ namespace Quik_BookingApp.Service
         public readonly IMapper mapper;
         public readonly ILogger<UserService> _logger;
         public readonly IEmailService emailService;
+        //private readonly IUnitOfWork _unitOfWork;
 
         public UserService(QuikDbContext context, IMapper mapper, ILogger<UserService> logger, IEmailService emailService)
         {
             this.context = context;
             this.mapper = mapper;
-            _logger = logger;
+            this._logger = logger;
             this.emailService = emailService;
+
         }
+
+        //public async Task<User?> GetByVerificationToken(string token)
+        //{
+        //    var userRepository = _unitOfWork.Repository<User>();
+        //    return await userRepository.GetAll().AsNoTracking()
+        //        .FirstOrDefaultAsync(u => u.EmailVerificationToken == token);
+        //}
+
+        //public async Task<User?> Login(string email, string password)
+        //{
+        //    var userRepository = _unitOfWork.Repository<User>();
+        //    var users = await userRepository.GetAllAsync();
+
+        //    var user = users.FirstOrDefault(u => u.Email == email && u.Password == password);
+        //    return user;
+        //}
+
+        //public async Task Add(User user)
+        //{
+        //    try
+        //    {
+        //        var userRepository = _unitOfWork.Repository<User>();
+        //        var customerRepository = _unitOfWork.Repository<Business>();
+
+        //        if (user is not null)
+        //        {
+        //            await _unitOfWork.BeginTransaction();
+        //            // check duplicate user
+        //            var existedUser = await userRepository.GetAsync(u => u.Username == user.Username || u.Email == user.Email);
+        //            if (existedUser is not null) throw new Exception("User already exists.");
+
+        //            await userRepository.InsertAsync(user);
+
+        //            // add customer or driver into tables
+        //            if (user.Role.Equals((int)UserRole.User))
+        //            {
+        //                var customer = mapper.Map<User>(user);
+        //                await userRepository.InsertAsync(customer);
+        //            }
+        //            else if (user.Role.Equals((int)UserRole.Business))
+        //            {
+        //                var driver = mapper.Map<Business>(user);
+        //                await customerRepository.InsertAsync(driver);
+        //            }
+        //            await _unitOfWork.CommitTransaction();
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        await _unitOfWork.RollbackTransaction();
+        //        throw;
+        //    }
+        //}
+
+
+        //public async Task Update(User user)
+        //{
+        //    try
+        //    {
+        //        var userRepository = _unitOfWork.Repository<User>();
+        //        if (user is not null)
+        //        {
+        //            await _unitOfWork.BeginTransaction();
+        //            await userRepository.UpdateAsync(user);
+        //            await _unitOfWork.CommitTransaction();
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        await _unitOfWork.RollbackTransaction();
+        //        throw;
+        //    }
+        //}
 
         public async Task<APIResponse> CreateUser(User user)
         {
@@ -85,7 +161,7 @@ namespace Quik_BookingApp.Service
             {
                 var bookings = await context.Users.Where(u => u.Username == username).ToListAsync();
 
-                if(bookings == null || !bookings.Any())
+                if (bookings == null || !bookings.Any())
                 {
                     throw new Exception("No booking with this user");
                 }
@@ -93,7 +169,7 @@ namespace Quik_BookingApp.Service
                 var response = mapper.Map<List<BookingRequestModel>>(bookings);
                 return response;
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 throw new Exception("An error occured while retieving bookings" + ex.Message);
             }
@@ -136,7 +212,7 @@ namespace Quik_BookingApp.Service
                     Password = _tempdata.Password,
                     Email = _tempdata.Email,
                     PhoneNumber = _tempdata.Phone,
-                    Role = "user"
+                    Role = "User"
                 };
                 await context.Users.AddAsync(_user);
                 await context.SaveChangesAsync();
@@ -147,9 +223,9 @@ namespace Quik_BookingApp.Service
             return response;
         }
 
-        public async Task<APIResponse> UserRegisteration(UserRegister userRegister)
+        public async Task<APIResponseData> UserRegisteration(UserRegister userRegister)
         {
-            APIResponse response = new APIResponse();
+            APIResponseData response = new APIResponseData();
             bool isvalid = true;
 
             try
@@ -164,6 +240,7 @@ namespace Quik_BookingApp.Service
                     response.ResponseCode = 409;
                     response.Result = "Failed";
                     response.Message = "Username already exists";
+                    response.Data = existingUser;
                 }
 
                 // Check for duplicate email
@@ -176,6 +253,7 @@ namespace Quik_BookingApp.Service
                     response.ResponseCode = 409;
                     response.Result = "Failed";
                     response.Message = "Email already exists";
+                    response.Data = existingEmail;
                 }
 
                 if (isvalid)
@@ -207,6 +285,7 @@ namespace Quik_BookingApp.Service
                     response.ResponseCode = 200;
                     response.Result = "Success";
                     response.Message = otpText;
+                    response.Data = otpText;
                 }
             }
             catch (DbUpdateException dbEx)
@@ -217,6 +296,7 @@ namespace Quik_BookingApp.Service
                 response.ResponseCode = 500;
                 response.Result = "Failed";
                 response.Message = "Database error: " + innerExceptionMessage;
+                response.Data = innerExceptionMessage;
                 return response;
             }
             catch (Exception ex)
@@ -227,6 +307,7 @@ namespace Quik_BookingApp.Service
                 response.ResponseCode = 500;
                 response.Result = "Failed";
                 response.Message = "Error: " + innerExceptionMessage;
+                response.Data = innerExceptionMessage;
                 return response;
             }
 
@@ -442,7 +523,7 @@ namespace Quik_BookingApp.Service
                 response.Message = "Invalid User";
             }
             return response;
-        }   
+        }
 
     }
 }

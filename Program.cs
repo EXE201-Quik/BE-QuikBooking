@@ -9,7 +9,6 @@ using Quik_BookingApp.Helper;
 using Quik_BookingApp.Modal;
 using Quik_BookingApp.Repos.Interface;
 using Quik_BookingApp.Service;
-using Quik_BookingApp.Share;
 using QuikBookingApp.Modal;
 using Serilog;
 using System;
@@ -60,15 +59,17 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.Configure<FirebaseConfiguration>(builder.Configuration.GetSection("FirebaseConfiguration"));
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection(""));
 builder.Services.AddScoped<IFirebaseService, FirebaseService>();
-builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddTransient<IBookingService, BookingService>();
 builder.Services.AddScoped<IWorkingSpaceService, WorkingSpaceService>();
 builder.Services.AddTransient<IBusinessService, BusinessService>();
 builder.Services.AddTransient<IRefreshHandler, RefreshHandler>();
 builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IPaymentService, PaymentService>();
+builder.Services.AddTransient<IVnPayService, VNPayService>();
 
 builder.Services.AddDbContext<QuikDbContext>(o =>
-o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), options => options.CommandTimeout(60)));
 
 
 

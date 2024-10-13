@@ -10,6 +10,29 @@ namespace Quik_BookingApp.Service
 {
     public class EmailService : IEmailService
     {
+
+        //private readonly SmtpClient _smtpClient;
+
+        //public EmailService(SmtpClient smtpClient)
+        //{
+        //    this._smtpClient = smtpClient;
+        //}
+
+        //public async Task SendVerificationEmailAsync(string email, string verificationLink)
+        //{
+        //    var message = new MimeMessage();
+        //    message.From.Add(new MailboxAddress("Quik", "huylqse173543@fpt.edu.vn"));
+        //    message.To.Add(new MailboxAddress("", email));
+        //    message.Subject = "Verify your email";
+
+        //    // Email body (plain text)
+        //    message.Body = new TextPart("plain")
+        //    {
+        //        Text = $"Please verify your email by clicking on this link: {verificationLink}"
+        //    };
+        //    await _smtpClient.SendAsync(message);
+        //}
+
         private readonly EmailSettings emailSettings;
         public EmailService(IOptions<EmailSettings> options)
         {
@@ -41,7 +64,7 @@ namespace Quik_BookingApp.Service
                             await file.CopyToAsync(ms);
                             fileBytes = ms.ToArray();
                         }
-                        builder.Attachments.Add("attachment.pdf", fileBytes, ContentType.Parse("application/pdf"));  
+                        builder.Attachments.Add("attachment.pdf", fileBytes, ContentType.Parse("application/pdf"));
                         builder.Attachments.Add("attachment2.pdf", fileBytes, ContentType.Parse("application/pdf"));
                     }
                 }
@@ -69,3 +92,4 @@ namespace Quik_BookingApp.Service
         }
     }
 }
+

@@ -5,7 +5,7 @@
         public string BookingId { get; set; }
         public string Username { get; set; }
         public string SpaceId { get; set; }
-        public string PaymentId { get; set; }
+        public Guid PaymentId { get; set; }
         public DateTime BookingDate { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
