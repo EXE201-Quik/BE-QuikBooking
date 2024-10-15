@@ -8,7 +8,6 @@ D:\EXE202\Quik_BookingApp\Quik_BookingApp\obj\Debug\net7.0\Quik_BookingApp.MvcAp
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\obj\Debug\net7.0\Quik_BookingApp.sourcelink.json
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\appsettings.Development.json
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\appsettings.json
-D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\Extentions\Config\firebaseConfig.json
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\Quik_BookingApp.staticwebassets.runtime.json
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\Quik_BookingApp.exe
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\Quik_BookingApp.deps.json
@@ -307,3 +306,4 @@ D:\EXE202\Quik_BookingApp\Quik_BookingApp\obj\Debug\net7.0\Quik_BookingApp.genru
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\obj\Debug\net7.0\ref\Quik_BookingApp.dll
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\Extentions\Config\firebaseConfig.json
