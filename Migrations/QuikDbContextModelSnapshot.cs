@@ -109,14 +109,14 @@ namespace QuikBookingApp.Migrations
                         new
                         {
                             BookingId = "booking001",
-                            BookingDate = new DateTime(2024, 10, 12, 0, 0, 0, 0, DateTimeKind.Local),
+                            BookingDate = new DateTime(2024, 10, 15, 0, 0, 0, 0, DateTimeKind.Local),
                             DepositAmount = 20000m,
-                            EndTime = new DateTime(2024, 10, 12, 19, 16, 10, 662, DateTimeKind.Local).AddTicks(6279),
+                            EndTime = new DateTime(2024, 10, 15, 19, 0, 22, 298, DateTimeKind.Local).AddTicks(9647),
                             NumberOfPeople = 4,
-                            PaymentId = new Guid("02d56bd5-35fa-4edd-95b1-ba8b2ea77c8d"),
+                            PaymentId = new Guid("22a58108-55dd-47ec-9a6c-8426a98b9831"),
                             RemainingAmount = 180000m,
                             SpaceId = "space001",
-                            StartTime = new DateTime(2024, 10, 12, 17, 16, 10, 662, DateTimeKind.Local).AddTicks(6272),
+                            StartTime = new DateTime(2024, 10, 15, 17, 0, 22, 298, DateTimeKind.Local).AddTicks(9642),
                             Status = "Hoàn tất",
                             TotalAmount = 200000m,
                             Username = "john_doe"
@@ -140,13 +140,16 @@ namespace QuikBookingApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("OwnerId")
+                    b.Property<string>("Presentor")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("BusinessId");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("Username");
 
                     b.ToTable("Businesses");
 
@@ -157,7 +160,7 @@ namespace QuikBookingApp.Migrations
                             BusinessName = "Jane's Workspace",
                             Description = "A cozy working space for startups.",
                             Location = "123 Main Street",
-                            OwnerId = "jane_business"
+                            Presentor = "Jane Business"
                         });
                 });
 
@@ -279,10 +282,10 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            PaymentId = new Guid("89f12688-27fe-4863-b336-198b97929780"),
+                            PaymentId = new Guid("81fb0d62-23e1-43da-8251-89d459298948"),
                             Amount = 50000.0,
                             BookingId = "booking001",
-                            PaymentDate = new DateTime(2024, 10, 12, 16, 16, 10, 662, DateTimeKind.Local).AddTicks(6297),
+                            PaymentDate = new DateTime(2024, 10, 15, 16, 0, 22, 298, DateTimeKind.Local).AddTicks(9664),
                             PaymentMethod = "Credit Card",
                             PaymentStatus = "Success",
                             PaymentUrl = "toexample@gmail.com",
@@ -573,13 +576,9 @@ namespace QuikBookingApp.Migrations
 
             modelBuilder.Entity("Quik_BookingApp.DAO.Models.Business", b =>
                 {
-                    b.HasOne("Quik_BookingApp.DAO.Models.User", "Owner")
+                    b.HasOne("Quik_BookingApp.DAO.Models.User", null)
                         .WithMany("Businesses")
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Owner");
+                        .HasForeignKey("Username");
                 });
 
             modelBuilder.Entity("Quik_BookingApp.DAO.Models.ImageWS", b =>

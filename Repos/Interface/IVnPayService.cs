@@ -5,8 +5,10 @@ namespace Quik_BookingApp.Repos.Interface
 {
     public interface IVnPayService
     {
-        string CreatePaymentUrl(double amount, string bookingId, string name);
-        bool ValidateSignature(VNPayCallbackModel model);
+        string CreatePaymentUrl(PaymentInformationModel model, HttpContext context);
+        VNPayPaymentResponseModel PaymentExecute(IQueryCollection collections);
+        //string CreatePaymentUrl(double amount, string bookingId, string name);
+        //bool ValidateSignature(VNPayCallbackModel model);
         //string CreatePaymentUrl(VNPayPaymentRequestModel model, HttpContext context);
         //VNPayPaymentResponseModel PaymentExecute(IQueryCollection collections);
     }

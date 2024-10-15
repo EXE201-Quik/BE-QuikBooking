@@ -71,8 +71,7 @@ namespace Quik_BookingApp.Service
                     Capacity = ws.Capacity,
                     Location = ws.Location,
                     RoomType = ws.RoomType,
-                    Bookings = new List<Booking>(),
-                    Images = new List<ImageWS>() // Initialize Images list
+                    
                 };
 
                 // Check if an image is uploaded

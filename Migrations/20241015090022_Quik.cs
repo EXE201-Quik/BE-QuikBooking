@@ -101,16 +101,17 @@ namespace QuikBookingApp.Migrations
                 {
                     BusinessId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BusinessName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Presentor = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Businesses", x => x.BusinessId);
                     table.ForeignKey(
-                        name: "FK_Businesses_Users_OwnerId",
-                        column: x => x.OwnerId,
+                        name: "FK_Businesses_Users_Username",
+                        column: x => x.Username,
                         principalTable: "Users",
                         principalColumn: "Username");
                 });
@@ -238,6 +239,11 @@ namespace QuikBookingApp.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Businesses",
+                columns: new[] { "BusinessId", "BusinessName", "Description", "Location", "Presentor", "Username" },
+                values: new object[] { "business001", "Jane's Workspace", "A cozy working space for startups.", "123 Main Street", "Jane Business", null });
+
+            migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Username", "Email", "ImageId", "IsActive", "IsLocked", "Name", "OTPVerified", "Password", "PhoneNumber", "Role", "Status" },
                 values: new object[,]
@@ -245,11 +251,6 @@ namespace QuikBookingApp.Migrations
                     { "jane_business", "jane@example.com", "img002", true, false, "Jane Business", true, "hashedpassword456", "0987654321", "Business", "Active" },
                     { "john_doe", "john@example.com", "img001", true, false, "John Doe", true, "hashedpassword123", "1234567890", "User", "Active" }
                 });
-
-            migrationBuilder.InsertData(
-                table: "Businesses",
-                columns: new[] { "BusinessId", "BusinessName", "Description", "Location", "OwnerId" },
-                values: new object[] { "business001", "Jane's Workspace", "A cozy working space for startups.", "123 Main Street", "jane_business" });
 
             migrationBuilder.InsertData(
                 table: "WorkingSpaces",
@@ -275,7 +276,7 @@ namespace QuikBookingApp.Migrations
             migrationBuilder.InsertData(
                 table: "Bookings",
                 columns: new[] { "BookingId", "BookingDate", "DepositAmount", "EndTime", "NumberOfPeople", "PaymentId", "RemainingAmount", "SpaceId", "StartTime", "Status", "TotalAmount", "Username" },
-                values: new object[] { "booking001", new DateTime(2024, 10, 12, 0, 0, 0, 0, DateTimeKind.Local), 20000m, new DateTime(2024, 10, 12, 19, 16, 10, 662, DateTimeKind.Local).AddTicks(6279), 4, new Guid("02d56bd5-35fa-4edd-95b1-ba8b2ea77c8d"), 180000m, "space001", new DateTime(2024, 10, 12, 17, 16, 10, 662, DateTimeKind.Local).AddTicks(6272), "Hoàn tất", 200000m, "john_doe" });
+                values: new object[] { "booking001", new DateTime(2024, 10, 15, 0, 0, 0, 0, DateTimeKind.Local), 20000m, new DateTime(2024, 10, 15, 19, 0, 22, 298, DateTimeKind.Local).AddTicks(9647), 4, new Guid("22a58108-55dd-47ec-9a6c-8426a98b9831"), 180000m, "space001", new DateTime(2024, 10, 15, 17, 0, 22, 298, DateTimeKind.Local).AddTicks(9642), "Hoàn tất", 200000m, "john_doe" });
 
             migrationBuilder.InsertData(
                 table: "Images",
@@ -285,7 +286,7 @@ namespace QuikBookingApp.Migrations
             migrationBuilder.InsertData(
                 table: "Payments",
                 columns: new[] { "PaymentId", "Amount", "BookingId", "PaymentDate", "PaymentMethod", "PaymentStatus", "PaymentUrl", "VNPayResponseCode", "VNPayTransactionId" },
-                values: new object[] { new Guid("89f12688-27fe-4863-b336-198b97929780"), 50000.0, "booking001", new DateTime(2024, 10, 12, 16, 16, 10, 662, DateTimeKind.Local).AddTicks(6297), "Credit Card", "Success", "toexample@gmail.com", "OK", "VNPay001" });
+                values: new object[] { new Guid("81fb0d62-23e1-43da-8251-89d459298948"), 50000.0, "booking001", new DateTime(2024, 10, 15, 16, 0, 22, 298, DateTimeKind.Local).AddTicks(9664), "Credit Card", "Success", "toexample@gmail.com", "OK", "VNPay001" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Amenities_SpaceId",
@@ -303,9 +304,9 @@ namespace QuikBookingApp.Migrations
                 column: "Username");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Businesses_OwnerId",
+                name: "IX_Businesses_Username",
                 table: "Businesses",
-                column: "OwnerId");
+                column: "Username");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Images_SpaceId",

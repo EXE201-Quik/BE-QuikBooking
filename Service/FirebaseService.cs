@@ -13,8 +13,8 @@ namespace Quik_BookingApp.Service
     public class FirebaseService : IFirebaseService
     {
 
-        private static string ApiKey = "AIzaSyCIROgMN-g5iIsG9d9fCB88PTOWTqhNknk";
-        private static string Bucket = "quik-a8158.appspot.com";
+        private static string ApiKey = "AIzaSyCr3D6-Z3owDLYkN8nW4sF4pWLnGXIbzEE";
+        private static string Bucket = "quik-77aae.appspot.com";
         private static string AuthEmail = "huylqse173543@fpt.edu.vn";
         private static string AuthPassword = "123456";
 
@@ -59,7 +59,7 @@ namespace Quik_BookingApp.Service
             //var a = pathFileName.Split("/");
             var a = pathFileName.Split("/o/")[1];
             //pathFileName = $"{a[0]}%2F{a[1]}";
-            var api = $"https://console.firebase.google.com/u/2/project/quik-a8158/storage/quik-a8158.appspot.com/files?{a}";
+            var api = $"https://console.firebase.google.com/u/0/project/quik-77aae/storage/quik-77aae.appspot.com/files?hl={a}";
             if (string.IsNullOrEmpty(pathFileName))
             {
                 return string.Empty;
@@ -73,7 +73,7 @@ namespace Quik_BookingApp.Service
                 var jmessage = JObject.Parse(response.Content);
                 var downloadToken = jmessage.GetValue("downloadTokens").ToString();
                 return
-                    $"https://firebasestorage.googleapis.com/v0/b/{_configuration["cloudfunction-yt-2b3df.appspot.com"]}/o/{pathFileName}?alt=media&token={downloadToken}";
+                    $"https://console.firebase.google.com/u/0/project/quik-77aae/storage/{_configuration["quik-77aae.appspot.com"]}/files/{pathFileName}?alt=media&token={downloadToken}";
             }
 
             return string.Empty;

@@ -48,12 +48,6 @@ namespace Quik_BookingApp.DAO
             modelBuilder.Entity<Amenity>().HasKey(a => a.AmenityId);
             modelBuilder.Entity<TblRefreshToken>().HasKey(rt => new { rt.UserId, rt.TokenId });
 
-            
-            modelBuilder.Entity<Business>()
-                .HasOne(b => b.Owner)
-                .WithMany(u => u.Businesses)
-                .HasForeignKey(b => b.OwnerId)
-                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<WorkingSpace>()
                 .HasOne(ws => ws.Business)
@@ -127,7 +121,7 @@ namespace Quik_BookingApp.DAO
                 {
                     BusinessId = "business001",
                     BusinessName = "Jane's Workspace",
-                    OwnerId = "jane_business",
+                    Presentor = "Jane Business",
                     Location = "123 Main Street",
                     Description = "A cozy working space for startups."
                 }

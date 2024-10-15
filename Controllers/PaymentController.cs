@@ -24,51 +24,93 @@ namespace Quik_BookingApp.Controllers
             _vnpayService = vnpayService;
         }
 
+        // POST: api/VNPay/CreatePaymentUrl
+        [HttpPost("CreatePaymentUrl")]
+        public IActionResult CreatePaymentUrl([FromBody] PaymentInformationModel model)
+        {
+            if (model == null || model.Amount <= 0)
+            {
+                return BadRequest(new { message = "Invalid payment information" });
+            }
+
+            var paymentUrl = _vnpayService.CreatePaymentUrl(model, HttpContext);
+
+            if (!string.IsNullOrEmpty(paymentUrl))
+            {
+                return Ok(new { PaymentUrl = paymentUrl });
+            }
+
+            return StatusCode(500, new { message = "Failed to create payment URL" });
+        }
+
+        // GET: api/VNPay/PaymentCallback
+        [HttpGet("PaymentCallback")]
+        public IActionResult PaymentCallback()
+        {
+            var queryParams = Request.Query;
+
+            if (queryParams.Count == 0)
+            {
+                return BadRequest(new { message = "No query parameters found" });
+            }
+
+            var paymentResponse = _vnpayService.PaymentExecute(queryParams);
+
+            if (paymentResponse != null && paymentResponse.VnPayResponseCode == "200")
+            {
+                // Xử lý thành công thanh toán
+                return Ok(new { message = "Payment successful", paymentResponse });
+            }
+
+            // Xử lý thanh toán thất bại
+            return BadRequest(new { message = "Payment failed", paymentResponse });
+        }
+
         // Tạo URL thanh toán cho VNPay
-        [HttpPost("create")]
-        public async Task<IActionResult> CreatePaymentUrl([FromBody] VNPayPaymentRequestModel model)
-        {
-            var vnpayUrl = _vnpayService.CreatePaymentUrl(model.Amount, model.BookingId, model.Name);
+        //[HttpPost("create")]
+        //public async Task<IActionResult> CreatePaymentUrl([FromBody] VNPayPaymentRequestModel model)
+        //{
+        //    var vnpayUrl = _vnpayService.CreatePaymentUrl(model.Amount, model.BookingId, model.Name);
 
-            var payment = new Payment
-            {
-                PaymentId = Guid.NewGuid(),
-                BookingId = model.BookingId,
-                Amount = model.Amount,
-                PaymentUrl = vnpayUrl,
-                PaymentStatus = "Pending",
-                PaymentMethod = "VNPay",
-                VNPayResponseCode = "200",
-                VNPayTransactionId = "Ok"
+        //    var payment = new Payment
+        //    {
+        //        PaymentId = Guid.NewGuid(),
+        //        BookingId = model.BookingId,
+        //        Amount = model.Amount,
+        //        PaymentUrl = vnpayUrl,
+        //        PaymentStatus = "Pending",
+        //        PaymentMethod = "VNPay",
+        //        VNPayResponseCode = "200",
+        //        VNPayTransactionId = "Ok"
 
-            };
+        //    };
 
-            await _paymentService.SavePaymentAsync(payment);
+        //    await _paymentService.SavePaymentAsync(payment);
 
-            return Ok(new { paymentUrl = vnpayUrl });
-        }
+        //    return Ok(new { paymentUrl = vnpayUrl });
+        //}
 
-        // Xử lý callback từ VNPay
-        [HttpGet("callback")]
-        public async Task<IActionResult> PaymentCallback([FromQuery] VNPayCallbackModel model)
-        {
-            var isValid = _vnpayService.ValidateSignature(model);
-            if (!isValid)
-            {
-                return BadRequest("Invalid signature");
-            }
+        //// Xử lý callback từ VNPay
+        //[HttpGet("callback")]
+        //public async Task<IActionResult> PaymentCallback([FromQuery] VNPayCallbackModel model)
+        //{
+        //    var isValid = _vnpayService.ValidateSignature(model);
+        //    if (!isValid)
+        //    {
+        //        return BadRequest("Invalid signature");
+        //    }
 
-            if (model.vnp_ResponseCode == "00")
-            {
-                await _paymentService.UpdatePaymentStatusAsync(Guid.Parse(model.vnp_TxnRef), "Success");
-                return Ok("Payment successful");
-            }
-            else
-            {
-                await _paymentService.UpdatePaymentStatusAsync(Guid.Parse(model.vnp_TxnRef), "Failed");
-                return BadRequest("Payment failed");
-            }
-        }
+        //    if (model.vnp_ResponseCode == "00")
+        //    {
+        //        await _paymentService.UpdatePaymentStatusAsync(Guid.Parse(model.vnp_TxnRef), "Success");
+        //        return Ok("Payment successful");
+        //    }
+        //    else
+        //    {
+        //        await _paymentService.UpdatePaymentStatusAsync(Guid.Parse(model.vnp_TxnRef), "Failed");
+        //        return BadRequest("Payment failed");
+        //    }
+        //}
     }
 
 
