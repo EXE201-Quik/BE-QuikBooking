@@ -12,7 +12,7 @@ using Quik_BookingApp.DAO;
 namespace QuikBookingApp.Migrations
 {
     [DbContext(typeof(QuikDbContext))]
-    [Migration("20241015090022_Quik")]
+    [Migration("20241015183344_Quik")]
     partial class Quik
     {
         /// <inheritdoc />
@@ -112,14 +112,14 @@ namespace QuikBookingApp.Migrations
                         new
                         {
                             BookingId = "booking001",
-                            BookingDate = new DateTime(2024, 10, 15, 0, 0, 0, 0, DateTimeKind.Local),
+                            BookingDate = new DateTime(2024, 10, 16, 0, 0, 0, 0, DateTimeKind.Local),
                             DepositAmount = 20000m,
-                            EndTime = new DateTime(2024, 10, 15, 19, 0, 22, 298, DateTimeKind.Local).AddTicks(9647),
+                            EndTime = new DateTime(2024, 10, 16, 4, 33, 44, 506, DateTimeKind.Local).AddTicks(9211),
                             NumberOfPeople = 4,
-                            PaymentId = new Guid("22a58108-55dd-47ec-9a6c-8426a98b9831"),
+                            PaymentId = new Guid("a31f3afe-6d84-4b03-88b9-23b20117ded0"),
                             RemainingAmount = 180000m,
                             SpaceId = "space001",
-                            StartTime = new DateTime(2024, 10, 15, 17, 0, 22, 298, DateTimeKind.Local).AddTicks(9642),
+                            StartTime = new DateTime(2024, 10, 16, 2, 33, 44, 506, DateTimeKind.Local).AddTicks(9205),
                             Status = "Hoàn tất",
                             TotalAmount = 200000m,
                             Username = "john_doe"
@@ -139,20 +139,23 @@ namespace QuikBookingApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Presentor")
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BusinessId");
-
-                    b.HasIndex("Username");
 
                     b.ToTable("Businesses");
 
@@ -162,8 +165,10 @@ namespace QuikBookingApp.Migrations
                             BusinessId = "business001",
                             BusinessName = "Jane's Workspace",
                             Description = "A cozy working space for startups.",
+                            Email = "jane.business@example.com",
                             Location = "123 Main Street",
-                            Presentor = "Jane Business"
+                            Password = "hashedpassword789",
+                            PhoneNumber = "123456789"
                         });
                 });
 
@@ -285,10 +290,10 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            PaymentId = new Guid("81fb0d62-23e1-43da-8251-89d459298948"),
+                            PaymentId = new Guid("8b776c2d-ce20-49f5-bf89-72b26596456d"),
                             Amount = 50000.0,
                             BookingId = "booking001",
-                            PaymentDate = new DateTime(2024, 10, 15, 16, 0, 22, 298, DateTimeKind.Local).AddTicks(9664),
+                            PaymentDate = new DateTime(2024, 10, 16, 1, 33, 44, 506, DateTimeKind.Local).AddTicks(9226),
                             PaymentMethod = "Credit Card",
                             PaymentStatus = "Success",
                             PaymentUrl = "toexample@gmail.com",
@@ -319,6 +324,59 @@ namespace QuikBookingApp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PwdManagers");
+                });
+
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.Review", b =>
+                {
+                    b.Property<Guid>("ReviewId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SpaceId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ReviewId");
+
+                    b.HasIndex("SpaceId");
+
+                    b.HasIndex("Username");
+
+                    b.ToTable("Reviews");
+
+                    b.HasData(
+                        new
+                        {
+                            ReviewId = new Guid("eb5dbe9d-fa1a-43d6-9353-10ba5508be27"),
+                            Comment = "Great office space, very comfortable!",
+                            CreatedAt = new DateTime(2024, 10, 16, 1, 33, 44, 506, DateTimeKind.Local).AddTicks(9239),
+                            Rating = 4,
+                            SpaceId = "space001",
+                            Username = "john_doe"
+                        },
+                        new
+                        {
+                            ReviewId = new Guid("c34afef1-e3c5-41a5-81e1-5f0a4ba1d633"),
+                            Comment = "Came back here, still amazing experience!",
+                            CreatedAt = new DateTime(2024, 10, 14, 1, 33, 44, 506, DateTimeKind.Local).AddTicks(9241),
+                            Rating = 5,
+                            SpaceId = "space001",
+                            Username = "john_doe"
+                        });
                 });
 
             modelBuilder.Entity("Quik_BookingApp.DAO.Models.TblRefreshToken", b =>
@@ -577,13 +635,6 @@ namespace QuikBookingApp.Migrations
                     b.Navigation("WorkingSpace");
                 });
 
-            modelBuilder.Entity("Quik_BookingApp.DAO.Models.Business", b =>
-                {
-                    b.HasOne("Quik_BookingApp.DAO.Models.User", null)
-                        .WithMany("Businesses")
-                        .HasForeignKey("Username");
-                });
-
             modelBuilder.Entity("Quik_BookingApp.DAO.Models.ImageWS", b =>
                 {
                     b.HasOne("Quik_BookingApp.DAO.Models.WorkingSpace", "WorkingSpace")
@@ -604,6 +655,25 @@ namespace QuikBookingApp.Migrations
                         .IsRequired();
 
                     b.Navigation("Booking");
+                });
+
+            modelBuilder.Entity("Quik_BookingApp.DAO.Models.Review", b =>
+                {
+                    b.HasOne("Quik_BookingApp.DAO.Models.WorkingSpace", "WorkingSpace")
+                        .WithMany("Reviews")
+                        .HasForeignKey("SpaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Quik_BookingApp.DAO.Models.User", "User")
+                        .WithMany("Reviews")
+                        .HasForeignKey("Username")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("WorkingSpace");
                 });
 
             modelBuilder.Entity("Quik_BookingApp.DAO.Models.WorkingSpace", b =>
@@ -632,7 +702,7 @@ namespace QuikBookingApp.Migrations
                 {
                     b.Navigation("Bookings");
 
-                    b.Navigation("Businesses");
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("Quik_BookingApp.DAO.Models.WorkingSpace", b =>
@@ -642,6 +712,8 @@ namespace QuikBookingApp.Migrations
                     b.Navigation("Bookings");
 
                     b.Navigation("Images");
+
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

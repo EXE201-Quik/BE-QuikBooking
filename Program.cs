@@ -67,6 +67,9 @@ builder.Services.AddTransient<IRefreshHandler, RefreshHandler>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
 builder.Services.AddTransient<IVnPayService, VNPayService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+
+
 
 builder.Services.AddDbContext<QuikDbContext>(o =>
 o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), options => options.CommandTimeout(60)));

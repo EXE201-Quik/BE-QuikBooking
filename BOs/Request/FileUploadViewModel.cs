@@ -1,4 +1,4 @@
-﻿namespace Quik_BookingApp.DAO.Models
+﻿namespace Quik_BookingApp.BOs.Request
 {
     public class FileUploadViewModel
     {

@@ -17,7 +17,8 @@ namespace Quik_BookingApp.DAO.Models
         public ICollection<Booking> Bookings { get; set; }
         public ICollection<Amenity> Amenities { get; set; }
         public ICollection<ImageWS> Images { get; set; }
-       
+        public ICollection<Review> Reviews { get; set; }
+
 
     }
 

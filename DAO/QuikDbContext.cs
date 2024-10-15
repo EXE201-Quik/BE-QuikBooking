@@ -22,6 +22,7 @@ namespace Quik_BookingApp.DAO
         public DbSet<OtpManager> OtpManagers { get; set; }
         public DbSet<PwdManager> PwdManagers { get; set; }
         public DbSet<Amenity> Amenities { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -47,6 +48,7 @@ namespace Quik_BookingApp.DAO
             modelBuilder.Entity<PwdManager>().HasKey(pm => pm.Id);
             modelBuilder.Entity<Amenity>().HasKey(a => a.AmenityId);
             modelBuilder.Entity<TblRefreshToken>().HasKey(rt => new { rt.UserId, rt.TokenId });
+            modelBuilder.Entity<Review>().HasKey(rt => rt.ReviewId);
 
 
             modelBuilder.Entity<WorkingSpace>()
@@ -62,10 +64,10 @@ namespace Quik_BookingApp.DAO
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<WorkingSpace>()
-                .HasMany(ws => ws.Amenities) 
+                .HasMany(ws => ws.Amenities)
                 .WithOne()
                 .HasForeignKey(a => a.SpaceId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.User)
@@ -83,6 +85,18 @@ namespace Quik_BookingApp.DAO
                 .HasOne(b => b.Payment)
                 .WithOne(p => p.Booking)
                 .HasForeignKey<Payment>(p => p.BookingId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Reviews) // A user can have many reviews
+                .HasForeignKey(r => r.Username)
+                .OnDelete(DeleteBehavior.NoAction); // No cascading delete
+
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.WorkingSpace)
+                .WithMany(ws => ws.Reviews) // A working space can have many reviews
+                .HasForeignKey(r => r.SpaceId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<User>().HasData(
@@ -121,11 +135,14 @@ namespace Quik_BookingApp.DAO
                 {
                     BusinessId = "business001",
                     BusinessName = "Jane's Workspace",
-                    Presentor = "Jane Business",
+                    PhoneNumber = "123456789",
+                    Email = "jane.business@example.com",
+                    Password = "hashedpassword789",  
                     Location = "123 Main Street",
                     Description = "A cozy working space for startups."
                 }
             );
+
 
             modelBuilder.Entity<WorkingSpace>().HasData(
                 new WorkingSpace
@@ -236,7 +253,7 @@ namespace Quik_BookingApp.DAO
 
             modelBuilder.Entity<Payment>().HasData(
                 new Payment
-                { 
+                {
                     PaymentId = Guid.NewGuid(),
                     BookingId = "booking001",
                     Amount = 50000,
@@ -248,6 +265,27 @@ namespace Quik_BookingApp.DAO
                     PaymentUrl = "toexample@gmail.com"
                 }
             );
+
+            modelBuilder.Entity<Review>().HasData(
+                new Review
+                {
+                    ReviewId = Guid.NewGuid(),
+                    Username = "john_doe",  // Refers to User table
+                    SpaceId = "space001",   // Refers to WorkingSpace table
+                    Rating = 4,
+                    Comment = "Great office space, very comfortable!",
+                    CreatedAt = DateTime.Now
+                },
+                new Review
+                {
+                    ReviewId = Guid.NewGuid(),
+                    Username = "john_doe",  // Same user as before
+                    SpaceId = "space001",   // Same working space
+                    Rating = 5,
+                    Comment = "Came back here, still amazing experience!",
+                    CreatedAt = DateTime.Now.AddDays(-2)
+                }
+    );
         }
     }
 }
