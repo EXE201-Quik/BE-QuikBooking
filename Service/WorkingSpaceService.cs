@@ -30,17 +30,18 @@ namespace Quik_BookingApp.Service
             this._configuration = configuration;
         }
 
-        public async Task<APIResponse> CreateWS(WorkingSpaceRequestModel ws)
+        public async Task<APIResponseData> CreateWS(WorkingSpaceRequestModel ws)
         {
             try
             {
                 if (ws == null)
                 {
-                    return new APIResponse
+                    return new APIResponseData
                     {
                         ResponseCode = 400,
                         Result = "Failure",
-                        Message = "Working space cannot be null"
+                        Message = "Working space cannot be null",
+                        Data = ws
                     };
                 }
 
@@ -51,11 +52,12 @@ namespace Quik_BookingApp.Service
                 var business = await context.Businesses.FindAsync(ws.BusinessId);
                 if (business == null)
                 {
-                    return new APIResponse
+                    return new APIResponseData
                     {
                         ResponseCode = 400,
                         Result = "Failure",
-                        Message = "Business not found."
+                        Message = "Business not found.",
+                        Data = ws
                     };
                 }
 
@@ -71,7 +73,7 @@ namespace Quik_BookingApp.Service
                     Capacity = ws.Capacity,
                     Location = ws.Location,
                     RoomType = ws.RoomType,
-                    
+                    Images = new List<ImageWS>()
                 };
 
                 // Check if an image is uploaded
@@ -86,6 +88,10 @@ namespace Quik_BookingApp.Service
                         var newImageWS = new ImageWS
                         {
                             ImageUrl = uploadResult.Data.ToString(), 
+                            ImageId = Guid.NewGuid().ToString(),
+                            SpaceId = ws.SpaceId,
+                            WorkingSpaceName = workingSpace.Title,
+                            WSCode = "Updated",
                         };
                         workingSpace.Images.Add(newImageWS); 
 
@@ -93,11 +99,12 @@ namespace Quik_BookingApp.Service
                     }
                     else
                     {
-                        return new APIResponse
+                        return new APIResponseData
                         {
                             ResponseCode = 500,
                             Result = "Failure",
-                            Message = "Failed to upload image to Firebase."
+                            Message = "Failed to upload image to Firebase.",
+                            Data = ws
                         };
                     }
                 }
@@ -123,11 +130,12 @@ namespace Quik_BookingApp.Service
                 // Map to WorkingSpaceModel
                 var workingSpaceModel = mapper.Map<WorkingSpace>(workingSpace);
 
-                return new APIResponse
+                return new APIResponseData
                 {
                     ResponseCode = 201,
                     Result = "Success",
                     Message = "Working space created successfully.",
+                    Data = workingSpaceModel
                 };
             }
             catch (DbUpdateException dbEx)
@@ -135,22 +143,24 @@ namespace Quik_BookingApp.Service
                 var innerExceptionMessage = dbEx.InnerException != null ? dbEx.InnerException.Message : dbEx.Message;
                 _logger.LogError(dbEx, "Database error during working space creation: {Message}", innerExceptionMessage);
 
-                return new APIResponse
+                return new APIResponseData
                 {
                     ResponseCode = 500,
                     Result = "Failure",
-                    Message = "Database error: " + innerExceptionMessage
+                    Message = "Database error: " + innerExceptionMessage,
+                    Data = ws
                 };
             }
             catch (Exception ex)
             {
                 // Log detailed exception information
                 _logger.LogError(ex, "Error creating working space: {Message}", ex.ToString());
-                return new APIResponse
+                return new APIResponseData
                 {
                     ResponseCode = 500,
                     Result = "Failure",
-                    Message = "Error creating working space."
+                    Message = "Error creating working space.",
+                    Data = ws
                 };
             }
         }

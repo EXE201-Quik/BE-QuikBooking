@@ -1,4 +1,6 @@
-﻿namespace Quik_BookingApp.DAO.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Quik_BookingApp.DAO.Models
 
 {
     public class Business
@@ -10,7 +12,8 @@
         public string Password { get; set; } 
         public string Location { get; set; }
         public string Description { get; set; }
-        
+
+        [JsonIgnore]
         public ICollection<WorkingSpace> WorkingSpaces { get; set; }
     }
 }

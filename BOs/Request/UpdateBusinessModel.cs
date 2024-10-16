@@ -1,8 +1,7 @@
 ﻿namespace Quik_BookingApp.BOs.Request
 {
-    public class BusinessRequestModel
-    {
-        public string BusinessId { get; set; }
+    public class UpdateBusinessModel
+    {   
         public string BusinessName { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }

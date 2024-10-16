@@ -29,6 +29,9 @@ namespace Quik_BookingApp.Modal
             //    .ForMember(dest => dest.EmailVerificationToken, opt => opt.MapFrom(src => src.EmailVerifiedToken));
 
             CreateMap<Payment, CreatePaymentRequest>();
+            CreateMap<WorkingSpace, WSWBNameResponse>()
+                .ForMember(dest => dest.BusinessName, opt => opt.MapFrom(src => src.Business.BusinessName));
+            CreateMap<Business, BusinessRequestModel>();
         }
     }
 }
