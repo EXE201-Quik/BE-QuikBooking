@@ -13,79 +13,57 @@ namespace Quik_BookingApp.Service
     public class BusinessService : IBusinessService
     {
         private readonly QuikDbContext _context;
-        public readonly IMapper _mapper;
-        public readonly ILogger<BusinessService> _logger;
 
-        public BusinessService(QuikDbContext context, IMapper _mapper, ILogger<BusinessService> _logger)
+        public BusinessService(QuikDbContext context)
         {
             _context = context;
-            this._mapper = _mapper;
-            this._logger = _logger;
         }
 
-        public async Task<List<BusinessResponseModel>> GetAllBusiness()
+        public async Task<IEnumerable<Business>> GetAllBusinessesAsync()
         {
-            List<BusinessResponseModel> _response = new List<BusinessResponseModel>();
-            var _data = await _context.Businesses.ToListAsync();
-            if (_data != null)
-            {
-                _response = _mapper.Map<List<Business>, List<BusinessResponseModel>>(_data);
-            }
-            return _response;
+            return await _context.Businesses.Include(b => b.WorkingSpaces).ToListAsync();
         }
 
-        public async Task<List<WorkingSpaceResponse>> GetListWSOfBusiness(string businessId)
+        public async Task<Business> GetBusinessByIdAsync(string businessId)
         {
-            try
-            {
-                // Retrieve the list of working spaces for the specified businessId
-                var workingSpaces = await _context.WorkingSpaces
-                    .Where(ws => ws.BusinessId == businessId) 
-                    .ToListAsync();
-
-                if (workingSpaces == null || !workingSpaces.Any())
-                {
-                    throw new Exception("No working spaces found for this business.");
-                }
-
-                // Map to response model (assuming you have AutoMapper configured)
-                var _response = _mapper.Map<List<WorkingSpaceResponse>>(workingSpaces);
-
-                return _response;
-            }
-            catch (Exception ex)
-            {
-                // It's a good practice to log the exception here
-                throw new Exception("An error occurred while retrieving working spaces: " + ex.Message);
-            }
+            return await _context.Businesses
+                                 .Include(b => b.WorkingSpaces)
+                                 .FirstOrDefaultAsync(b => b.BusinessId == businessId);
         }
 
-
-        public async Task<BusinessResponseModel> GetBusinessById(string bid)
+        public async Task<Business> CreateBusinessAsync(Business business)
         {
-            try
-            {
-                // Find the business by its ID
-                var business = await _context.Businesses.FindAsync(bid);
-                if (business == null)
-                {
-                    throw new Exception("Business not found.");
-                }
-
-                // Map the business entity to BusinessResponseModel
-                var businessResponse = _mapper.Map<BusinessResponseModel>(business);
-
-                return businessResponse;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while retrieving the business.");
-                throw; // Rethrow the exception so it can be handled by the calling method
-            }
+            business.BusinessId = Guid.NewGuid().ToString();
+            _context.Businesses.Add(business);
+            await _context.SaveChangesAsync();
+            return business;
         }
 
-      
-        
+        public async Task<Business> UpdateBusinessAsync(Business business)
+        {
+            var existingBusiness = await _context.Businesses.FindAsync(business.BusinessId);
+            if (existingBusiness == null) return null;
 
+            existingBusiness.BusinessName = business.BusinessName;
+            existingBusiness.PhoneNumber = business.PhoneNumber;
+            existingBusiness.Email = business.Email;
+            existingBusiness.Password = business.Password;
+            existingBusiness.Location = business.Location;
+            existingBusiness.Description = business.Description;
+
+            await _context.SaveChangesAsync();
+            return existingBusiness;
+        }
+
+        public async Task<bool> DeleteBusinessAsync(string businessId)
+        {
+            var business = await _context.Businesses.FindAsync(businessId);
+            if (business == null) return false;
+
+            _context.Businesses.Remove(business);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
+
 }

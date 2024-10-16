@@ -23,7 +23,8 @@ namespace Quik_BookingApp.DAO.Models
         //public string? EmailVerificationToken { get; set; }
 
         public ICollection<Booking> Bookings { get; set; }
-        //public ICollection<Business> Businesses { get; set; }
+        public ICollection<Review> Reviews { get; set; }
+
     }
 
 
