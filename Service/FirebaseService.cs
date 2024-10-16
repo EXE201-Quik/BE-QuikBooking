@@ -13,10 +13,10 @@ namespace Quik_BookingApp.Service
     public class FirebaseService : IFirebaseService
     {
 
-        private static string ApiKey = "AIzaSyCr3D6-Z3owDLYkN8nW4sF4pWLnGXIbzEE";
-        private static string Bucket = "quik-77aae.appspot.com";
-        private static string AuthEmail = "huylqse173543@fpt.edu.vn";
-        private static string AuthPassword = "123456";
+        //private static string ApiKey = "AIzaSyCr3D6-Z3owDLYkN8nW4sF4pWLnGXIbzEE";
+        //private static string Bucket = "quik-77aae.appspot.com";
+        //private static string AuthEmail = "huylqse173543@fpt.edu.vn";
+        //private static string AuthPassword = "123456";
 
 
         private readonly FirebaseConfiguration _firebaseConfiguration;
@@ -32,8 +32,8 @@ namespace Quik_BookingApp.Service
             var _result = new ServiceResult();
             try
             {
-                var auth = new FirebaseAuthProvider (new FirebaseConfig(ApiKey));
-                var account = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+                var auth = new FirebaseAuthProvider (new FirebaseConfig(_firebaseConfiguration.ApiKey));
+                var account = await auth.SignInWithEmailAndPasswordAsync(_firebaseConfiguration.AuthEmail, _firebaseConfiguration.AuthPassword);
                 var storage = new FirebaseStorage(
              _firebaseConfiguration.Bucket,
              new FirebaseStorageOptions
@@ -79,54 +79,58 @@ namespace Quik_BookingApp.Service
             return string.Empty;
         }
 
+      
+
         public async Task<IServiceResult> UploadFileToFirebase(IFormFile file, string pathFileName)
         {
             var _result = new ServiceResult();
-            bool isValid = true;
+
             if (file == null || file.Length == 0)
             {
-                isValid = false;
                 _result.Message = "The file is empty";
+                _result.Status = 400;
+                return _result;
             }
-            if (isValid)
+
+            try
             {
-                var stream = file!.OpenReadStream();
-                var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
-                var account = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
-                string destinationPath = $"{pathFileName}";
+                var apiKey = _firebaseConfiguration.ApiKey;
+                var stream = file.OpenReadStream();
+                var auth = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+                var account = await auth.SignInWithEmailAndPasswordAsync(_firebaseConfiguration.AuthEmail, _firebaseConfiguration.AuthPassword);
 
+                var encodedPathFileName = Uri.EscapeDataString(pathFileName);
                 var task = new FirebaseStorage(
-                _firebaseConfiguration.Bucket,
-                new FirebaseStorageOptions
-                {
-                    AuthTokenAsyncFactory = () => Task.FromResult(account.FirebaseToken),
-                    ThrowOnCancel = true
-                })
-                .Child(destinationPath)
-                .PutAsync(stream);
-                var downloadUrl = await task;
+                    _firebaseConfiguration.Bucket,
+                    new FirebaseStorageOptions
+                    {
+                        AuthTokenAsyncFactory = () => Task.FromResult(account.FirebaseToken),
+                        ThrowOnCancel = true
+                    })
+                    .Child(encodedPathFileName)
+                    .PutAsync(stream);
 
-                if (task != null)
-                {
-                    _result.Status = 200;
-                    _result.Message = "Success";
-                    _result.Data = downloadUrl;
-                }
-                else
-                {
-                    _result.Status = 500;
-                    _result.Message = "Upload failed";
-                }
+                var downloadUrl = await task;
+                _result.Status = 200;
+                _result.Message = "Success";
+                _result.Data = downloadUrl;
             }
+            catch (FirebaseStorageException ex)
+            {
+                _result.Status = 500;
+                _result.Message = $"Upload failed: {ex.Message}";
+            }
+
             return _result;
         }
+
         public async Task<IServiceResult> UploadFilesToFirebase(List<IFormFile> files, string basePath)
         {
             var _result = new ServiceResult();
             var uploadResults = new List<string>();
 
-            var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
-            var account = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+            var auth = new FirebaseAuthProvider(new FirebaseConfig(_firebaseConfiguration.ApiKey));
+            var account = await auth.SignInWithEmailAndPasswordAsync(_firebaseConfiguration.AuthEmail, _firebaseConfiguration.AuthPassword);
             var storage = new FirebaseStorage(
                 _firebaseConfiguration.Bucket,
                 new FirebaseStorageOptions
@@ -139,40 +143,37 @@ namespace Quik_BookingApp.Service
             {
                 if (file == null || file.Length == 0)
                 {
-                    _result.Message = "One or more files are empty";
+                    _result.Message = $"One or more files are empty: {file?.FileName}";
                     continue;
                 }
 
-                var stream = file.OpenReadStream();
-                string destinationPath = $"{basePath}/{file.FileName}";
-
-                var task = storage.Child(destinationPath).PutAsync(stream);
-                var downloadUrl = await task;
-
-                if (task != null)
+                try
                 {
+                    var stream = file.OpenReadStream();
+                    string destinationPath = $"{basePath}/{file.FileName}";
+
+                    var task = storage.Child(destinationPath).PutAsync(stream);
+                    var downloadUrl = await task;
+
                     uploadResults.Add(downloadUrl);
                 }
-                else
+                catch (FirebaseStorageException ex)
                 {
                     _result.Status = 500;
-                    _result.Message = $"Upload failed for file: {file.FileName}";
+                    _result.Message = $"Upload failed for file: {file.FileName} - {ex.Message}";
                 }
             }
 
             _result.Data = uploadResults;
-            if (uploadResults.Count == files.Count)
-            {
-                _result.Status = 200;
-                _result.Message = "All files uploaded successfully";
-            }
-            else
-            {
-                _result.Status = 500;
-                _result.Message = "Some files failed to upload";
-            }
+            _result.Status = uploadResults.Count == files.Count ? 200 : 500;
+            _result.Message = uploadResults.Count == files.Count
+                ? "All files uploaded successfully"
+                : "Some files failed to upload";
 
             return _result;
         }
+
+
+        
     }
 }
