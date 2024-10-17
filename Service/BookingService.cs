@@ -17,14 +17,16 @@ namespace Quik_BookingApp.Service
     {
         private readonly QuikDbContext _context;
         public readonly IMapper _mapper;
+        private readonly EmailService _emailService;
         public readonly ILogger<BookingService> _logger;
         public const decimal CommissionPerPerson = 4000;
 
-        public BookingService(QuikDbContext context, IMapper _mapper, ILogger<BookingService> _logger)
+        public BookingService(QuikDbContext context, IMapper _mapper, ILogger<BookingService> _logger, EmailService emailService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             this._mapper = _mapper ?? throw new ArgumentNullException(nameof(_mapper));
             this._logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
+            _emailService = emailService;
         }
 
         //can sua lai
@@ -82,22 +84,23 @@ namespace Quik_BookingApp.Service
                    
                 };
 
-                //var payment = new Payment
-                //{
-                //    PaymentId = booking.PaymentId,
-                //    BookingId = booking.BookingId,
-                //    Amount = booking.DepositAmount,
-                //    PaymentMethod = "VNPay",
-                //    PaymentDate = DateTime.Now,
-                //    PaymentStatus = "Pending",
-                //    VNPayTransactionId = Guid.NewGuid().ToString(),
-                //    VNPayResponseCode = Guid.NewGuid().ToString(),
-                //    PaymentUrl = null
-                //};
-
                 _context.Bookings.Add(booking);
                 //_context.Payments.Add(payment);
                 await _context.SaveChangesAsync();
+
+                //string subject = "Xác nhận đặt phòng thành công";
+                //string body = $@"
+                //    <h2>Cảm ơn bạn đã đặt phòng với Quik Booking!</h2>
+                //    <p>Chi tiết đặt phòng của bạn:</p>
+                //    <ul>
+                //        <li>Mã đặt phòng: {booking.BookingId}</li>
+                //        <li>Không gian: {space.Description}</li>
+                //        <li>Thời gian: {booking.StartTime} đến {booking.EndTime}</li>
+                //        <li>Tổng chi phí: {totalAmount} VND</li>
+                //        <li>Tiền cần thanh toán: {booking.RemainingAmount}</li>
+                //    </ul>";
+
+                //await _emailService.SendEmailAsync(bookingRequest.Username, subject, body);
 
                 _logger.LogInformation("Booking created successfully for user {UserId} and space {SpaceId}.", bookingRequest.Username, bookingRequest.SpaceId);
 

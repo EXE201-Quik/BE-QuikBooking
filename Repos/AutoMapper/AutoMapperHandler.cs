@@ -32,6 +32,7 @@ namespace Quik_BookingApp.Modal
             CreateMap<WorkingSpace, WSWBNameResponse>()
                 .ForMember(dest => dest.BusinessName, opt => opt.MapFrom(src => src.Business.BusinessName));
             CreateMap<Business, BusinessRequestModel>();
+            CreateMap<Review, ReviewRequestModel>();
         }
     }
 }

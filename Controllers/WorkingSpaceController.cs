@@ -35,46 +35,7 @@ namespace Quik_BookingApp.Controllers
             this.workingSpaceService = workingSpaceService;
         }
 
-        //[HttpPost]
-        //private async Task<IActionResult> Index(FileUploadViewModel file)
-        //{
-        //    var fileUpload = file.File;
-        //    if (fileUpload.Length > 0)
-        //    {
-        //        var fs = fileUpload.OpenReadStream();
-
-        //        // Firebase authentication
-        //        var authProvider = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
-                
-                 
-        //        var auth = await authProvider.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
-
-        //        // Cancellation token
-        //        var cancellation = new CancellationTokenSource();
-
-        //        // Uploading to Firebase Storage
-        //        var upload = new FirebaseStorage(Bucket, new FirebaseStorageOptions
-        //        {
-        //            AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken),
-        //            ThrowOnCancel = true
-        //        })
-        //            .Child("assets")
-        //            .Child($"{Path.GetFileNameWithoutExtension(fileUpload.FileName)}{Path.GetExtension(fileUpload.FileName)}")
-        //            .PutAsync(fs, cancellation.Token);
-
-        //        try
-        //        {
-        //            var downloadUrl = await upload;
-        //            return Ok(new { link = downloadUrl });
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Debug.WriteLine($"**********{ex}**********");
-        //            return StatusCode(500, "An error occurred while uploading the file.");
-        //        }
-        //    }
-        //    return BadRequest("File is empty");
-        //}
+        
 
 
         [SwaggerOperation(
@@ -123,26 +84,10 @@ namespace Quik_BookingApp.Controllers
             return StatusCode(response.ResponseCode, response);
         }
 
-        //[SwaggerOperation(
-        //     Summary = "Get List theo room type",
-        //     Description = "Lấy list theo 4 loại:\r\n- Không gian làm việc chung \r\n- Phòng họp\r\n- Study hub\r\n- Không gian văn phòng"
-        //)]
-        //[HttpGet("roomtype/{roomType}")]
-        //public async Task<ActionResult<List<WorkingSpaceRequestModel>>> GetWSOfRoomType(string roomType)
-        //{
-        //    var result = await workingSpaceService.GetWSOfRoomType(roomType);
-        //    if (result == null)
-        //    {
-        //        return NotFound(new APIResponse
-        //        {
-        //            ResponseCode = 404,
-        //            Result = "Failure",
-        //            Message = "No working spaces found for the specified room type."
-        //        });
-        //    }
-        //    return Ok(result);
-        //}
-
+        [SwaggerOperation(
+             Summary = "Get List theo room type: Không gian làm việc chung",
+             Description = "Lấy list theo 4 loại:\r\n- Không gian làm việc chung \r\n- Phòng họp\r\n- Study hub\r\n- Không gian văn phòng"
+        )]
         [HttpGet("WorkingArea")]
         public async Task<IActionResult> GetWorkingAreaSpaces()
         {
@@ -154,6 +99,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(result);
         }
 
+        [SwaggerOperation(
+             Summary = "Get List theo room type: Phòng họp",
+             Description = "Lấy list theo 4 loại:\r\n- Không gian làm việc chung \r\n- Phòng họp\r\n- Study hub\r\n- Không gian văn phòng"
+        )]
         [HttpGet("MeetingRoom")]
         public async Task<IActionResult> GetMeetingRoomSpaces()
         {
@@ -165,6 +114,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(result);
         }
 
+        [SwaggerOperation(
+             Summary = "Get List theo room type: Study hub",
+             Description = "Lấy list theo 4 loại:\r\n- Không gian làm việc chung \r\n- Phòng họp\r\n- Study hub\r\n- Không gian văn phòng"
+        )]
         [HttpGet("CommonSpace")]
         public async Task<IActionResult> GetCommonSpaceSpaces()
         {
@@ -176,6 +129,10 @@ namespace Quik_BookingApp.Controllers
             return Ok(result);
         }
 
+        [SwaggerOperation(
+             Summary = "Get List theo room type: Không gian văn phòng",
+             Description = "Lấy list theo 4 loại:\r\n- Không gian làm việc chung \r\n- Phòng họp\r\n- Study hub\r\n- Không gian văn phòng"
+        )]
         [HttpGet("PrivateOffice")]
         public async Task<IActionResult> GetPrivateOfficeSpaces()
         {
