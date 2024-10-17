@@ -23,7 +23,7 @@ namespace Quik_BookingApp.Service
             var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, user.Email),
-            new Claim(ClaimTypes.NameIdentifier, user.Username.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user.Email.ToString()),
         };
 
             foreach (var role in roles)

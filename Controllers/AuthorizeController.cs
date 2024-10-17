@@ -29,39 +29,54 @@ namespace Quik_BookingApp.Controllers
         }
 
         [SwaggerOperation(
-            Summary = "Generate JWT token",
-            Description = "Generates a JWT token and a refresh token if the provided user credentials are valid."
-        )]
+     Summary = "Generate JWT token",
+     Description = "Generates a JWT token and a refresh token if the provided user credentials are valid."
+ )]
         [HttpPost("GenerateToken")]
         public async Task<IActionResult> GenerateToken([FromBody] UserCred userCred)
         {
-            var user = await this.context.Users.FirstOrDefaultAsync(item => item.Email == userCred.Email && item.Password == userCred.Password);
-            if (user != null)
+            // Find the user by email
+            var user = await this.context.Users
+                .FirstOrDefaultAsync(item => item.Email == userCred.Email);
+
+            // If user is found, verify the password
+            if (user != null && VerifyPassword(userCred.Password, user.Password))
             {
-                //generate token
-                var tokenhandler = new JwtSecurityTokenHandler();
-                var tokenkey = Encoding.UTF8.GetBytes(this.jwtSettings.Securitykey);
-                var tokendesc = new SecurityTokenDescriptor
+                // Generate token
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var tokenKey = Encoding.UTF8.GetBytes(this.jwtSettings.Securitykey);
+                var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                        new Claim(ClaimTypes.Name,user.Username),
-                        new Claim(ClaimTypes.Role,user.Role)
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, user.Role)
                     }),
-                    Expires = DateTime.UtcNow.AddSeconds(300),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenkey), SecurityAlgorithms.HmacSha256)
+                    Expires = DateTime.UtcNow.AddMinutes(30), // Set a longer expiry time if needed
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256)
                 };
-                var token = tokenhandler.CreateToken(tokendesc);
-                var finaltoken = tokenhandler.WriteToken(token);
-                return Ok(new TokenResponse() { Token = finaltoken, RefreshToken = await this.refresh.GenerateToken(userCred.Email) });
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var finalToken = tokenHandler.WriteToken(token);
 
+                // Generate refresh token (ensure your refresh logic is secure)
+                var refreshToken = await this.refresh.GenerateToken(userCred.Email);
+
+                return Ok(new TokenResponse() { Token = finalToken, RefreshToken = refreshToken, Username = user.Username });
             }
             else
             {
                 return Unauthorized();
             }
-
         }
+
+        // Method to verify the password
+        private bool VerifyPassword(string enteredPassword, string storedHashedPassword)
+        {
+            // Implement your password verification logic here.
+            // Example: using BCrypt:
+            return BCrypt.Net.BCrypt.Verify(enteredPassword, storedHashedPassword);
+        }
+
 
         [SwaggerOperation(
             Summary = "Generate new JWT using refresh token",
