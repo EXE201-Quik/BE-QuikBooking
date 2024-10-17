@@ -100,192 +100,258 @@ namespace Quik_BookingApp.DAO
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Username = "john_doe",
-                    Name = "John Doe",
-                    Email = "john@example.com",
-                    Password = "hashedpassword123",
-                    Role = "User",
-                    ImageId = "img001",
-                    PhoneNumber = "1234567890",
-                    OTPVerified = true,
-                    IsActive = true,
-                    IsLocked = false,
-                    Status = "Active"
-                },
-                new User
-                {
-                    Username = "jane_business",
-                    Name = "Jane Business",
-                    Email = "jane@example.com",
-                    Password = "hashedpassword456",
-                    Role = "Business",
-                    ImageId = "img002",
-                    PhoneNumber = "0987654321",
-                    OTPVerified = true,
-                    IsActive = true,
-                    IsLocked = false,
-                    Status = "Active"
-                }
-            );
+     new User
+     {
+         Username = "alice_admin",
+         Name = "Alice Admin",
+         Email = "alice.admin@example.com",
+         Password = "hashedpassword789",
+         Role = "Admin",
+         ImageId = "img003",
+         PhoneNumber = "1231231234",
+         OTPVerified = true,
+         IsActive = true,
+         IsLocked = false,
+         Status = "Active"
+     },
+     new User
+     {
+         Username = "bob_member",
+         Name = "Bob Member",
+         Email = "bob.member@example.com",
+         Password = "hashedpassword789",
+         Role = "Member",
+         ImageId = "img004",
+         PhoneNumber = "3213214321",
+         OTPVerified = true,
+         IsActive = true,
+         IsLocked = false,
+         Status = "Active"
+     },
+     new User
+     {
+         Username = "charlie_business",
+         Name = "Charlie Business",
+         Email = "charlie.business@example.com",
+         Password = "hashedpassword789",
+         Role = "Business",
+         ImageId = "img005",
+         PhoneNumber = "6549871230",
+         OTPVerified = true,
+         IsActive = true,
+         IsLocked = false,
+         Status = "Active"
+     },
+     new User
+     {
+         Username = "david_user",
+         Name = "David User",
+         Email = "david.user@example.com",
+         Password = "hashedpassword321",
+         Role = "User",
+         ImageId = "img006",
+         PhoneNumber = "9876543210",
+         OTPVerified = true,
+         IsActive = true,
+         IsLocked = false,
+         Status = "Active"
+     }
+ );
 
+            // Seed thêm dữ liệu cho Business
             modelBuilder.Entity<Business>().HasData(
                 new Business
                 {
-                    BusinessId = "business001",
-                    BusinessName = "Jane's Workspace",
-                    PhoneNumber = "123456789",
-                    Email = "jane.business@example.com",
-                    Password = "hashedpassword789",  
-                    Location = "123 Main Street",
-                    Description = "A cozy working space for startups."
+                    BusinessId = "business002",
+                    BusinessName = "Workspace Deluxe",
+                    PhoneNumber = "987654321",
+                    Email = "contact@workspace-deluxe.com",
+                    Password = "hashedpassword",
+                    Location = "456 Elm Street",
+                    Description = "A deluxe workspace offering premium services."
+                },
+                new Business
+                {
+                    BusinessId = "business003",
+                    BusinessName = "Startup Hub",
+                    PhoneNumber = "123456987",
+                    Email = "info@startup-hub.com",
+                    Password = "hashedpassword123",
+                    Location = "789 Startup Blvd",
+                    Description = "An energetic space for young startups."
+                },
+                new Business
+                {
+                    BusinessId = "business004",
+                    BusinessName = "Freelancers Corner",
+                    PhoneNumber = "654321987",
+                    Email = "freelancers@corner.com",
+                    Password = "hashedpassword789",
+                    Location = "101 Freelance Road",
+                    Description = "A cozy spot for freelancers."
                 }
             );
 
-
+            // Seed thêm dữ liệu cho WorkingSpace
             modelBuilder.Entity<WorkingSpace>().HasData(
                 new WorkingSpace
                 {
-                    SpaceId = "space001",
-                    ImageId = "img_space001",
-                    BusinessId = "business001", // Đã đổi thành business001
-                    Title = "Cozy Private Office",
-                    Description = "A private office space for up to 4 people.",
-                    PricePerHour = 25000,
-                    RoomType = "Không gian văn phòng",
-                    Capacity = 4,
-                    Location = "123 Main Street, Room 101"
+                    SpaceId = "space006",
+                    ImageId = "img_space006",
+                    BusinessId = "business002",
+                    Title = "VIP Executive Office",
+                    Description = "An executive office with all luxury amenities.",
+                    PricePerHour = 100000,
+                    RoomType = "Executive",
+                    Capacity = 3,
+                    Location = "456 Elm Street, Room 101"
                 },
                 new WorkingSpace
                 {
-                    SpaceId = "space002",
-                    ImageId = "img_space002",
-                    BusinessId = "business001",
-                    Title = "Modern Shared Workspace",
-                    Description = "An open workspace for freelancers and small teams.",
+                    SpaceId = "space007",
+                    ImageId = "img_space007",
+                    BusinessId = "business003",
+                    Title = "Startup Lab",
+                    Description = "Perfect for small teams working on innovation.",
+                    PricePerHour = 20000,
+                    RoomType = "Lab",
+                    Capacity = 5,
+                    Location = "789 Startup Blvd, Room 303"
+                },
+                new WorkingSpace
+                {
+                    SpaceId = "space008",
+                    ImageId = "img_space008",
+                    BusinessId = "business004",
+                    Title = "Freelance Studio",
+                    Description = "An open studio perfect for remote workers.",
                     PricePerHour = 15000,
-                    RoomType = "Không gian làm việc chung",
-                    Capacity = 10,
-                    Location = "123 Main Street, Room 102"
-                },
-                new WorkingSpace
-                {
-                    SpaceId = "space003",
-                    ImageId = "img_space003",
-                    BusinessId = "business001",
-                    Title = "Conference Room A",
-                    Description = "A spacious conference room equipped with A/V facilities.",
-                    PricePerHour = 50000,
-                    RoomType = "Phòng họp",
-                    Capacity = 20,
-                    Location = "123 Main Street, Room 201"
-                },
-                new WorkingSpace
-                {
-                    SpaceId = "space004",
-                    ImageId = "img_space004",
-                    BusinessId = "business001",
-                    Title = "Study Hub",
-                    Description = "A quiet study hub with individual workstations.",
-                    PricePerHour = 10000,
-                    RoomType = "Study hub",
-                    Capacity = 8,
-                    Location = "123 Main Street, Room 103"
-                },
-                new WorkingSpace
-                {
-                    SpaceId = "space005",
-                    ImageId = "img_space005",
-                    BusinessId = "business001",
-                    Title = "Executive Office",
-                    Description = "A premium office space with stunning views.",
-                    PricePerHour = 75000,
-                    RoomType = "Không gian văn phòng",
-                    Capacity = 2,
-                    Location = "123 Main Street, Room 104"
+                    RoomType = "Studio",
+                    Capacity = 6,
+                    Location = "101 Freelance Road, Room 102"
                 }
             );
 
+            // Seed thêm dữ liệu cho Amenity
             modelBuilder.Entity<Amenity>().HasData(
                 new Amenity
                 {
-                    SpaceId = "space001",
-                    AmenityId = "facility1",
-                    AmenityText = "Air conditioner free"
+                    SpaceId = "space006",
+                    AmenityId = "amenity1",
+                    AmenityText = "Private bathroom"
                 },
                 new Amenity
                 {
-                    SpaceId = "space001",
-                    AmenityId = "facility2",
-                    AmenityText = "Wifi's room free"
-                });
-
-            modelBuilder.Entity<ImageWS>().HasData(
-                new ImageWS
+                    SpaceId = "space006",
+                    AmenityId = "amenity2",
+                    AmenityText = "Free beverages"
+                },
+                new Amenity
                 {
-                    ImageId = "img_space001",
-                    SpaceId = "space001",
-                    WorkingSpaceName = "Cozy Private Office",
-                    ImageUrl = "https://example.com/images/space001_image1.jpg",
-                    WSCode = "WS001",
-                    WSImages = null
+                    SpaceId = "space007",
+                    AmenityId = "amenity3",
+                    AmenityText = "24/7 access"
+                },
+                new Amenity
+                {
+                    SpaceId = "space008",
+                    AmenityId = "amenity4",
+                    AmenityText = "Free parking"
                 }
             );
 
+            // Seed thêm dữ liệu cho Booking
             modelBuilder.Entity<Booking>().HasData(
                 new Booking
                 {
-                    BookingId = "booking001",
+                    BookingId = "booking002",
                     PaymentId = Guid.NewGuid(),
-                    Username = "john_doe",
-                    SpaceId = "space001",
-                    BookingDate = DateTime.Now.Date,
-                    StartTime = DateTime.Now.AddHours(1),
-                    EndTime = DateTime.Now.AddHours(3),
-                    NumberOfPeople = 4,
+                    Username = "bob_member",
+                    SpaceId = "space006",
+                    BookingDate = DateTime.Now.AddDays(-1),
+                    StartTime = DateTime.Now.AddHours(2),
+                    EndTime = DateTime.Now.AddHours(4),
+                    NumberOfPeople = 2,
                     TotalAmount = 200000,
-                    DepositAmount = 20000,
-                    RemainingAmount = 180000,
-                    Status = "Hoàn tất"
+                    DepositAmount = 30000,
+                    RemainingAmount = 170000,
+                    Status = "Pending"
+                },
+                new Booking
+                {
+                    BookingId = "booking003",
+                    PaymentId = Guid.NewGuid(),
+                    Username = "alice_admin",
+                    SpaceId = "space007",
+                    BookingDate = DateTime.Now.AddDays(-2),
+                    StartTime = DateTime.Now.AddHours(3),
+                    EndTime = DateTime.Now.AddHours(5),
+                    NumberOfPeople = 3,
+                    TotalAmount = 250000,
+                    DepositAmount = 40000,
+                    RemainingAmount = 210000,
+                    Status = "Confirmed"
                 }
             );
 
+            // Seed thêm dữ liệu cho Payment
             modelBuilder.Entity<Payment>().HasData(
                 new Payment
                 {
                     PaymentId = Guid.NewGuid(),
-                    BookingId = "booking001",
-                    Amount = 50000,
+                    BookingId = "booking002",
+                    Amount = 30000,
+                    PaymentMethod = "PayPal",
+                    PaymentDate = DateTime.Now,
+                    PaymentStatus = "Pending",
+                    VNPayTransactionId = "VNPay002",
+                    VNPayResponseCode = "OK",
+                    PaymentUrl = "payment002@example.com"
+                },
+                new Payment
+                {
+                    PaymentId = Guid.NewGuid(),
+                    BookingId = "booking003",
+                    Amount = 40000,
                     PaymentMethod = "Credit Card",
                     PaymentDate = DateTime.Now,
                     PaymentStatus = "Success",
-                    VNPayTransactionId = "VNPay001",
+                    VNPayTransactionId = "VNPay003",
                     VNPayResponseCode = "OK",
-                    PaymentUrl = "toexample@gmail.com"
+                    PaymentUrl = "payment003@example.com"
                 }
             );
 
+            // Seed thêm dữ liệu cho Review
             modelBuilder.Entity<Review>().HasData(
                 new Review
                 {
                     ReviewId = Guid.NewGuid(),
-                    Username = "john_doe",  // Refers to User table
-                    SpaceId = "space001",   // Refers to WorkingSpace table
-                    Rating = 4,
-                    Comment = "Great office space, very comfortable!",
-                    CreatedAt = DateTime.Now
+                    Username = "alice_admin",
+                    SpaceId = "space006",
+                    Rating = 5,
+                    Comment = "Amazing experience, highly recommend!",
+                    CreatedAt = DateTime.Now.AddDays(-5)
                 },
                 new Review
                 {
                     ReviewId = Guid.NewGuid(),
-                    Username = "john_doe",  // Same user as before
-                    SpaceId = "space001",   // Same working space
-                    Rating = 5,
-                    Comment = "Came back here, still amazing experience!",
-                    CreatedAt = DateTime.Now.AddDays(-2)
+                    Username = "bob_member",
+                    SpaceId = "space007",
+                    Rating = 4,
+                    Comment = "Great place for team collaboration!",
+                    CreatedAt = DateTime.Now.AddDays(-3)
+                },
+                new Review
+                {
+                    ReviewId = Guid.NewGuid(),
+                    Username = "charlie_business",
+                    SpaceId = "space008",
+                    Rating = 4,
+                    Comment = "Nice and quiet workspace.",
+                    CreatedAt = DateTime.Now.AddDays(-1)
                 }
-    );
+            );
         }
     }
 }

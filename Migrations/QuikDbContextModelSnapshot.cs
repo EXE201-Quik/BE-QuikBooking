@@ -44,15 +44,27 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            AmenityId = "facility1",
-                            AmenityText = "Air conditioner free",
-                            SpaceId = "space001"
+                            AmenityId = "amenity1",
+                            AmenityText = "Private bathroom",
+                            SpaceId = "space006"
                         },
                         new
                         {
-                            AmenityId = "facility2",
-                            AmenityText = "Wifi's room free",
-                            SpaceId = "space001"
+                            AmenityId = "amenity2",
+                            AmenityText = "Free beverages",
+                            SpaceId = "space006"
+                        },
+                        new
+                        {
+                            AmenityId = "amenity3",
+                            AmenityText = "24/7 access",
+                            SpaceId = "space007"
+                        },
+                        new
+                        {
+                            AmenityId = "amenity4",
+                            AmenityText = "Free parking",
+                            SpaceId = "space008"
                         });
                 });
 
@@ -108,18 +120,33 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            BookingId = "booking001",
-                            BookingDate = new DateTime(2024, 10, 17, 0, 0, 0, 0, DateTimeKind.Local),
-                            DepositAmount = 20000m,
-                            EndTime = new DateTime(2024, 10, 17, 17, 5, 59, 985, DateTimeKind.Local).AddTicks(7358),
-                            NumberOfPeople = 4,
-                            PaymentId = new Guid("a958a700-4dff-41c7-ab5d-c568c866a427"),
-                            RemainingAmount = 180000m,
-                            SpaceId = "space001",
-                            StartTime = new DateTime(2024, 10, 17, 15, 5, 59, 985, DateTimeKind.Local).AddTicks(7352),
-                            Status = "Hoàn tất",
+                            BookingId = "booking002",
+                            BookingDate = new DateTime(2024, 10, 16, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(8928),
+                            DepositAmount = 30000m,
+                            EndTime = new DateTime(2024, 10, 17, 20, 58, 1, 680, DateTimeKind.Local).AddTicks(8950),
+                            NumberOfPeople = 2,
+                            PaymentId = new Guid("24f99844-dbb8-4ab1-877f-c214b43ec456"),
+                            RemainingAmount = 170000m,
+                            SpaceId = "space006",
+                            StartTime = new DateTime(2024, 10, 17, 18, 58, 1, 680, DateTimeKind.Local).AddTicks(8949),
+                            Status = "Pending",
                             TotalAmount = 200000m,
-                            Username = "john_doe"
+                            Username = "bob_member"
+                        },
+                        new
+                        {
+                            BookingId = "booking003",
+                            BookingDate = new DateTime(2024, 10, 15, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(8955),
+                            DepositAmount = 40000m,
+                            EndTime = new DateTime(2024, 10, 17, 21, 58, 1, 680, DateTimeKind.Local).AddTicks(8957),
+                            NumberOfPeople = 3,
+                            PaymentId = new Guid("a9b72404-ee69-4f03-b5a5-b23deb983a9a"),
+                            RemainingAmount = 210000m,
+                            SpaceId = "space007",
+                            StartTime = new DateTime(2024, 10, 17, 19, 58, 1, 680, DateTimeKind.Local).AddTicks(8956),
+                            Status = "Confirmed",
+                            TotalAmount = 250000m,
+                            Username = "alice_admin"
                         });
                 });
 
@@ -159,13 +186,33 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            BusinessId = "business001",
-                            BusinessName = "Jane's Workspace",
-                            Description = "A cozy working space for startups.",
-                            Email = "jane.business@example.com",
-                            Location = "123 Main Street",
+                            BusinessId = "business002",
+                            BusinessName = "Workspace Deluxe",
+                            Description = "A deluxe workspace offering premium services.",
+                            Email = "contact@workspace-deluxe.com",
+                            Location = "456 Elm Street",
+                            Password = "hashedpassword",
+                            PhoneNumber = "987654321"
+                        },
+                        new
+                        {
+                            BusinessId = "business003",
+                            BusinessName = "Startup Hub",
+                            Description = "An energetic space for young startups.",
+                            Email = "info@startup-hub.com",
+                            Location = "789 Startup Blvd",
+                            Password = "hashedpassword123",
+                            PhoneNumber = "123456987"
+                        },
+                        new
+                        {
+                            BusinessId = "business004",
+                            BusinessName = "Freelancers Corner",
+                            Description = "A cozy spot for freelancers.",
+                            Email = "freelancers@corner.com",
+                            Location = "101 Freelance Road",
                             Password = "hashedpassword789",
-                            PhoneNumber = "123456789"
+                            PhoneNumber = "654321987"
                         });
                 });
 
@@ -198,16 +245,6 @@ namespace QuikBookingApp.Migrations
                     b.HasIndex("SpaceId");
 
                     b.ToTable("Images");
-
-                    b.HasData(
-                        new
-                        {
-                            ImageId = "img_space001",
-                            ImageUrl = "https://example.com/images/space001_image1.jpg",
-                            SpaceId = "space001",
-                            WSCode = "WS001",
-                            WorkingSpaceName = "Cozy Private Office"
-                        });
                 });
 
             modelBuilder.Entity("Quik_BookingApp.DAO.Models.OtpManager", b =>
@@ -287,15 +324,27 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            PaymentId = new Guid("6b2400c3-b661-428c-97be-e6b5c806ffc1"),
-                            Amount = 50000.0,
-                            BookingId = "booking001",
-                            PaymentDate = new DateTime(2024, 10, 17, 14, 5, 59, 985, DateTimeKind.Local).AddTicks(7377),
+                            PaymentId = new Guid("5d003ca5-8753-47c9-a3c9-e969d1457506"),
+                            Amount = 30000.0,
+                            BookingId = "booking002",
+                            PaymentDate = new DateTime(2024, 10, 17, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9028),
+                            PaymentMethod = "PayPal",
+                            PaymentStatus = "Pending",
+                            PaymentUrl = "payment002@example.com",
+                            VNPayResponseCode = "OK",
+                            VNPayTransactionId = "VNPay002"
+                        },
+                        new
+                        {
+                            PaymentId = new Guid("fd45d97e-8a68-45ad-b881-cd9b8cbbd272"),
+                            Amount = 40000.0,
+                            BookingId = "booking003",
+                            PaymentDate = new DateTime(2024, 10, 17, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9031),
                             PaymentMethod = "Credit Card",
                             PaymentStatus = "Success",
-                            PaymentUrl = "toexample@gmail.com",
+                            PaymentUrl = "payment003@example.com",
                             VNPayResponseCode = "OK",
-                            VNPayTransactionId = "VNPay001"
+                            VNPayTransactionId = "VNPay003"
                         });
                 });
 
@@ -358,21 +407,30 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            ReviewId = new Guid("6dde8fec-f4b6-4258-9731-2c88d30d0333"),
-                            Comment = "Great office space, very comfortable!",
-                            CreatedAt = new DateTime(2024, 10, 17, 14, 5, 59, 985, DateTimeKind.Local).AddTicks(7391),
-                            Rating = 4f,
-                            SpaceId = "space001",
-                            Username = "john_doe"
+                            ReviewId = new Guid("43c07812-50ca-4245-8253-9edba6293b18"),
+                            Comment = "Amazing experience, highly recommend!",
+                            CreatedAt = new DateTime(2024, 10, 12, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9049),
+                            Rating = 5f,
+                            SpaceId = "space006",
+                            Username = "alice_admin"
                         },
                         new
                         {
-                            ReviewId = new Guid("2197de85-59b4-4417-9f2f-43f8060e4185"),
-                            Comment = "Came back here, still amazing experience!",
-                            CreatedAt = new DateTime(2024, 10, 15, 14, 5, 59, 985, DateTimeKind.Local).AddTicks(7393),
-                            Rating = 5f,
-                            SpaceId = "space001",
-                            Username = "john_doe"
+                            ReviewId = new Guid("ff20e165-361f-4f09-b67c-7148c3ab4b3a"),
+                            Comment = "Great place for team collaboration!",
+                            CreatedAt = new DateTime(2024, 10, 14, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9052),
+                            Rating = 4f,
+                            SpaceId = "space007",
+                            Username = "bob_member"
+                        },
+                        new
+                        {
+                            ReviewId = new Guid("f49fcab4-1cb2-49fd-8596-57d7bfb1c06e"),
+                            Comment = "Nice and quiet workspace.",
+                            CreatedAt = new DateTime(2024, 10, 16, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9054),
+                            Rating = 4f,
+                            SpaceId = "space008",
+                            Username = "charlie_business"
                         });
                 });
 
@@ -472,30 +530,58 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            Username = "john_doe",
-                            Email = "john@example.com",
-                            ImageId = "img001",
+                            Username = "alice_admin",
+                            Email = "alice.admin@example.com",
+                            ImageId = "img003",
                             IsActive = true,
                             IsLocked = false,
-                            Name = "John Doe",
+                            Name = "Alice Admin",
                             OTPVerified = true,
-                            Password = "hashedpassword123",
-                            PhoneNumber = "1234567890",
-                            Role = "User",
+                            Password = "hashedpassword789",
+                            PhoneNumber = "1231231234",
+                            Role = "Admin",
                             Status = "Active"
                         },
                         new
                         {
-                            Username = "jane_business",
-                            Email = "jane@example.com",
-                            ImageId = "img002",
+                            Username = "bob_member",
+                            Email = "bob.member@example.com",
+                            ImageId = "img004",
                             IsActive = true,
                             IsLocked = false,
-                            Name = "Jane Business",
+                            Name = "Bob Member",
                             OTPVerified = true,
-                            Password = "hashedpassword456",
-                            PhoneNumber = "0987654321",
+                            Password = "hashedpassword789",
+                            PhoneNumber = "3213214321",
+                            Role = "Member",
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            Username = "charlie_business",
+                            Email = "charlie.business@example.com",
+                            ImageId = "img005",
+                            IsActive = true,
+                            IsLocked = false,
+                            Name = "Charlie Business",
+                            OTPVerified = true,
+                            Password = "hashedpassword789",
+                            PhoneNumber = "6549871230",
                             Role = "Business",
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            Username = "david_user",
+                            Email = "david.user@example.com",
+                            ImageId = "img006",
+                            IsActive = true,
+                            IsLocked = false,
+                            Name = "David User",
+                            OTPVerified = true,
+                            Password = "hashedpassword321",
+                            PhoneNumber = "9876543210",
+                            Role = "User",
                             Status = "Active"
                         });
                 });
@@ -544,63 +630,39 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            SpaceId = "space001",
-                            BusinessId = "business001",
-                            Capacity = 4,
-                            Description = "A private office space for up to 4 people.",
-                            ImageId = "img_space001",
-                            Location = "123 Main Street, Room 101",
-                            PricePerHour = 25000m,
-                            RoomType = "Không gian văn phòng",
-                            Title = "Cozy Private Office"
+                            SpaceId = "space006",
+                            BusinessId = "business002",
+                            Capacity = 3,
+                            Description = "An executive office with all luxury amenities.",
+                            ImageId = "img_space006",
+                            Location = "456 Elm Street, Room 101",
+                            PricePerHour = 100000m,
+                            RoomType = "Executive",
+                            Title = "VIP Executive Office"
                         },
                         new
                         {
-                            SpaceId = "space002",
-                            BusinessId = "business001",
-                            Capacity = 10,
-                            Description = "An open workspace for freelancers and small teams.",
-                            ImageId = "img_space002",
-                            Location = "123 Main Street, Room 102",
+                            SpaceId = "space007",
+                            BusinessId = "business003",
+                            Capacity = 5,
+                            Description = "Perfect for small teams working on innovation.",
+                            ImageId = "img_space007",
+                            Location = "789 Startup Blvd, Room 303",
+                            PricePerHour = 20000m,
+                            RoomType = "Lab",
+                            Title = "Startup Lab"
+                        },
+                        new
+                        {
+                            SpaceId = "space008",
+                            BusinessId = "business004",
+                            Capacity = 6,
+                            Description = "An open studio perfect for remote workers.",
+                            ImageId = "img_space008",
+                            Location = "101 Freelance Road, Room 102",
                             PricePerHour = 15000m,
-                            RoomType = "Không gian làm việc chung",
-                            Title = "Modern Shared Workspace"
-                        },
-                        new
-                        {
-                            SpaceId = "space003",
-                            BusinessId = "business001",
-                            Capacity = 20,
-                            Description = "A spacious conference room equipped with A/V facilities.",
-                            ImageId = "img_space003",
-                            Location = "123 Main Street, Room 201",
-                            PricePerHour = 50000m,
-                            RoomType = "Phòng họp",
-                            Title = "Conference Room A"
-                        },
-                        new
-                        {
-                            SpaceId = "space004",
-                            BusinessId = "business001",
-                            Capacity = 8,
-                            Description = "A quiet study hub with individual workstations.",
-                            ImageId = "img_space004",
-                            Location = "123 Main Street, Room 103",
-                            PricePerHour = 10000m,
-                            RoomType = "Study hub",
-                            Title = "Study Hub"
-                        },
-                        new
-                        {
-                            SpaceId = "space005",
-                            BusinessId = "business001",
-                            Capacity = 2,
-                            Description = "A premium office space with stunning views.",
-                            ImageId = "img_space005",
-                            Location = "123 Main Street, Room 104",
-                            PricePerHour = 75000m,
-                            RoomType = "Không gian văn phòng",
-                            Title = "Executive Office"
+                            RoomType = "Studio",
+                            Title = "Freelance Studio"
                         });
                 });
 

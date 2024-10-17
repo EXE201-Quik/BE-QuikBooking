@@ -264,15 +264,22 @@ namespace QuikBookingApp.Migrations
             migrationBuilder.InsertData(
                 table: "Businesses",
                 columns: new[] { "BusinessId", "BusinessName", "Description", "Email", "Location", "Password", "PhoneNumber" },
-                values: new object[] { "business001", "Jane's Workspace", "A cozy working space for startups.", "jane.business@example.com", "123 Main Street", "hashedpassword789", "123456789" });
+                values: new object[,]
+                {
+                    { "business002", "Workspace Deluxe", "A deluxe workspace offering premium services.", "contact@workspace-deluxe.com", "456 Elm Street", "hashedpassword", "987654321" },
+                    { "business003", "Startup Hub", "An energetic space for young startups.", "info@startup-hub.com", "789 Startup Blvd", "hashedpassword123", "123456987" },
+                    { "business004", "Freelancers Corner", "A cozy spot for freelancers.", "freelancers@corner.com", "101 Freelance Road", "hashedpassword789", "654321987" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Username", "Email", "ImageId", "IsActive", "IsLocked", "Name", "OTPVerified", "Password", "PhoneNumber", "Role", "Status" },
                 values: new object[,]
                 {
-                    { "jane_business", "jane@example.com", "img002", true, false, "Jane Business", true, "hashedpassword456", "0987654321", "Business", "Active" },
-                    { "john_doe", "john@example.com", "img001", true, false, "John Doe", true, "hashedpassword123", "1234567890", "User", "Active" }
+                    { "alice_admin", "alice.admin@example.com", "img003", true, false, "Alice Admin", true, "hashedpassword789", "1231231234", "Admin", "Active" },
+                    { "bob_member", "bob.member@example.com", "img004", true, false, "Bob Member", true, "hashedpassword789", "3213214321", "Member", "Active" },
+                    { "charlie_business", "charlie.business@example.com", "img005", true, false, "Charlie Business", true, "hashedpassword789", "6549871230", "Business", "Active" },
+                    { "david_user", "david.user@example.com", "img006", true, false, "David User", true, "hashedpassword321", "9876543210", "User", "Active" }
                 });
 
             migrationBuilder.InsertData(
@@ -280,11 +287,9 @@ namespace QuikBookingApp.Migrations
                 columns: new[] { "SpaceId", "BusinessId", "Capacity", "Description", "ImageId", "Location", "PricePerHour", "RoomType", "Title" },
                 values: new object[,]
                 {
-                    { "space001", "business001", 4, "A private office space for up to 4 people.", "img_space001", "123 Main Street, Room 101", 25000m, "Không gian văn phòng", "Cozy Private Office" },
-                    { "space002", "business001", 10, "An open workspace for freelancers and small teams.", "img_space002", "123 Main Street, Room 102", 15000m, "Không gian làm việc chung", "Modern Shared Workspace" },
-                    { "space003", "business001", 20, "A spacious conference room equipped with A/V facilities.", "img_space003", "123 Main Street, Room 201", 50000m, "Phòng họp", "Conference Room A" },
-                    { "space004", "business001", 8, "A quiet study hub with individual workstations.", "img_space004", "123 Main Street, Room 103", 10000m, "Study hub", "Study Hub" },
-                    { "space005", "business001", 2, "A premium office space with stunning views.", "img_space005", "123 Main Street, Room 104", 75000m, "Không gian văn phòng", "Executive Office" }
+                    { "space006", "business002", 3, "An executive office with all luxury amenities.", "img_space006", "456 Elm Street, Room 101", 100000m, "Executive", "VIP Executive Office" },
+                    { "space007", "business003", 5, "Perfect for small teams working on innovation.", "img_space007", "789 Startup Blvd, Room 303", 20000m, "Lab", "Startup Lab" },
+                    { "space008", "business004", 6, "An open studio perfect for remote workers.", "img_space008", "101 Freelance Road, Room 102", 15000m, "Studio", "Freelance Studio" }
                 });
 
             migrationBuilder.InsertData(
@@ -292,33 +297,39 @@ namespace QuikBookingApp.Migrations
                 columns: new[] { "AmenityId", "AmenityText", "SpaceId" },
                 values: new object[,]
                 {
-                    { "facility1", "Air conditioner free", "space001" },
-                    { "facility2", "Wifi's room free", "space001" }
+                    { "amenity1", "Private bathroom", "space006" },
+                    { "amenity2", "Free beverages", "space006" },
+                    { "amenity3", "24/7 access", "space007" },
+                    { "amenity4", "Free parking", "space008" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Bookings",
                 columns: new[] { "BookingId", "BookingDate", "DepositAmount", "EndTime", "NumberOfPeople", "PaymentId", "RemainingAmount", "SpaceId", "StartTime", "Status", "TotalAmount", "Username" },
-                values: new object[] { "booking001", new DateTime(2024, 10, 17, 0, 0, 0, 0, DateTimeKind.Local), 20000m, new DateTime(2024, 10, 17, 17, 5, 59, 985, DateTimeKind.Local).AddTicks(7358), 4, new Guid("a958a700-4dff-41c7-ab5d-c568c866a427"), 180000m, "space001", new DateTime(2024, 10, 17, 15, 5, 59, 985, DateTimeKind.Local).AddTicks(7352), "Hoàn tất", 200000m, "john_doe" });
-
-            migrationBuilder.InsertData(
-                table: "Images",
-                columns: new[] { "ImageId", "ImageUrl", "SpaceId", "WSCode", "WSImages", "WorkingSpaceName" },
-                values: new object[] { "img_space001", "https://example.com/images/space001_image1.jpg", "space001", "WS001", null, "Cozy Private Office" });
+                values: new object[,]
+                {
+                    { "booking002", new DateTime(2024, 10, 16, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(8928), 30000m, new DateTime(2024, 10, 17, 20, 58, 1, 680, DateTimeKind.Local).AddTicks(8950), 2, new Guid("24f99844-dbb8-4ab1-877f-c214b43ec456"), 170000m, "space006", new DateTime(2024, 10, 17, 18, 58, 1, 680, DateTimeKind.Local).AddTicks(8949), "Pending", 200000m, "bob_member" },
+                    { "booking003", new DateTime(2024, 10, 15, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(8955), 40000m, new DateTime(2024, 10, 17, 21, 58, 1, 680, DateTimeKind.Local).AddTicks(8957), 3, new Guid("a9b72404-ee69-4f03-b5a5-b23deb983a9a"), 210000m, "space007", new DateTime(2024, 10, 17, 19, 58, 1, 680, DateTimeKind.Local).AddTicks(8956), "Confirmed", 250000m, "alice_admin" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Reviews",
                 columns: new[] { "ReviewId", "Comment", "CreatedAt", "Rating", "SpaceId", "Username" },
                 values: new object[,]
                 {
-                    { new Guid("2197de85-59b4-4417-9f2f-43f8060e4185"), "Came back here, still amazing experience!", new DateTime(2024, 10, 15, 14, 5, 59, 985, DateTimeKind.Local).AddTicks(7393), 5f, "space001", "john_doe" },
-                    { new Guid("6dde8fec-f4b6-4258-9731-2c88d30d0333"), "Great office space, very comfortable!", new DateTime(2024, 10, 17, 14, 5, 59, 985, DateTimeKind.Local).AddTicks(7391), 4f, "space001", "john_doe" }
+                    { new Guid("43c07812-50ca-4245-8253-9edba6293b18"), "Amazing experience, highly recommend!", new DateTime(2024, 10, 12, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9049), 5f, "space006", "alice_admin" },
+                    { new Guid("f49fcab4-1cb2-49fd-8596-57d7bfb1c06e"), "Nice and quiet workspace.", new DateTime(2024, 10, 16, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9054), 4f, "space008", "charlie_business" },
+                    { new Guid("ff20e165-361f-4f09-b67c-7148c3ab4b3a"), "Great place for team collaboration!", new DateTime(2024, 10, 14, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9052), 4f, "space007", "bob_member" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Payments",
                 columns: new[] { "PaymentId", "Amount", "BookingId", "PaymentDate", "PaymentMethod", "PaymentStatus", "PaymentUrl", "VNPayResponseCode", "VNPayTransactionId" },
-                values: new object[] { new Guid("6b2400c3-b661-428c-97be-e6b5c806ffc1"), 50000.0, "booking001", new DateTime(2024, 10, 17, 14, 5, 59, 985, DateTimeKind.Local).AddTicks(7377), "Credit Card", "Success", "toexample@gmail.com", "OK", "VNPay001" });
+                values: new object[,]
+                {
+                    { new Guid("5d003ca5-8753-47c9-a3c9-e969d1457506"), 30000.0, "booking002", new DateTime(2024, 10, 17, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9028), "PayPal", "Pending", "payment002@example.com", "OK", "VNPay002" },
+                    { new Guid("fd45d97e-8a68-45ad-b881-cd9b8cbbd272"), 40000.0, "booking003", new DateTime(2024, 10, 17, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9031), "Credit Card", "Success", "payment003@example.com", "OK", "VNPay003" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Amenities_SpaceId",
