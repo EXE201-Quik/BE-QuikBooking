@@ -1,6 +1,6 @@
-﻿namespace Quik_BookingApp.DAO.Models
+﻿namespace Quik_BookingApp.BOs.Response
 {
-    public class Review
+    public class ReviewResponseModel
     {
         public Guid ReviewId { get; set; }
         public string Username { get; set; }
@@ -8,9 +8,5 @@
         public float Rating { get; set; }
         public string Comment { get; set; }
         public DateTime CreatedAt { get; set; }
-
-        // Navigation properties
-        public User User { get; set; }
-        public WorkingSpace WorkingSpace { get; set; }
     }
 }

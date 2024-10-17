@@ -14,6 +14,7 @@ using Serilog;
 using System;
 using System.Configuration;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,14 +58,18 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        // Enable ReferenceHandler.Preserve for cycle detection
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-        options.JsonSerializerOptions.WriteIndented = true; // Optional: Pretty print JSON
-    });
+//builder.Services.AddControllers()
+//    .AddJsonOptions(options =>
+//    {
+//        // Enable ReferenceHandler.Preserve for cycle detection
+//        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+//        options.JsonSerializerOptions.WriteIndented = true; // Optional: Pretty print JSON
+//    });
 
+
+
+
+builder.Services.AddTransient<EmailService>();
 builder.Services.Configure<FirebaseConfiguration>(builder.Configuration.GetSection("Firebase"));
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection(""));
 builder.Services.AddScoped<IFirebaseService, FirebaseService>();

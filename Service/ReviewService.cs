@@ -2,6 +2,8 @@
 using Quik_BookingApp.DAO;
 using Microsoft.EntityFrameworkCore;
 using Quik_BookingApp.Repos.Interface;
+using Quik_BookingApp.BOs.Request;
+using Quik_BookingApp.BOs.Response;
 
 namespace Quik_BookingApp.Service
 {
@@ -27,28 +29,68 @@ namespace Quik_BookingApp.Service
                                  .FirstOrDefaultAsync(r => r.ReviewId == reviewId);
         }
 
-        public async Task<Review> CreateReviewAsync(Review review)
-        {
-            review.ReviewId = Guid.NewGuid();
-            review.CreatedAt = DateTime.UtcNow;
 
-            _context.Reviews.Add(review);
-            await _context.SaveChangesAsync();
-            return review;
+        public async Task<List<ReviewResponseModel>> GetReviewsBySpaceIdAsync(string spaceId)
+        {
+
+            var reviews = await _context.Reviews
+                .AsNoTracking()
+                .Where(r => r.SpaceId == spaceId)
+                .Select(r => new ReviewResponseModel
+                {
+                    ReviewId = r.ReviewId,
+                    Username = r.Username,
+                    SpaceId = r.SpaceId,
+                    Rating = r.Rating,
+                    Comment = r.Comment,
+                    CreatedAt = r.CreatedAt
+                })
+                .ToListAsync();
+
+            return reviews;
         }
+
+
+
+        public async Task<ReviewResponseModel> CreateReviewAsync(ReviewRequestModel reviewRequest)
+            {
+                var review = new Review
+                {
+                    ReviewId = Guid.NewGuid(),
+                    Username = reviewRequest.Username,
+                    SpaceId = reviewRequest.SpaceId,
+                    Rating = reviewRequest.Rating,
+                    Comment = reviewRequest.Comment,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.Reviews.Add(review);
+                await _context.SaveChangesAsync();
+
+                return new ReviewResponseModel
+                {
+                    ReviewId = review.ReviewId,
+                    Username = review.Username,
+                    SpaceId = review.SpaceId,
+                    Rating = review.Rating,
+                    Comment = review.Comment,
+                    CreatedAt = review.CreatedAt
+                };
+            }
+
 
         public async Task<Review> UpdateReviewAsync(Review review)
-        {
-            var existingReview = await _context.Reviews.FindAsync(review.ReviewId);
-            if (existingReview == null) return null;
+            {
+                var existingReview = await _context.Reviews.FindAsync(review.ReviewId);
+                if (existingReview == null) return null;
 
-            existingReview.Rating = review.Rating;
-            existingReview.Comment = review.Comment;
-            // Add other properties to update if needed
+                existingReview.Rating = review.Rating;
+                existingReview.Comment = review.Comment;
+                // Add other properties to update if needed
 
-            await _context.SaveChangesAsync();
-            return existingReview;
-        }
+                await _context.SaveChangesAsync();
+                return existingReview;
+            }
 
         public async Task<bool> DeleteReviewAsync(Guid reviewId)
         {

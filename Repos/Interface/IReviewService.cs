@@ -1,4 +1,6 @@
-﻿using Quik_BookingApp.DAO.Models;
+﻿using Quik_BookingApp.BOs.Request;
+using Quik_BookingApp.BOs.Response;
+using Quik_BookingApp.DAO.Models;
 
 namespace Quik_BookingApp.Repos.Interface
 {
@@ -6,7 +8,8 @@ namespace Quik_BookingApp.Repos.Interface
     {
         Task<IEnumerable<Review>> GetAllReviewsAsync();
         Task<Review> GetReviewByIdAsync(Guid reviewId);
-        Task<Review> CreateReviewAsync(Review review);
+        Task<List<ReviewResponseModel>> GetReviewsBySpaceIdAsync(string spaceId);
+        Task<ReviewResponseModel> CreateReviewAsync(ReviewRequestModel reviewRequest);
         Task<Review> UpdateReviewAsync(Review review);
         Task<bool> DeleteReviewAsync(Guid reviewId);
     }

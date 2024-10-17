@@ -109,14 +109,14 @@ namespace QuikBookingApp.Migrations
                         new
                         {
                             BookingId = "booking001",
-                            BookingDate = new DateTime(2024, 10, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            BookingDate = new DateTime(2024, 10, 17, 0, 0, 0, 0, DateTimeKind.Local),
                             DepositAmount = 20000m,
-                            EndTime = new DateTime(2024, 10, 16, 4, 33, 44, 506, DateTimeKind.Local).AddTicks(9211),
+                            EndTime = new DateTime(2024, 10, 17, 17, 5, 59, 985, DateTimeKind.Local).AddTicks(7358),
                             NumberOfPeople = 4,
-                            PaymentId = new Guid("a31f3afe-6d84-4b03-88b9-23b20117ded0"),
+                            PaymentId = new Guid("a958a700-4dff-41c7-ab5d-c568c866a427"),
                             RemainingAmount = 180000m,
                             SpaceId = "space001",
-                            StartTime = new DateTime(2024, 10, 16, 2, 33, 44, 506, DateTimeKind.Local).AddTicks(9205),
+                            StartTime = new DateTime(2024, 10, 17, 15, 5, 59, 985, DateTimeKind.Local).AddTicks(7352),
                             Status = "Hoàn tất",
                             TotalAmount = 200000m,
                             Username = "john_doe"
@@ -287,10 +287,10 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            PaymentId = new Guid("8b776c2d-ce20-49f5-bf89-72b26596456d"),
+                            PaymentId = new Guid("6b2400c3-b661-428c-97be-e6b5c806ffc1"),
                             Amount = 50000.0,
                             BookingId = "booking001",
-                            PaymentDate = new DateTime(2024, 10, 16, 1, 33, 44, 506, DateTimeKind.Local).AddTicks(9226),
+                            PaymentDate = new DateTime(2024, 10, 17, 14, 5, 59, 985, DateTimeKind.Local).AddTicks(7377),
                             PaymentMethod = "Credit Card",
                             PaymentStatus = "Success",
                             PaymentUrl = "toexample@gmail.com",
@@ -336,8 +336,8 @@ namespace QuikBookingApp.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
+                    b.Property<float>("Rating")
+                        .HasColumnType("real");
 
                     b.Property<string>("SpaceId")
                         .IsRequired()
@@ -358,19 +358,19 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            ReviewId = new Guid("eb5dbe9d-fa1a-43d6-9353-10ba5508be27"),
+                            ReviewId = new Guid("6dde8fec-f4b6-4258-9731-2c88d30d0333"),
                             Comment = "Great office space, very comfortable!",
-                            CreatedAt = new DateTime(2024, 10, 16, 1, 33, 44, 506, DateTimeKind.Local).AddTicks(9239),
-                            Rating = 4,
+                            CreatedAt = new DateTime(2024, 10, 17, 14, 5, 59, 985, DateTimeKind.Local).AddTicks(7391),
+                            Rating = 4f,
                             SpaceId = "space001",
                             Username = "john_doe"
                         },
                         new
                         {
-                            ReviewId = new Guid("c34afef1-e3c5-41a5-81e1-5f0a4ba1d633"),
+                            ReviewId = new Guid("2197de85-59b4-4417-9f2f-43f8060e4185"),
                             Comment = "Came back here, still amazing experience!",
-                            CreatedAt = new DateTime(2024, 10, 14, 1, 33, 44, 506, DateTimeKind.Local).AddTicks(9241),
-                            Rating = 5,
+                            CreatedAt = new DateTime(2024, 10, 15, 14, 5, 59, 985, DateTimeKind.Local).AddTicks(7393),
+                            Rating = 5f,
                             SpaceId = "space001",
                             Username = "john_doe"
                         });

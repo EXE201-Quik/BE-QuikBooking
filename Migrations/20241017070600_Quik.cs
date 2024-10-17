@@ -216,7 +216,7 @@ namespace QuikBookingApp.Migrations
                     ReviewId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     SpaceId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Rating = table.Column<float>(type: "real", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -299,7 +299,7 @@ namespace QuikBookingApp.Migrations
             migrationBuilder.InsertData(
                 table: "Bookings",
                 columns: new[] { "BookingId", "BookingDate", "DepositAmount", "EndTime", "NumberOfPeople", "PaymentId", "RemainingAmount", "SpaceId", "StartTime", "Status", "TotalAmount", "Username" },
-                values: new object[] { "booking001", new DateTime(2024, 10, 16, 0, 0, 0, 0, DateTimeKind.Local), 20000m, new DateTime(2024, 10, 16, 4, 33, 44, 506, DateTimeKind.Local).AddTicks(9211), 4, new Guid("a31f3afe-6d84-4b03-88b9-23b20117ded0"), 180000m, "space001", new DateTime(2024, 10, 16, 2, 33, 44, 506, DateTimeKind.Local).AddTicks(9205), "Hoàn tất", 200000m, "john_doe" });
+                values: new object[] { "booking001", new DateTime(2024, 10, 17, 0, 0, 0, 0, DateTimeKind.Local), 20000m, new DateTime(2024, 10, 17, 17, 5, 59, 985, DateTimeKind.Local).AddTicks(7358), 4, new Guid("a958a700-4dff-41c7-ab5d-c568c866a427"), 180000m, "space001", new DateTime(2024, 10, 17, 15, 5, 59, 985, DateTimeKind.Local).AddTicks(7352), "Hoàn tất", 200000m, "john_doe" });
 
             migrationBuilder.InsertData(
                 table: "Images",
@@ -311,14 +311,14 @@ namespace QuikBookingApp.Migrations
                 columns: new[] { "ReviewId", "Comment", "CreatedAt", "Rating", "SpaceId", "Username" },
                 values: new object[,]
                 {
-                    { new Guid("c34afef1-e3c5-41a5-81e1-5f0a4ba1d633"), "Came back here, still amazing experience!", new DateTime(2024, 10, 14, 1, 33, 44, 506, DateTimeKind.Local).AddTicks(9241), 5, "space001", "john_doe" },
-                    { new Guid("eb5dbe9d-fa1a-43d6-9353-10ba5508be27"), "Great office space, very comfortable!", new DateTime(2024, 10, 16, 1, 33, 44, 506, DateTimeKind.Local).AddTicks(9239), 4, "space001", "john_doe" }
+                    { new Guid("2197de85-59b4-4417-9f2f-43f8060e4185"), "Came back here, still amazing experience!", new DateTime(2024, 10, 15, 14, 5, 59, 985, DateTimeKind.Local).AddTicks(7393), 5f, "space001", "john_doe" },
+                    { new Guid("6dde8fec-f4b6-4258-9731-2c88d30d0333"), "Great office space, very comfortable!", new DateTime(2024, 10, 17, 14, 5, 59, 985, DateTimeKind.Local).AddTicks(7391), 4f, "space001", "john_doe" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Payments",
                 columns: new[] { "PaymentId", "Amount", "BookingId", "PaymentDate", "PaymentMethod", "PaymentStatus", "PaymentUrl", "VNPayResponseCode", "VNPayTransactionId" },
-                values: new object[] { new Guid("8b776c2d-ce20-49f5-bf89-72b26596456d"), 50000.0, "booking001", new DateTime(2024, 10, 16, 1, 33, 44, 506, DateTimeKind.Local).AddTicks(9226), "Credit Card", "Success", "toexample@gmail.com", "OK", "VNPay001" });
+                values: new object[] { new Guid("6b2400c3-b661-428c-97be-e6b5c806ffc1"), 50000.0, "booking001", new DateTime(2024, 10, 17, 14, 5, 59, 985, DateTimeKind.Local).AddTicks(7377), "Credit Card", "Success", "toexample@gmail.com", "OK", "VNPay001" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Amenities_SpaceId",

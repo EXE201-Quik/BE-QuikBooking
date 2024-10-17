@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Quik_BookingApp.BOs.Request;
 using Quik_BookingApp.DAO.Models;
 using Quik_BookingApp.Repos.Interface;
 
@@ -23,7 +24,7 @@ namespace Quik_BookingApp.Controllers
             return Ok(reviews);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetReviewById/{id}")]
         public async Task<IActionResult> GetReviewById(Guid id)
         {
             var review = await _reviewService.GetReviewByIdAsync(id);
@@ -31,14 +32,27 @@ namespace Quik_BookingApp.Controllers
             return Ok(review);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateReview([FromBody] Review review)
+        [HttpGet("GetReviewsBySpaceId/{spaceId}")]
+        public async Task<IActionResult> GetReviewsBySpaceId(string spaceId)
+        {
+            var reviews = await _reviewService.GetReviewsBySpaceIdAsync(spaceId);
+
+            if (reviews == null || !reviews.Any())
+            {
+                return NotFound(new { Message = "No reviews found for this working space." });
+            }
+
+            return Ok(new { Reviews = reviews });
+        }
+
+        [HttpPost("CreateReview")]
+        public async Task<IActionResult> CreateReview([FromBody] ReviewRequestModel review)
         {
             var createdReview = await _reviewService.CreateReviewAsync(review);
             return CreatedAtAction(nameof(GetReviewById), new { id = createdReview.ReviewId }, createdReview);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("UpdateReview/{id}")]
         public async Task<IActionResult> UpdateReview(Guid id, [FromBody] Review review)
         {
             if (id != review.ReviewId) return BadRequest();
@@ -49,7 +63,7 @@ namespace Quik_BookingApp.Controllers
             return Ok(updatedReview);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("RemoveReview/{id}")]
         public async Task<IActionResult> DeleteReview(Guid id)
         {
             var success = await _reviewService.DeleteReviewAsync(id);
