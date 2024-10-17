@@ -4,21 +4,30 @@ using Microsoft.EntityFrameworkCore;
 using Quik_BookingApp.Repos.Interface;
 using Quik_BookingApp.BOs.Request;
 using Quik_BookingApp.BOs.Response;
+using AutoMapper;
 
 namespace Quik_BookingApp.Service
 {
     public class ReviewService : IReviewService
     {
         private readonly QuikDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ReviewService(QuikDbContext context)
+        public ReviewService(QuikDbContext context, IMapper _mapper)
         {
-            _context = context;
+            this._context = context;
+            this._mapper = _mapper;
         }
 
-        public async Task<IEnumerable<Review>> GetAllReviewsAsync()
+        public async Task<List<ReviewResponseModel>> GetAllReviewsAsync()
         {
-            return await _context.Reviews.ToListAsync();
+            List<ReviewResponseModel> _response = new List<ReviewResponseModel>();
+            var data = await _context.Reviews.ToListAsync();
+            if(data != null)
+            {
+                _response = _mapper.Map<List<Review>, List<ReviewResponseModel>>(data);
+            }
+            return _response;
         }
 
         public async Task<Review> GetReviewByIdAsync(Guid reviewId)

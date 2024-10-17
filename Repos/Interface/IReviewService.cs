@@ -6,7 +6,7 @@ namespace Quik_BookingApp.Repos.Interface
 {
     public interface IReviewService
     {
-        Task<IEnumerable<Review>> GetAllReviewsAsync();
+        Task<List<ReviewResponseModel>> GetAllReviewsAsync();
         Task<Review> GetReviewByIdAsync(Guid reviewId);
         Task<List<ReviewResponseModel>> GetReviewsBySpaceIdAsync(string spaceId);
         Task<ReviewResponseModel> CreateReviewAsync(ReviewRequestModel reviewRequest);
