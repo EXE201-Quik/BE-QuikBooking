@@ -100,63 +100,63 @@ namespace Quik_BookingApp.DAO
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<User>().HasData(
-     new User
-     {
-         Username = "alice_admin",
-         Name = "Alice Admin",
-         Email = "alice.admin@example.com",
-         Password = "hashedpassword789",
-         Role = "Admin",
-         ImageId = "img003",
-         PhoneNumber = "1231231234",
-         OTPVerified = true,
-         IsActive = true,
-         IsLocked = false,
-         Status = "Active"
-     },
-     new User
-     {
-         Username = "bob_member",
-         Name = "Bob Member",
-         Email = "bob.member@example.com",
-         Password = "hashedpassword789",
-         Role = "Member",
-         ImageId = "img004",
-         PhoneNumber = "3213214321",
-         OTPVerified = true,
-         IsActive = true,
-         IsLocked = false,
-         Status = "Active"
-     },
-     new User
-     {
-         Username = "charlie_business",
-         Name = "Charlie Business",
-         Email = "charlie.business@example.com",
-         Password = "hashedpassword789",
-         Role = "Business",
-         ImageId = "img005",
-         PhoneNumber = "6549871230",
-         OTPVerified = true,
-         IsActive = true,
-         IsLocked = false,
-         Status = "Active"
-     },
-     new User
-     {
-         Username = "david_user",
-         Name = "David User",
-         Email = "david.user@example.com",
-         Password = "hashedpassword321",
-         Role = "User",
-         ImageId = "img006",
-         PhoneNumber = "9876543210",
-         OTPVerified = true,
-         IsActive = true,
-         IsLocked = false,
-         Status = "Active"
-     }
- );
+                 new User
+                 {
+                     Username = "alice_admin",
+                     Name = "Alice Admin",
+                     Email = "alice.admin@example.com",
+                     Password = "hashedpassword789",
+                     Role = "Admin",
+                     ImageId = "img003",
+                     PhoneNumber = "1231231234",
+                     OTPVerified = true,
+                     IsActive = true,
+                     IsLocked = false,
+                     Status = "Active"
+                 },
+                 new User
+                 {
+                     Username = "bob_member",
+                     Name = "Bob Member",
+                     Email = "bob.member@example.com",
+                     Password = "hashedpassword789",
+                     Role = "Member",
+                     ImageId = "img004",
+                     PhoneNumber = "3213214321",
+                     OTPVerified = true,
+                     IsActive = true,
+                     IsLocked = false,
+                     Status = "Active"
+                 },
+                 new User
+                 {
+                     Username = "charlie_business",
+                     Name = "Charlie Business",
+                     Email = "charlie.business@example.com",
+                     Password = "hashedpassword789",
+                     Role = "Business",
+                     ImageId = "img005",
+                     PhoneNumber = "6549871230",
+                     OTPVerified = true,
+                     IsActive = true,
+                     IsLocked = false,
+                     Status = "Active"
+                 },
+                 new User
+                 {
+                     Username = "david_user",
+                     Name = "David User",
+                     Email = "david.user@example.com",
+                     Password = "hashedpassword321",
+                     Role = "User",
+                     ImageId = "img006",
+                     PhoneNumber = "9876543210",
+                     OTPVerified = true,
+                     IsActive = true,
+                     IsLocked = false,
+                     Status = "Active"
+                 }
+             );
 
             // Seed thêm dữ liệu cho Business
             modelBuilder.Entity<Business>().HasData(
