@@ -60,6 +60,19 @@ namespace Quik_BookingApp.Service
                     };
                 }
 
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == bookingRequest.Username);
+                if (user == null)
+                {
+                    _logger.LogWarning("User with username {Username} not found.", bookingRequest.Username);
+                    return new APIResponseData
+                    {
+                        ResponseCode = 404,
+                        Result = "Failed",
+                        Message = "User not found.",
+                    };
+                }
+
+
                 // Tính tổng chi phí dựa trên giá không gian và thời gian
                 var durationInHours = (bookingRequest.EndTime - bookingRequest.StartTime).TotalHours;
                 var totalAmount = space.PricePerHour * (decimal)durationInHours;
@@ -88,21 +101,21 @@ namespace Quik_BookingApp.Service
                 //_context.Payments.Add(payment);
                 await _context.SaveChangesAsync();
 
-                //string subject = "Xác nhận đặt phòng thành công";
-                //string body = $@"
-                //    <h2>Cảm ơn bạn đã đặt phòng với Quik Booking!</h2>
-                //    <p>Chi tiết đặt phòng của bạn:</p>
-                //    <ul>
-                //        <li>Mã đặt phòng: {booking.BookingId}</li>
-                //        <li>Không gian: {space.Description}</li>
-                //        <li>Thời gian: {booking.StartTime} đến {booking.EndTime}</li>
-                //        <li>Tổng chi phí: {totalAmount} VND</li>
-                //        <li>Tiền cần thanh toán: {booking.RemainingAmount}</li>
-                //    </ul>";
+                string subject = "Xác nhận đặt phòng thành công";
+                string body = $@"
+                    <h2>Cảm ơn bạn đã đặt phòng với Quik Booking!</h2>
+                    <p>Chi tiết đặt phòng của bạn:</p>
+                    <ul>
+                        <li>Mã đặt phòng: {booking.BookingId}</li>
+                        <li>Không gian: {space.Description}</li>
+                        <li>Thời gian: {booking.StartTime} đến {booking.EndTime}</li>
+                        <li>Tổng chi phí: {totalAmount} VND</li>
+                        <li>Tiền cần thanh toán: {booking.RemainingAmount}</li>
+                    </ul>";
 
-                //await _emailService.SendEmailAsync(bookingRequest.Username, subject, body);
+                await _emailService.SendEmailAsync(user.Email, subject, body);
 
-                _logger.LogInformation("Booking created successfully for user {UserId} and space {SpaceId}.", bookingRequest.Username, bookingRequest.SpaceId);
+                _logger.LogInformation("Booking created successfully for user {UserId} and space {SpaceId}.", user.Email, bookingRequest.SpaceId);
 
                 var bookingResponse = new BookingResponseModel
                 {
