@@ -110,7 +110,7 @@ namespace Quik_BookingApp.Service
                         <li>Không gian: {space.Description}</li>
                         <li>Thời gian: {booking.StartTime} đến {booking.EndTime}</li>
                         <li>Tổng chi phí: {totalAmount} VND</li>
-                        <li>Tiền cần thanh toán: {booking.RemainingAmount}</li>
+                        <li>Tiền cần thanh toán: {booking.RemainingAmount} VND</li>
                     </ul>";
 
                 await _emailService.SendEmailAsync(user.Email, subject, body);

@@ -52,7 +52,8 @@ namespace Quik_BookingApp.Service
                     SpaceId = r.SpaceId,
                     Rating = r.Rating,
                     Comment = r.Comment,
-                    CreatedAt = r.CreatedAt
+                    CreatedAt = r.CreatedAt,
+                    Title = r.Title
                 })
                 .ToListAsync();
 
@@ -70,6 +71,7 @@ namespace Quik_BookingApp.Service
                     SpaceId = reviewRequest.SpaceId,
                     Rating = reviewRequest.Rating,
                     Comment = reviewRequest.Comment,
+                    Title = reviewRequest.Title,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -83,6 +85,7 @@ namespace Quik_BookingApp.Service
                     SpaceId = review.SpaceId,
                     Rating = review.Rating,
                     Comment = review.Comment,
+                    Title = review.Title,
                     CreatedAt = review.CreatedAt
                 };
             }
@@ -95,6 +98,7 @@ namespace Quik_BookingApp.Service
 
                 existingReview.Rating = review.Rating;
                 existingReview.Comment = review.Comment;
+                existingReview.Title = review.Title;
                 // Add other properties to update if needed
 
                 await _context.SaveChangesAsync();

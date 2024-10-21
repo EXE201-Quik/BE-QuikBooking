@@ -12,7 +12,7 @@ using Quik_BookingApp.DAO;
 namespace QuikBookingApp.Migrations
 {
     [DbContext(typeof(QuikDbContext))]
-    [Migration("20241017095801_Quik")]
+    [Migration("20241021004902_Quik")]
     partial class Quik
     {
         /// <inheritdoc />
@@ -124,14 +124,14 @@ namespace QuikBookingApp.Migrations
                         new
                         {
                             BookingId = "booking002",
-                            BookingDate = new DateTime(2024, 10, 16, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(8928),
+                            BookingDate = new DateTime(2024, 10, 20, 7, 49, 2, 53, DateTimeKind.Local).AddTicks(6216),
                             DepositAmount = 30000m,
-                            EndTime = new DateTime(2024, 10, 17, 20, 58, 1, 680, DateTimeKind.Local).AddTicks(8950),
+                            EndTime = new DateTime(2024, 10, 21, 11, 49, 2, 53, DateTimeKind.Local).AddTicks(6233),
                             NumberOfPeople = 2,
-                            PaymentId = new Guid("24f99844-dbb8-4ab1-877f-c214b43ec456"),
+                            PaymentId = new Guid("81758fad-148f-4928-83e5-cf60184c1523"),
                             RemainingAmount = 170000m,
                             SpaceId = "space006",
-                            StartTime = new DateTime(2024, 10, 17, 18, 58, 1, 680, DateTimeKind.Local).AddTicks(8949),
+                            StartTime = new DateTime(2024, 10, 21, 9, 49, 2, 53, DateTimeKind.Local).AddTicks(6232),
                             Status = "Pending",
                             TotalAmount = 200000m,
                             Username = "bob_member"
@@ -139,14 +139,14 @@ namespace QuikBookingApp.Migrations
                         new
                         {
                             BookingId = "booking003",
-                            BookingDate = new DateTime(2024, 10, 15, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(8955),
+                            BookingDate = new DateTime(2024, 10, 19, 7, 49, 2, 53, DateTimeKind.Local).AddTicks(6237),
                             DepositAmount = 40000m,
-                            EndTime = new DateTime(2024, 10, 17, 21, 58, 1, 680, DateTimeKind.Local).AddTicks(8957),
+                            EndTime = new DateTime(2024, 10, 21, 12, 49, 2, 53, DateTimeKind.Local).AddTicks(6238),
                             NumberOfPeople = 3,
-                            PaymentId = new Guid("a9b72404-ee69-4f03-b5a5-b23deb983a9a"),
+                            PaymentId = new Guid("8e2e9ba0-997a-4ea5-bf1b-8a636959f880"),
                             RemainingAmount = 210000m,
                             SpaceId = "space007",
-                            StartTime = new DateTime(2024, 10, 17, 19, 58, 1, 680, DateTimeKind.Local).AddTicks(8956),
+                            StartTime = new DateTime(2024, 10, 21, 10, 49, 2, 53, DateTimeKind.Local).AddTicks(6238),
                             Status = "Confirmed",
                             TotalAmount = 250000m,
                             Username = "alice_admin"
@@ -182,6 +182,9 @@ namespace QuikBookingApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<float>("Rating")
+                        .HasColumnType("real");
+
                     b.HasKey("BusinessId");
 
                     b.ToTable("Businesses");
@@ -195,7 +198,8 @@ namespace QuikBookingApp.Migrations
                             Email = "contact@workspace-deluxe.com",
                             Location = "456 Elm Street",
                             Password = "hashedpassword",
-                            PhoneNumber = "987654321"
+                            PhoneNumber = "987654321",
+                            Rating = 4f
                         },
                         new
                         {
@@ -205,7 +209,8 @@ namespace QuikBookingApp.Migrations
                             Email = "info@startup-hub.com",
                             Location = "789 Startup Blvd",
                             Password = "hashedpassword123",
-                            PhoneNumber = "123456987"
+                            PhoneNumber = "123456987",
+                            Rating = 5f
                         },
                         new
                         {
@@ -215,7 +220,8 @@ namespace QuikBookingApp.Migrations
                             Email = "freelancers@corner.com",
                             Location = "101 Freelance Road",
                             Password = "hashedpassword789",
-                            PhoneNumber = "654321987"
+                            PhoneNumber = "654321987",
+                            Rating = 4f
                         });
                 });
 
@@ -327,10 +333,10 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            PaymentId = new Guid("5d003ca5-8753-47c9-a3c9-e969d1457506"),
+                            PaymentId = new Guid("56cc030e-86ff-4f6e-a6df-053218c77d5e"),
                             Amount = 30000.0,
                             BookingId = "booking002",
-                            PaymentDate = new DateTime(2024, 10, 17, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9028),
+                            PaymentDate = new DateTime(2024, 10, 21, 7, 49, 2, 53, DateTimeKind.Local).AddTicks(6258),
                             PaymentMethod = "PayPal",
                             PaymentStatus = "Pending",
                             PaymentUrl = "payment002@example.com",
@@ -339,10 +345,10 @@ namespace QuikBookingApp.Migrations
                         },
                         new
                         {
-                            PaymentId = new Guid("fd45d97e-8a68-45ad-b881-cd9b8cbbd272"),
+                            PaymentId = new Guid("b93fb0bf-2858-449c-907b-1897f6841f1e"),
                             Amount = 40000.0,
                             BookingId = "booking003",
-                            PaymentDate = new DateTime(2024, 10, 17, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9031),
+                            PaymentDate = new DateTime(2024, 10, 21, 7, 49, 2, 53, DateTimeKind.Local).AddTicks(6263),
                             PaymentMethod = "Credit Card",
                             PaymentStatus = "Success",
                             PaymentUrl = "payment003@example.com",
@@ -395,6 +401,10 @@ namespace QuikBookingApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -410,29 +420,32 @@ namespace QuikBookingApp.Migrations
                     b.HasData(
                         new
                         {
-                            ReviewId = new Guid("43c07812-50ca-4245-8253-9edba6293b18"),
+                            ReviewId = new Guid("58ff3f9f-a5a7-4b9b-8584-bb6f3ddc866e"),
                             Comment = "Amazing experience, highly recommend!",
-                            CreatedAt = new DateTime(2024, 10, 12, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9049),
+                            CreatedAt = new DateTime(2024, 10, 16, 7, 49, 2, 53, DateTimeKind.Local).AddTicks(6278),
                             Rating = 5f,
                             SpaceId = "space006",
+                            Title = "Fantastic Experience",
                             Username = "alice_admin"
                         },
                         new
                         {
-                            ReviewId = new Guid("ff20e165-361f-4f09-b67c-7148c3ab4b3a"),
+                            ReviewId = new Guid("68f38126-8cad-4f81-9ab5-96c9c01fb3b5"),
                             Comment = "Great place for team collaboration!",
-                            CreatedAt = new DateTime(2024, 10, 14, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9052),
+                            CreatedAt = new DateTime(2024, 10, 18, 7, 49, 2, 53, DateTimeKind.Local).AddTicks(6280),
                             Rating = 4f,
                             SpaceId = "space007",
+                            Title = "Good Collaboration Space",
                             Username = "bob_member"
                         },
                         new
                         {
-                            ReviewId = new Guid("f49fcab4-1cb2-49fd-8596-57d7bfb1c06e"),
+                            ReviewId = new Guid("77b55126-b082-4400-8d02-fa38886d9864"),
                             Comment = "Nice and quiet workspace.",
-                            CreatedAt = new DateTime(2024, 10, 16, 16, 58, 1, 680, DateTimeKind.Local).AddTicks(9054),
+                            CreatedAt = new DateTime(2024, 10, 20, 7, 49, 2, 53, DateTimeKind.Local).AddTicks(6283),
                             Rating = 4f,
                             SpaceId = "space008",
+                            Title = "Quiet Workspace",
                             Username = "charlie_business"
                         });
                 });
@@ -616,6 +629,9 @@ namespace QuikBookingApp.Migrations
                     b.Property<decimal>("PricePerHour")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<float>("Rating")
+                        .HasColumnType("real");
+
                     b.Property<string>("RoomType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -636,10 +652,11 @@ namespace QuikBookingApp.Migrations
                             SpaceId = "space006",
                             BusinessId = "business002",
                             Capacity = 3,
-                            Description = "An executive office with all luxury amenities.",
+                            Description = "An executive office with all luxury amenities, including high-speed internet, ergonomic furniture, and personalized services to enhance productivity and comfort. Ideal for high-stakes meetings and presentations.",
                             ImageId = "img_space006",
                             Location = "456 Elm Street, Room 101",
                             PricePerHour = 100000m,
+                            Rating = 4.5f,
                             RoomType = "Executive",
                             Title = "VIP Executive Office"
                         },
@@ -648,10 +665,11 @@ namespace QuikBookingApp.Migrations
                             SpaceId = "space007",
                             BusinessId = "business003",
                             Capacity = 5,
-                            Description = "Perfect for small teams working on innovation.",
+                            Description = "Perfect for innovative teams, this lab offers a vibrant atmosphere with collaborative spaces, whiteboards, and high-speed internet. It's designed to foster creativity and teamwork, helping your startup thrive.",
                             ImageId = "img_space007",
                             Location = "789 Startup Blvd, Room 303",
                             PricePerHour = 20000m,
+                            Rating = 4.5f,
                             RoomType = "Lab",
                             Title = "Startup Lab"
                         },
@@ -660,10 +678,11 @@ namespace QuikBookingApp.Migrations
                             SpaceId = "space008",
                             BusinessId = "business004",
                             Capacity = 6,
-                            Description = "An open studio perfect for remote workers.",
+                            Description = "An open studio designed for remote workers, featuring a relaxed environment with natural light, comfortable seating, and high-speed internet. It's the perfect place for freelancers to get work done efficiently.",
                             ImageId = "img_space008",
                             Location = "101 Freelance Road, Room 102",
                             PricePerHour = 15000m,
+                            Rating = 4.3f,
                             RoomType = "Studio",
                             Title = "Freelance Studio"
                         });

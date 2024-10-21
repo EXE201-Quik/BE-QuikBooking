@@ -8,7 +8,7 @@ namespace Quik_BookingApp.Repos.Interface
     public interface IBusinessService
     {
 
-        Task<List<BusinessResponseModel>> GetAllBusiness();
+        Task<List<BusinessResponseRatingMode>> GetAllBusiness();
         Task<List<WSWBNameResponse>> GetListWSOfBusiness(string businessId);
         Task<BusinessResponseModel> GetBusinessById(string bid);
 
