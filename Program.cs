@@ -135,17 +135,17 @@ app.UseCors(builder => builder
     .WithOrigins("http://localhost:5173"));
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    await using (var scope = app.Services.CreateAsyncScope())
-    {
-        var dbContext = scope.ServiceProvider.GetRequiredService<QuikDbContext>();
-        await dbContext.Database.MigrateAsync();
-    }
+//if (app.Environment.IsDevelopment())
+//{
+//    await using (var scope = app.Services.CreateAsyncScope())
+//    {
+//        var dbContext = scope.ServiceProvider.GetRequiredService<QuikDbContext>();
+//        await dbContext.Database.MigrateAsync();
+//    }
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
 
 app.UseHttpsRedirection();
 
