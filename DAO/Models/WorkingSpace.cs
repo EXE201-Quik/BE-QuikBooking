@@ -21,6 +21,7 @@ namespace Quik_BookingApp.DAO.Models
         public Business Business { get; set; }
         public ICollection<Booking> Bookings { get; set; }
         public ICollection<Amenity> Amenities { get; set; }
+        [JsonIgnore]
         public ICollection<ImageWS> Images { get; set; } = new List<ImageWS>();
         public ICollection<Review> Reviews { get; set; }
         

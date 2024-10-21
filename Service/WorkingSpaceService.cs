@@ -175,13 +175,14 @@ namespace Quik_BookingApp.Service
         {
             List<WorkingSpaceRequestRatingMode> _response = new List<WorkingSpaceRequestRatingMode>();
 
-            // Get all working spaces with their average rating from reviews
+            // Get all working spaces with their average rating, business name, and associated images
             var _data = await context.WorkingSpaces
                 .Select(ws => new
                 {
                     WorkingSpace = ws,
                     AverageRating = ws.Reviews.Any() ? ws.Reviews.Average(r => r.Rating) : 0,
-                    BusinessName = ws.Business.BusinessName
+                    BusinessName = ws.Business.BusinessName,
+                    ImageUrls = ws.Images.Select(img => img.ImageUrl).ToList() // Lấy danh sách các URL ảnh
                 })
                 .ToListAsync();
 
@@ -192,12 +193,14 @@ namespace Quik_BookingApp.Service
                     var workingSpaceModel = mapper.Map<WorkingSpaceRequestRatingMode>(item.WorkingSpace);
                     workingSpaceModel.Rating = item.AverageRating;
                     workingSpaceModel.BusinessName = item.BusinessName;
+                    workingSpaceModel.ImageUrls = item.ImageUrls; // Gán danh sách URL ảnh vào model
                     return workingSpaceModel;
                 }).ToList();
             }
 
             return _response;
         }
+
 
 
         public async Task<WorkingSpaceResponseAmenities> GetBySpaceId(string spaceId)

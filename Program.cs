@@ -14,6 +14,7 @@ using Serilog;
 using System;
 using System.Configuration;
 using System.Text;
+using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,13 +58,13 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-//builder.Services.AddControllers()
-//    .AddJsonOptions(options =>
-//    {
-//        // Enable ReferenceHandler.Preserve for cycle detection
-//        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-//        options.JsonSerializerOptions.WriteIndented = true; // Optional: Pretty print JSON
-//    });
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Enable ReferenceHandler.Preserve for cycle detection
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+        options.JsonSerializerOptions.WriteIndented = true; // Optional: Pretty print JSON
+    });
 
 
 
