@@ -39,7 +39,7 @@ namespace Quik_BookingApp.Controllers
 
             if (reviews == null || !reviews.Any())
             {
-                return NotFound(new { Message = "No reviews found for this working space." });
+                return Ok(new { Message = "No reviews found for this working space." });
             }
 
             return Ok(new { Reviews = reviews });
