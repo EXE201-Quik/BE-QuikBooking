@@ -210,7 +210,8 @@ namespace Quik_BookingApp.Service
                 var workingSpace = await context.WorkingSpaces
                                                  .Include(ws => ws.Amenities)
                                                  .Include(ws => ws.Business)
-                                                 .Include(ws => ws.Reviews) 
+                                                 .Include(ws => ws.Reviews)
+                                                 .Include(ws => ws.Images)
                                                  .FirstOrDefaultAsync(ws => ws.SpaceId == spaceId);
 
                 if (workingSpace == null)
@@ -225,6 +226,7 @@ namespace Quik_BookingApp.Service
                 var workingSpaceModel = mapper.Map<WorkingSpaceResponseAmenities>(workingSpace);
                 workingSpaceModel.Rating = averageRating; 
                 workingSpaceModel.BusinessName = workingSpace.Business?.BusinessName;
+                workingSpaceModel.ImageUrls = workingSpace.Images.Select(img => img.ImageUrl).ToList();
 
                 return workingSpaceModel;
             }

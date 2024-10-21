@@ -12,6 +12,7 @@
         public string RoomType {  get; set; }
         public int Capacity { get; set; }
         public string Location { get; set; }
+        public List<string> ImageUrls { get; set; }
         public IFormFile Image { get; set; }
         public float Rating { get; set; }
 
