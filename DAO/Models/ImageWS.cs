@@ -1,4 +1,6 @@
-﻿namespace Quik_BookingApp.DAO.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Quik_BookingApp.DAO.Models
 {
     public class ImageWS
     {
@@ -9,6 +11,7 @@
         public string WSCode { get; set; }
         public byte[]? WSImages { get; set; }
 
+        [JsonIgnore]
         public WorkingSpace WorkingSpace { get; set; }
     }
 }

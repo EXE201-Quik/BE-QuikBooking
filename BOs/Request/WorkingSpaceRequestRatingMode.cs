@@ -16,6 +16,7 @@ namespace Quik_BookingApp.BOs.Request
         public string Location { get; set; }
         public IFormFile Image { get; set; }
         public float Rating {  get; set; }
+        public List<string> ImageUrls { get; set; }
 
 
     }
