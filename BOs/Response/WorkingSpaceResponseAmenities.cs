@@ -4,6 +4,7 @@
     {
         public string SpaceId { get; set; }
         public string BusinessId { get; set; }
+        public string BusinessName { get; set; }
         public string ImageId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
@@ -12,8 +13,9 @@
         public int Capacity { get; set; }
         public string Location { get; set; }
         public IFormFile Image { get; set; }
+        public float Rating { get; set; }
 
-        // Add a list of amenities
+       
         public List<AmenityRequestModel> Amenities { get; set; }
     }
 
