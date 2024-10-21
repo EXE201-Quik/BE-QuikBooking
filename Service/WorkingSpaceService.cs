@@ -182,7 +182,7 @@ namespace Quik_BookingApp.Service
                     WorkingSpace = ws,
                     AverageRating = ws.Reviews.Any() ? ws.Reviews.Average(r => r.Rating) : 0,
                     BusinessName = ws.Business.BusinessName,
-                    ImageUrls = ws.Images.Select(img => img.ImageUrl).ToList() // Lấy danh sách các URL ảnh
+                    ImageUrls = ws.Images.Select(img => img.ImageUrl).ToList() 
                 })
                 .ToListAsync();
 
@@ -207,28 +207,24 @@ namespace Quik_BookingApp.Service
         {
             try
             {
-                // Include amenities and business when retrieving the working space
                 var workingSpace = await context.WorkingSpaces
-                                                .Include(ws => ws.Amenities)
-                                                .Include(ws => ws.Business) // Include the Business entity
-                                                .FirstOrDefaultAsync(ws => ws.SpaceId == spaceId);
+                                                 .Include(ws => ws.Amenities)
+                                                 .Include(ws => ws.Business)
+                                                 .Include(ws => ws.Reviews) 
+                                                 .FirstOrDefaultAsync(ws => ws.SpaceId == spaceId);
 
                 if (workingSpace == null)
                 {
                     return null;
                 }
 
-                // Calculate the average rating from reviews
                 var averageRating = workingSpace.Reviews != null && workingSpace.Reviews.Any()
-                                    ? workingSpace.Reviews.Average(r => r.Rating)
-                                    : 0;
+                                     ? workingSpace.Reviews.Average(r => r.Rating)
+                                     : 0;
 
-                // Map the working space to the response model
                 var workingSpaceModel = mapper.Map<WorkingSpaceResponseAmenities>(workingSpace);
-
-                // Set additional properties
-                workingSpaceModel.Rating = averageRating; // Set the calculated average rating
-                workingSpaceModel.BusinessName = workingSpace.Business?.BusinessName; // Set the business name
+                workingSpaceModel.Rating = averageRating; 
+                workingSpaceModel.BusinessName = workingSpace.Business?.BusinessName;
 
                 return workingSpaceModel;
             }
@@ -238,6 +234,7 @@ namespace Quik_BookingApp.Service
                 return null;
             }
         }
+
 
 
 
