@@ -12,13 +12,6 @@ namespace Quik_BookingApp.Service
 {
     public class FirebaseService : IFirebaseService
     {
-
-        //private static string ApiKey = "AIzaSyCr3D6-Z3owDLYkN8nW4sF4pWLnGXIbzEE";
-        //private static string Bucket = "quik-77aae.appspot.com";
-        //private static string AuthEmail = "huylqse173543@fpt.edu.vn";
-        //private static string AuthPassword = "123456";
-
-
         private readonly FirebaseConfiguration _firebaseConfiguration;
         private readonly IConfiguration _configuration;
         public FirebaseService(IConfiguration configuration, IOptions<FirebaseConfiguration> firebaseConfiguration)

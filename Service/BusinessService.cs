@@ -24,16 +24,43 @@ namespace Quik_BookingApp.Service
             this._logger = _logger;
         }
 
-        public async Task<List<BusinessResponseModel>> GetAllBusiness()
+        //public async Task<List<BusinessResponseModel>> GetAllBusiness()
+        //{
+        //    List<BusinessResponseModel> _response = new List<BusinessResponseModel>();
+        //    var _data = await _context.Businesses.ToListAsync();
+        //    if (_data != null)
+        //    {
+        //        _response = _mapper.Map<List<Business>, List<BusinessResponseModel>>(_data);
+        //    }
+        //    return _response;
+        //}
+
+        public async Task<List<BusinessResponseRatingMode>> GetAllBusiness()
         {
-            List<BusinessResponseModel> _response = new List<BusinessResponseModel>();
-            var _data = await _context.Businesses.ToListAsync();
+            List<BusinessResponseRatingMode> _response = new List<BusinessResponseRatingMode>();
+
+            // Get all businesses with their average rating from working spaces
+            var _data = await _context.Businesses
+                .Select(b => new
+                {
+                    Business = b,
+                    AverageRating = b.WorkingSpaces.Any() ? b.WorkingSpaces.Average(ws => ws.Rating) : 0 // Calculate average rating
+                })
+                .ToListAsync();
+
             if (_data != null)
             {
-                _response = _mapper.Map<List<Business>, List<BusinessResponseModel>>(_data);
+                _response = _data.Select(item =>
+                {
+                    var businessResponseModel = _mapper.Map<BusinessResponseRatingMode>(item.Business);
+                    businessResponseModel.Rating = item.AverageRating; // Add average rating to the model
+                    return businessResponseModel;
+                }).ToList();
             }
+
             return _response;
         }
+
 
         public async Task<List<WSWBNameResponse>> GetListWSOfBusiness(string businessId)
         {
@@ -101,7 +128,7 @@ namespace Quik_BookingApp.Service
                         ResponseCode = 400,
                         Result = "Error",
                         Message = "A business with this email already exists.",
-                        Data = null
+                        Data = existingBusiness
                     };
                 }
 
@@ -139,7 +166,7 @@ namespace Quik_BookingApp.Service
                     ResponseCode = 500,
                     Result = "Error",
                     Message = $"An error occurred: {ex.Message}",
-                    Data = null
+                    Data = businessRequest.BusinessName
                 };
             }
         }
@@ -158,7 +185,7 @@ namespace Quik_BookingApp.Service
                         ResponseCode = 404,
                         Message = "Business not found",
                         Result = "Failed",
-                        Data = null
+                        Data = existingBusiness
                     };
                 }
 

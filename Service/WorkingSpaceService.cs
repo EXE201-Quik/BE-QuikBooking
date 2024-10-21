@@ -171,16 +171,32 @@ namespace Quik_BookingApp.Service
 
 
 
-        public async Task<List<WorkingSpaceRequestModel>> GetAll()
+        public async Task<List<WorkingSpaceRequestRatingMode>> GetAll()
         {
-            List<WorkingSpaceRequestModel> _response = new List<WorkingSpaceRequestModel>();
-            var _data = await context.WorkingSpaces.ToListAsync();
+            List<WorkingSpaceRequestRatingMode> _response = new List<WorkingSpaceRequestRatingMode>();
+
+            // Get all working spaces with their average rating from reviews
+            var _data = await context.WorkingSpaces
+                .Select(ws => new
+                {
+                    WorkingSpace = ws,
+                    AverageRating = ws.Reviews.Any() ? ws.Reviews.Average(r => r.Rating) : 0 // Calculate average rating
+                })
+                .ToListAsync();
+
             if (_data != null)
             {
-                _response = mapper.Map<List<WorkingSpace>, List<WorkingSpaceRequestModel>>(_data);
+                _response = _data.Select(item =>
+                {
+                    var workingSpaceModel = mapper.Map<WorkingSpaceRequestRatingMode>(item.WorkingSpace);
+                    workingSpaceModel.Rating = item.AverageRating; // Add average rating to the model
+                    return workingSpaceModel;
+                }).ToList();
             }
+
             return _response;
         }
+
 
         public async Task<WorkingSpaceResponseAmenities> GetBySpaceId(string spaceId)
         {

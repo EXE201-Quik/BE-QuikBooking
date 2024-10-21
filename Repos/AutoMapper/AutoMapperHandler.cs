@@ -15,6 +15,7 @@ namespace Quik_BookingApp.Modal
             CreateMap<WorkingSpace, WorkingSpaceRequestModel>();
             CreateMap<Booking, BookingResponseModel>();
             CreateMap<Business, BusinessResponseModel>();
+            CreateMap<Business, BusinessResponseRatingMode>();
             CreateMap<UserRegister, User>()
                 .ForMember(dest => dest.Password, opt => opt.Ignore()) // Password will be hashed manually
                 .ForMember(dest => dest.Role, opt => opt.Ignore());    // Default role will be set in the service
@@ -34,6 +35,8 @@ namespace Quik_BookingApp.Modal
             CreateMap<Business, BusinessRequestModel>();
             CreateMap<Review, ReviewRequestModel>();
             CreateMap<Review, ReviewResponseModel>();
+            CreateMap<WorkingSpace, WorkingSpaceRequestRatingMode>();
+            
         }
     }
 }

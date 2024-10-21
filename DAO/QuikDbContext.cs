@@ -168,7 +168,8 @@ namespace Quik_BookingApp.DAO
                     Email = "contact@workspace-deluxe.com",
                     Password = "hashedpassword",
                     Location = "456 Elm Street",
-                    Description = "A deluxe workspace offering premium services."
+                    Description = "A deluxe workspace offering premium services.",
+                    Rating = 4
                 },
                 new Business
                 {
@@ -178,7 +179,9 @@ namespace Quik_BookingApp.DAO
                     Email = "info@startup-hub.com",
                     Password = "hashedpassword123",
                     Location = "789 Startup Blvd",
-                    Description = "An energetic space for young startups."
+                    Description = "An energetic space for young startups.",
+                    Rating = 5
+                    
                 },
                 new Business
                 {
@@ -188,7 +191,8 @@ namespace Quik_BookingApp.DAO
                     Email = "freelancers@corner.com",
                     Password = "hashedpassword789",
                     Location = "101 Freelance Road",
-                    Description = "A cozy spot for freelancers."
+                    Description = "A cozy spot for freelancers.",
+                    Rating = 4
                 }
             );
 
@@ -200,11 +204,12 @@ namespace Quik_BookingApp.DAO
                     ImageId = "img_space006",
                     BusinessId = "business002",
                     Title = "VIP Executive Office",
-                    Description = "An executive office with all luxury amenities.",
+                    Description = "An executive office with all luxury amenities, including high-speed internet, ergonomic furniture, and personalized services to enhance productivity and comfort. Ideal for high-stakes meetings and presentations.",
                     PricePerHour = 100000,
                     RoomType = "Executive",
                     Capacity = 3,
-                    Location = "456 Elm Street, Room 101"
+                    Location = "456 Elm Street, Room 101",
+                    Rating = 4.5f
                 },
                 new WorkingSpace
                 {
@@ -212,11 +217,12 @@ namespace Quik_BookingApp.DAO
                     ImageId = "img_space007",
                     BusinessId = "business003",
                     Title = "Startup Lab",
-                    Description = "Perfect for small teams working on innovation.",
+                    Description = "Perfect for innovative teams, this lab offers a vibrant atmosphere with collaborative spaces, whiteboards, and high-speed internet. It's designed to foster creativity and teamwork, helping your startup thrive.",
                     PricePerHour = 20000,
                     RoomType = "Lab",
                     Capacity = 5,
-                    Location = "789 Startup Blvd, Room 303"
+                    Location = "789 Startup Blvd, Room 303",
+                    Rating = 4.5f
                 },
                 new WorkingSpace
                 {
@@ -224,13 +230,15 @@ namespace Quik_BookingApp.DAO
                     ImageId = "img_space008",
                     BusinessId = "business004",
                     Title = "Freelance Studio",
-                    Description = "An open studio perfect for remote workers.",
+                    Description = "An open studio designed for remote workers, featuring a relaxed environment with natural light, comfortable seating, and high-speed internet. It's the perfect place for freelancers to get work done efficiently.",
                     PricePerHour = 15000,
                     RoomType = "Studio",
                     Capacity = 6,
-                    Location = "101 Freelance Road, Room 102"
+                    Location = "101 Freelance Road, Room 102",
+                    Rating = 4.3f
                 }
             );
+
 
             // Seed thêm dữ liệu cho Amenity
             modelBuilder.Entity<Amenity>().HasData(
@@ -322,8 +330,7 @@ namespace Quik_BookingApp.DAO
                 }
             );
 
-            // Seed thêm dữ liệu cho Review
-            modelBuilder.Entity<Review>().HasData(
+        modelBuilder.Entity<Review>().HasData(
                 new Review
                 {
                     ReviewId = Guid.NewGuid(),
@@ -331,6 +338,7 @@ namespace Quik_BookingApp.DAO
                     SpaceId = "space006",
                     Rating = 5,
                     Comment = "Amazing experience, highly recommend!",
+                    Title = "Fantastic Experience", // New title field
                     CreatedAt = DateTime.Now.AddDays(-5)
                 },
                 new Review
@@ -340,6 +348,7 @@ namespace Quik_BookingApp.DAO
                     SpaceId = "space007",
                     Rating = 4,
                     Comment = "Great place for team collaboration!",
+                    Title = "Good Collaboration Space", // New title field
                     CreatedAt = DateTime.Now.AddDays(-3)
                 },
                 new Review
@@ -349,9 +358,11 @@ namespace Quik_BookingApp.DAO
                     SpaceId = "space008",
                     Rating = 4,
                     Comment = "Nice and quiet workspace.",
+                    Title = "Quiet Workspace", // New title field
                     CreatedAt = DateTime.Now.AddDays(-1)
                 }
             );
+
         }
     }
 }

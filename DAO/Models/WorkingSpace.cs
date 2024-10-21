@@ -14,6 +14,8 @@ namespace Quik_BookingApp.DAO.Models
         public string RoomType {  get; set; }
         public int Capacity { get; set; }
         public string Location { get; set; }
+        public float Rating {  get; set; }
+        
 
         [JsonIgnore]
         public Business Business { get; set; }
@@ -21,7 +23,7 @@ namespace Quik_BookingApp.DAO.Models
         public ICollection<Amenity> Amenities { get; set; }
         public ICollection<ImageWS> Images { get; set; } = new List<ImageWS>();
         public ICollection<Review> Reviews { get; set; }
-
+        
 
     }
 
