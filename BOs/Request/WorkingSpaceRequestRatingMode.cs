@@ -5,7 +5,8 @@ namespace Quik_BookingApp.BOs.Request
     public class WorkingSpaceRequestRatingMode
     {
         public string SpaceId { get; set; }
-        public string BusinessId { get; set; } // Foreign key for Business
+        public string BusinessId { get; set; } 
+        public string BusinessName {  get; set; }
         public string ImageId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
@@ -15,5 +16,7 @@ namespace Quik_BookingApp.BOs.Request
         public string Location { get; set; }
         public IFormFile Image { get; set; }
         public float Rating {  get; set; }
+
+
     }
 }
