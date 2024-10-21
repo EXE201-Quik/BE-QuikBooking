@@ -41,10 +41,29 @@ namespace Quik_BookingApp.Service
 
         public async Task<List<ReviewResponseModel>> GetReviewsBySpaceIdAsync(string spaceId)
         {
+            // Log giá trị spaceId
+            Console.WriteLine($"SpaceId received: {spaceId}");
 
-            var reviews = await _context.Reviews
-                .AsNoTracking()
-                .Where(r => r.SpaceId == spaceId)
+            // Kiểm tra xem spaceId có phải là Guid hay không
+            bool isGuid = Guid.TryParse(spaceId, out Guid spaceGuid);
+
+            var reviewsQuery = _context.Reviews.AsNoTracking();
+
+            // Nếu spaceId là chuỗi kiểu Guid, truy vấn theo Guid
+            if (isGuid)
+            {
+                reviewsQuery = reviewsQuery.Where(r => r.SpaceId == spaceGuid.ToString());
+            }
+            else
+            {
+                // Nếu không, truy vấn theo chuỗi thông thường
+                reviewsQuery = reviewsQuery.Where(r => r.SpaceId == spaceId);
+            }
+
+            // Log truy vấn trước khi thực hiện
+            Console.WriteLine($"Query: {reviewsQuery.ToQueryString()}");
+
+            var reviews = await reviewsQuery
                 .Select(r => new ReviewResponseModel
                 {
                     ReviewId = r.ReviewId,
@@ -57,8 +76,12 @@ namespace Quik_BookingApp.Service
                 })
                 .ToListAsync();
 
+            // Không cần kiểm tra null hoặc danh sách trống, trả về luôn
             return reviews;
         }
+
+
+
 
 
 

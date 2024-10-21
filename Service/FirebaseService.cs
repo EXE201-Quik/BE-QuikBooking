@@ -52,7 +52,7 @@ namespace Quik_BookingApp.Service
             //var a = pathFileName.Split("/");
             var a = pathFileName.Split("/o/")[1];
             //pathFileName = $"{a[0]}%2F{a[1]}";
-            var api = $"https://console.firebase.google.com/u/0/project/quik-77aae/storage/quik-77aae.appspot.com/files?hl={a}";
+            var api = $"https://console.firebase.google.com/u/1/project/quik-1893b/storage/quik-1893b.appspot.com/files?hl={a}";
             if (string.IsNullOrEmpty(pathFileName))
             {
                 return string.Empty;
@@ -66,7 +66,7 @@ namespace Quik_BookingApp.Service
                 var jmessage = JObject.Parse(response.Content);
                 var downloadToken = jmessage.GetValue("downloadTokens").ToString();
                 return
-                    $"https://console.firebase.google.com/u/0/project/quik-77aae/storage/{_configuration["quik-77aae.appspot.com"]}/files/{pathFileName}?alt=media&token={downloadToken}";
+                    $"https://console.firebase.google.com/u/1/project/quik-1893b/storage/{_configuration["quik-1893b.appspot.com"]}/files/{pathFileName}?alt=media&token={downloadToken}";
             }
 
             return string.Empty;

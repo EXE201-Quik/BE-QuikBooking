@@ -19,10 +19,7 @@ namespace Quik_BookingApp.Controllers
     [ApiController]
     public class WorkingSpaceController : ControllerBase
     {
-        private static string ApiKey = "AIzaSyCIROgMN-g5iIsG9d9fCB88PTOWTqhNknk";
-        private static string Bucket = "quik-a8158.appspot.com";
-        private static string AuthEmail = "huylqse173543@fpt.edu.vn";
-        private static string AuthPassword = "123456";
+       
 
         private readonly IWebHostEnvironment environment;
         private readonly QuikDbContext context;
