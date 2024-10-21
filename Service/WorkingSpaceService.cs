@@ -87,13 +87,13 @@ namespace Quik_BookingApp.Service
                         // Create a new ImageWS object and set the ImageUrl
                         var newImageWS = new ImageWS
                         {
-                            ImageUrl = uploadResult.Data.ToString(), 
+                            ImageUrl = uploadResult.Data.ToString(),
                             ImageId = Guid.NewGuid().ToString(),
                             SpaceId = ws.SpaceId,
                             WorkingSpaceName = workingSpace.Title,
                             WSCode = "Updated",
                         };
-                        workingSpace.Images.Add(newImageWS); 
+                        workingSpace.Images.Add(newImageWS);
 
                         _logger.LogInformation("Image uploaded successfully to Firebase for working space: {Title}", ws.Title);
                     }
