@@ -24,6 +24,7 @@ namespace Quik_BookingApp.Controllers
         private readonly IWebHostEnvironment environment;
         private readonly QuikDbContext context;
         private readonly IWorkingSpaceService workingSpaceService;
+        private readonly ILogger logger;
 
         public WorkingSpaceController(IWebHostEnvironment environment, QuikDbContext context, IWorkingSpaceService workingSpaceService)
         {
@@ -32,7 +33,31 @@ namespace Quik_BookingApp.Controllers
             this.workingSpaceService = workingSpaceService;
         }
 
-        
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchByLocation([FromQuery] string location)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(location))
+                {
+                    return BadRequest("Location is required.");
+                }
+
+                var result = await workingSpaceService.SearchWorkingSpacesByLocationAsync(location);
+
+                if (result == null || result.Count == 0)
+                {
+                    return NotFound("No working spaces found for the specified location.");
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error searching working spaces by location: {Location}", location);
+                return StatusCode(500, "Internal server error");
+            }
+        }
 
 
         [SwaggerOperation(

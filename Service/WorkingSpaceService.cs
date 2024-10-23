@@ -237,10 +237,6 @@ namespace Quik_BookingApp.Service
             }
         }
 
-
-
-
-
         public async Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForWorkingAreaAsync()
         {
             return await GetWorkingSpacesByRoomTypeAsync("Không gian làm việc chung");
@@ -279,6 +275,30 @@ namespace Quik_BookingApp.Service
         }
 
 
+        public async Task<List<WorkingSpaceRequestModel>> SearchWorkingSpacesByLocationAsync(string location)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(location))
+                {
+                    _logger.LogInformation("Location search term is empty.");
+                    return new List<WorkingSpaceRequestModel>();
+                }
+
+                var workingSpaces = await context.WorkingSpaces
+                    .Where(ws => ws.Location.ToLower().Contains(location.ToLower())) // Case-insensitive search
+                    .ToListAsync();
+
+                var result = mapper.Map<List<WorkingSpaceRequestModel>>(workingSpaces);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while searching for working spaces by location: {Location}", location);
+                return null; // Return null or an empty list depending on your preference
+            }
+        }
 
     }
 }
