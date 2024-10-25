@@ -15,5 +15,7 @@ namespace Quik_BookingApp.Repos.Interface
         Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForMeetingRoomAsync();
         Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForCommonSpaceAsync();
         Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForPrivateOfficeAsync();
+
+        Task<List<WorkingSpaceRequestModel>> SearchWorkingSpacesByLocationAsync(string location);
     }
 }
