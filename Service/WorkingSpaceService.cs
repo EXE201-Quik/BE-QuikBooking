@@ -242,19 +242,19 @@ namespace Quik_BookingApp.Service
             return await GetWorkingSpacesByRoomTypeAsync("Không gian làm việc chung");
         }
 
-        public async Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForMeetingRoomAsync()
-        {
-            return await GetWorkingSpacesByRoomTypeAsync("Phòng họp");
-        }
-
         public async Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForCommonSpaceAsync()
         {
             return await GetWorkingSpacesByRoomTypeAsync("Study hub");
         }
 
-        public async Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForPrivateOfficeAsync()
+        public async Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForWorkingCafeAsync()
         {
-            return await GetWorkingSpacesByRoomTypeAsync("Không gian văn phòng");
+            return await GetWorkingSpacesByRoomTypeAsync("Cafe làm việc");
+        }
+
+        public async Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForEventSpaceAsync()
+        {
+            return await GetWorkingSpacesByRoomTypeAsync("Không gian sự kiện");
         }
 
         private async Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesByRoomTypeAsync(string roomType)
@@ -296,7 +296,7 @@ namespace Quik_BookingApp.Service
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while searching for working spaces by location: {Location}", location);
-                return null; // Return null or an empty list depending on your preference
+                return null; 
             }
         }
 
