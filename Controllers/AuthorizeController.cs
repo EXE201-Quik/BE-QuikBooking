@@ -61,7 +61,7 @@ namespace Quik_BookingApp.Controllers
                 // Generate refresh token (ensure your refresh logic is secure)
                 var refreshToken = await this.refresh.GenerateToken(userCred.Email);
 
-                return Ok(new TokenResponse() { Token = finalToken, RefreshToken = refreshToken, Username = user.Username });
+                return Ok(new TokenResponse() { Token = finalToken, RefreshToken = refreshToken, Username = user.Username, Role = user.Role});
             }
             else
             {
