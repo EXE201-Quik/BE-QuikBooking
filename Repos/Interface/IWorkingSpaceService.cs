@@ -12,9 +12,9 @@ namespace Quik_BookingApp.Repos.Interface
         Task<APIResponseData> CreateWS(WorkingSpaceRequestModel ws);
 
         Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForWorkingAreaAsync();
-        Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForMeetingRoomAsync();
+        Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForWorkingCafeAsync();
         Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForCommonSpaceAsync();
-        Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForPrivateOfficeAsync();
+        Task<List<WorkingSpaceRequestModel>> GetWorkingSpacesForEventSpaceAsync();
 
         Task<List<WorkingSpaceRequestModel>> SearchWorkingSpacesByLocationAsync(string location);
     }
