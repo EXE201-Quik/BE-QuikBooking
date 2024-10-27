@@ -125,10 +125,10 @@ namespace Quik_BookingApp.Controllers
              Summary = "Get List theo room type: Phòng họp",
              Description = "Lấy list theo 4 loại:\r\n- Không gian làm việc chung \r\n- Phòng họp\r\n- Study hub\r\n- Không gian văn phòng"
         )]
-        [HttpGet("MeetingRoom")]
+        [HttpGet("CafeLamViec")]
         public async Task<IActionResult> GetMeetingRoomSpaces()
         {
-            var result = await workingSpaceService.GetWorkingSpacesForMeetingRoomAsync();
+            var result = await workingSpaceService.GetWorkingSpacesForWorkingCafeAsync();
             if (result == null || result.Count == 0)
             {
                 return NotFound("No meeting room spaces found.");
@@ -155,10 +155,10 @@ namespace Quik_BookingApp.Controllers
              Summary = "Get List theo room type: Không gian văn phòng",
              Description = "Lấy list theo 4 loại:\r\n- Không gian làm việc chung \r\n- Phòng họp\r\n- Study hub\r\n- Không gian văn phòng"
         )]
-        [HttpGet("PrivateOffice")]
+        [HttpGet("KhongGianSuKien")]
         public async Task<IActionResult> GetPrivateOfficeSpaces()
         {
-            var result = await workingSpaceService.GetWorkingSpacesForPrivateOfficeAsync();
+            var result = await workingSpaceService.GetWorkingSpacesForEventSpaceAsync();
             if (result == null || result.Count == 0)
             {
                 return NotFound("No private office spaces found.");
