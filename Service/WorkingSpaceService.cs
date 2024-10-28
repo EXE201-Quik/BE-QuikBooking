@@ -45,10 +45,30 @@ namespace Quik_BookingApp.Service
                     };
                 }
 
-                // Log the BusinessId being used
+                if (ws.PricePerHour <= 1000)
+                {
+                    return new APIResponseData
+                    {
+                        ResponseCode = 400,
+                        Result = "Failure",
+                        Message = "Price per hour must be greater than 1000.",
+                        Data = ws
+                    };
+                }
+
+                if (ws.Capacity <= 0)
+                {
+                    return new APIResponseData
+                    {
+                        ResponseCode = 400,
+                        Result = "Failure",
+                        Message = "Capacity must be greater than 0.",
+                        Data = ws
+                    };
+                }
+
                 _logger.LogInformation("Attempting to retrieve business with ID: {BusinessId}", ws.BusinessId);
 
-                // Retrieve the business first
                 var business = await context.Businesses.FindAsync(ws.BusinessId);
                 if (business == null)
                 {
@@ -61,7 +81,6 @@ namespace Quik_BookingApp.Service
                     };
                 }
 
-                // Create a new working space instance
                 var workingSpace = new WorkingSpace
                 {
                     SpaceId = Guid.NewGuid().ToString(),
@@ -76,15 +95,12 @@ namespace Quik_BookingApp.Service
                     Images = new List<ImageWS>()
                 };
 
-                // Check if an image is uploaded
                 if (ws.Image != null && ws.Image.Length > 0)
                 {
-                    // Upload the image to Firebase
                     var uploadResult = await _firebase.UploadFileToFirebase(ws.Image, $"workingspaces/{ws.Title}_{DateTime.Now.Ticks}");
 
                     if (uploadResult.Status == 200)
                     {
-                        // Create a new ImageWS object and set the ImageUrl
                         var newImageWS = new ImageWS
                         {
                             ImageUrl = uploadResult.Data.ToString(),
@@ -110,24 +126,20 @@ namespace Quik_BookingApp.Service
                 }
                 else
                 {
-                    // Use a default image if no image is uploaded
                     var defaultImageWS = new ImageWS
                     {
-                        ImageUrl = _configuration["DefaultImageUrl"] // This should be configured in appsettings.json or environment variables
+                        ImageUrl = _configuration["DefaultImageUrl"]
                     };
-                    workingSpace.Images.Add(defaultImageWS); // Add to Images collection
+                    workingSpace.Images.Add(defaultImageWS);
 
                     _logger.LogInformation("No image uploaded, using default image for working space: {Title}", ws.Title);
                 }
 
-                // Log the new working space creation details
                 _logger.LogInformation("Creating working space: {Title} for Business ID: {BusinessId}", workingSpace.Title, workingSpace.BusinessId);
 
-                // Add the working space to the database
                 await context.WorkingSpaces.AddAsync(workingSpace);
                 await context.SaveChangesAsync();
 
-                // Map to WorkingSpaceModel
                 var workingSpaceModel = mapper.Map<WorkingSpace>(workingSpace);
 
                 return new APIResponseData
@@ -153,7 +165,6 @@ namespace Quik_BookingApp.Service
             }
             catch (Exception ex)
             {
-                // Log detailed exception information
                 _logger.LogError(ex, "Error creating working space: {Message}", ex.ToString());
                 return new APIResponseData
                 {
@@ -164,6 +175,7 @@ namespace Quik_BookingApp.Service
                 };
             }
         }
+
 
 
 
@@ -275,21 +287,21 @@ namespace Quik_BookingApp.Service
         }
 
 
-        public async Task<List<WorkingSpaceRequestModel>> SearchWorkingSpacesByLocationAsync(string location)
+        public async Task<List<WorkingSpaceRequestRatingMode>> SearchWorkingSpacesByLocationAsync(string location)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(location))
                 {
                     _logger.LogInformation("Location search term is empty.");
-                    return new List<WorkingSpaceRequestModel>();
+                    return new List<WorkingSpaceRequestRatingMode>();
                 }
 
                 var workingSpaces = await context.WorkingSpaces
                     .Where(ws => ws.Location.ToLower().Contains(location.ToLower())) // Case-insensitive search
                     .ToListAsync();
 
-                var result = mapper.Map<List<WorkingSpaceRequestModel>>(workingSpaces);
+                var result = mapper.Map<List<WorkingSpaceRequestRatingMode>>(workingSpaces);
 
                 return result;
             }
