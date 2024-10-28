@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "LhP9eZl2YdrTb6uSu2gdILu1o8qiAkm7yI/Po9JXqy0FopEXCUg3VdlOnmZ4dVf8EohWKI6wocAw5USBQ2/xBg==",
+  "dgSpecHash": "PoGzQ3KzAe1T7MA5rtXY3+0fR3uumLALVTanhb/Szij554RHwjOpd+S4+JlNwOYPl7eBjPqrzduIrkfzhW1BmA==",
   "success": true,
   "projectFilePath": "D:\\EXE202\\Quik_BookingApp\\Quik_BookingApp\\Quik_BookingApp.csproj",
   "expectedPackageFiles": [
@@ -153,6 +153,7 @@
     "C:\\Users\\ADMIN\\.nuget\\packages\\microsoft.netcore.windows.apisets\\1.0.1\\microsoft.netcore.windows.apisets.1.0.1.nupkg.sha512",
     "C:\\Users\\ADMIN\\.nuget\\packages\\microsoft.openapi\\1.6.14\\microsoft.openapi.1.6.14.nupkg.sha512",
     "C:\\Users\\ADMIN\\.nuget\\packages\\microsoft.sqlserver.server\\1.0.0\\microsoft.sqlserver.server.1.0.0.nupkg.sha512",
+    "C:\\Users\\ADMIN\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.19.5\\microsoft.visualstudio.azure.containers.tools.targets.1.19.5.nupkg.sha512",
     "C:\\Users\\ADMIN\\.nuget\\packages\\microsoft.visualstudio.web.codegeneration\\7.0.12\\microsoft.visualstudio.web.codegeneration.7.0.12.nupkg.sha512",
     "C:\\Users\\ADMIN\\.nuget\\packages\\microsoft.visualstudio.web.codegeneration.core\\7.0.12\\microsoft.visualstudio.web.codegeneration.core.7.0.12.nupkg.sha512",
     "C:\\Users\\ADMIN\\.nuget\\packages\\microsoft.visualstudio.web.codegeneration.design\\7.0.12\\microsoft.visualstudio.web.codegeneration.design.7.0.12.nupkg.sha512",

@@ -307,3 +307,4 @@ D:\EXE202\Quik_BookingApp\Quik_BookingApp\obj\Debug\net7.0\ref\Quik_BookingApp.d
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\Extentions\Config\firebaseConfig.json
+D:\EXE202\Quik_BookingApp\Quik_BookingApp\bin\Debug\net7.0\libman.json
