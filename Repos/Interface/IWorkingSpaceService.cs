@@ -7,7 +7,10 @@ namespace Quik_BookingApp.Repos.Interface
 {
     public interface IWorkingSpaceService
     {
-        Task<List<WorkingSpaceRequestRatingMode>> GetAll();
+        //Task<List<WorkingSpaceRequestRatingMode>> GetAll(string? location = null);
+        //Task<List<WorkingSpaceRequestRatingMode>> GetAllType(string? type = null);
+        Task<List<WorkingSpaceRequestRatingMode>> GetAll(string? location = null, string? type = null);
+
         Task<WorkingSpaceResponseAmenities> GetBySpaceId(string spaceId);
         Task<APIResponseData> CreateWS(WorkingSpaceRequestModel ws);
 

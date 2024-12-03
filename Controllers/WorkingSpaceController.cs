@@ -61,19 +61,39 @@ namespace Quik_BookingApp.Controllers
 
 
         [SwaggerOperation(
-             Summary = "Retrieve all workign space",
-             Description = "Returns a list of all working spaces. If no workign space are found, it returns a 404 Not Found response."
-         )]
+            Summary = "Retrieve all working spaces",
+            Description = "Returns a list of all working spaces. If no working spaces are found, it returns a 404 Not Found response. Optionally, a location can be specified in the path to filter the results."
+        )]
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(string? location = null, string? type = null)
         {
-            var data = await workingSpaceService.GetAll();
-            if (data == null || data.Count == 0)
+            var data = await workingSpaceService.GetAll(location,type);
+
+            if (data == null || !data.Any())
             {
-                return NotFound();
+                return Ok(data);
             }
+
             return Ok(data);
         }
+
+
+       
+
+        //[SwaggerOperation(
+        //     Summary = "Retrieve all workign space",
+        //     Description = "Returns a list of all working spaces. If no workign space are found, it returns a 404 Not Found response."
+        // )]
+        //[HttpGet("GetAll")]
+        //public async Task<IActionResult> GetAll()
+        //{
+        //    var data = await workingSpaceService.GetAll();
+        //    if (data == null || data.Count == 0)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return Ok(data);
+        //}
 
         [SwaggerOperation(
              Summary = "Retrieve user by wsId",

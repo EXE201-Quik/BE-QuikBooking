@@ -10,10 +10,15 @@ namespace Quik_BookingApp.Repos.Interface
         Task<List<BookingResponseModel>> GetAllBookings();
         Task<APIResponseData> BookSpace(BookingRequestModel bookingRequest);
         Task<BusinessResponseModel> GetBookingById(string bookingId);
+        Task<BusinessResponseModel> UpdateBookingStatusToPaid(string bookingId);
+        Task<BusinessResponseModel> UpdateBookingStatusToUnPaid(string bookingId);
+
         Task<BusinessResponseModel> UpdateBooking(string bookingId, BookingResponseModel bookingRequest);
         Task<APIResponse> DeleteBooking(string bookingId);
-        Task<List<BookingResponseModel>> GetBookingOfHoanTat(string username);
-        Task<List<BookingResponseModel>> GetBookingOfSapToi(string username);
-        Task<List<BookingResponseModel>> GetBookingOfDaHuy(string username);
+        Task<List<BookingResponseModel>> GetBookingOfChuaThanhToan();
+        Task<List<BookingResponseModel>> GetBookingOfDaThanhToan();
+        Task<List<BookingResponseModel>> GetAllBookingsByUsername(string username);
+
+
     }
 }

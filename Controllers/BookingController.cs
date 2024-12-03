@@ -37,6 +37,31 @@ namespace Quik_BookingApp.Controllers
         }
 
         [SwaggerOperation(
+            Summary = "Retrieve all bookings by username",
+            Description = "Gets a list of all bookings for the specified username. If no bookings are found, a 404 Not Found response is returned."
+        )]
+        [HttpGet("GetAllBookingsByUsername/{username}")]
+        public async Task<IActionResult> GetAllBookingsByUsername(string username)
+        {
+            try
+            {
+                var data = await _service.GetAllBookingsByUsername(username);
+
+                if (data == null || !data.Any())
+                {
+                    return NotFound($"No bookings found for user {username}.");
+                }
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error occurred while retrieving bookings: {ex.Message}");
+            }
+        }
+
+
+        [SwaggerOperation(
             Summary = "Create a new booking",
             Description = "Tạo mới booking không cần truyền bookingId"
         )]
@@ -73,6 +98,42 @@ namespace Quik_BookingApp.Controllers
             }
 
             return Ok(booking);
+        }
+
+        [SwaggerOperation(
+            Summary = "Update booking status to 'Đã thanh toán'",
+            Description = "Updates the status of a specific booking to 'Đã thanh toán' given the booking ID."
+        )]
+        [HttpPut("update-status-to-paid/{bookingId}")]
+        public async Task<IActionResult> UpdateStatusToPaid(string bookingId)
+        {
+            try
+            {
+                await _service.UpdateBookingStatusToPaid(bookingId);
+                return Ok(new { Message = "Updated successfully" }); 
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [SwaggerOperation(
+           Summary = "Update booking status to 'Chưa thanh toán'",
+           Description = "Updates the status of a specific booking to 'Chưa thanh toán' given the booking ID."
+       )]
+        [HttpPut("update-status-to-unpaid/{bookingId}")]
+        public async Task<IActionResult> UpdateStatusToUnPaid(string bookingId)
+        {
+            try
+            {
+                await _service.UpdateBookingStatusToUnPaid(bookingId);
+                return Ok(new { Message = "Updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
         [SwaggerOperation(
@@ -131,17 +192,16 @@ namespace Quik_BookingApp.Controllers
             }
         }
 
-
         [SwaggerOperation(
-             Summary = "All booking Hoàn Tất",
-             Description = "Gets a list of all working spaces. If no working spaces are found, a 404 Not Found response is returned."
-        )]
-        [HttpGet("GetBookingOfHoanTat/{username}")]
-        public async Task<IActionResult> GetBookingOfHoanTat(string username)
+                    Summary = "All booking Da thanh toan",
+                    Description = "Gets a list of all working spaces. If no working spaces are found, a 404 Not Found response is returned."
+               )]
+        [HttpGet("GetBookingOfDaThanhToan")]
+        public async Task<IActionResult> GetBookingOfDaThanhToan()
         {
             try
             {
-                var data = await _service.GetBookingOfHoanTat(username);
+                var data = await _service.GetBookingOfDaThanhToan();
 
                 // If no data is found, return a NotFound response
                 if (data == null || !data.Any())
@@ -159,15 +219,15 @@ namespace Quik_BookingApp.Controllers
         }
 
         [SwaggerOperation(
-             Summary = "All booking Sắp Tới",
-             Description = "Gets a list of all working spaces. If no working spaces are found, a 404 Not Found response is returned."
-        )]
-        [HttpGet("GetBookingOfSapToi/{username}")]
-        public async Task<IActionResult> GetBookingOfSapToi(string username)
+                    Summary = "All booking Chua thanh toan",
+                    Description = "Gets a list of all working spaces. If no working spaces are found, a 404 Not Found response is returned."
+               )]
+        [HttpGet("GetBookingOfChuaThanhToan")]
+        public async Task<IActionResult> GetBookingOfChuaThanhToan()
         {
             try
             {
-                var data = await _service.GetBookingOfSapToi(username);
+                var data = await _service.GetBookingOfChuaThanhToan();
 
                 // If no data is found, return a NotFound response
                 if (data == null || !data.Any())
@@ -184,31 +244,6 @@ namespace Quik_BookingApp.Controllers
             }
         }
 
-        [SwaggerOperation(
-             Summary = "All booking Đã Hủy",
-             Description = "Gets a list of all working spaces. If no working spaces are found, a 404 Not Found response is returned."
-        )]
-        [HttpGet("GetBookingOfDaHuy/{username}")]
-        public async Task<IActionResult> GetBookingOfDaHuy(string username)
-        {
-            try
-            {
-                var data = await _service.GetBookingOfDaHuy(username);
-
-                // If no data is found, return a NotFound response
-                if (data == null || !data.Any())
-                {
-                    return NotFound("No bookings found for this username.");
-                }
-
-                return Ok(data);
-            }
-            catch (Exception ex)
-            {
-                // Log the exception (optional)
-                return StatusCode(500, "An error occurred while processing your request: " + ex.Message);
-            }
-        }
     }
 }
 

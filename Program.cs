@@ -12,20 +12,18 @@ using Quik_BookingApp.Service;
 using QuikBookingApp.Modal;
 using Serilog;
 using System;
-using System.Configuration;
 using System.Text;
-using System.Text.Json.Serialization;
-
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Call firebase initailization
+// Call firebase initialization
 FirebaseInitializer.InitializeFirebase();
 
-// Add services to the container.
-
+// Add services to the container
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Swagger configuration
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -58,20 +56,10 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-//builder.Services.AddControllers()
-//    .AddJsonOptions(options =>
-//    {
-//        // Enable ReferenceHandler.Preserve for cycle detection
-//        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-//        options.JsonSerializerOptions.WriteIndented = true; // Optional: Pretty print JSON
-//    });
-
-
-
-
+// Add services for DI (Dependency Injection)
 builder.Services.AddTransient<EmailService>();
 builder.Services.Configure<FirebaseConfiguration>(builder.Configuration.GetSection("Firebase"));
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection(""));
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IFirebaseService, FirebaseService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddTransient<IBookingService, BookingService>();
@@ -83,37 +71,33 @@ builder.Services.AddTransient<IPaymentService, PaymentService>();
 builder.Services.AddTransient<IVnPayService, VNPayService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 
-
-
+// DbContext and database connection
 builder.Services.AddDbContext<QuikDbContext>(o =>
-o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), options => options.CommandTimeout(60)));
+    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), options => options.CommandTimeout(60)));
 
-
-
+// JWT Authentication setup
 var _authkey = builder.Configuration.GetValue<string>("JwtSettings:securitykey");
-builder.Services.AddAuthentication(item =>
-{
-    item.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    item.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(item =>
-{
-    item.RequireHttpsMetadata = true;
-    item.SaveToken = true;
-    item.TokenValidationParameters = new TokenValidationParameters()
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authkey)),
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ClockSkew = TimeSpan.Zero
-    };
+        options.RequireHttpsMetadata = true;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authkey)),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
-});
-
+// AutoMapper setup
 var automapper = new MapperConfiguration(item => item.AddProfile(new AutoMapperHandler()));
 IMapper mapper = automapper.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
+// Configure Serilog logging
 string logpath = builder.Configuration.GetSection("Logging:Logpath").Value;
 var _logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -123,44 +107,40 @@ var _logger = new LoggerConfiguration()
     .CreateLogger();
 builder.Logging.AddSerilog(_logger);
 
-var _jwtsetting = builder.Configuration.GetSection("JwtSettings");
-builder.Services.Configure<JwtSettings>(_jwtsetting);
+// Configure JWT settings
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
 var app = builder.Build();
 
+// CORS configuration
 app.UseCors(builder => builder
     .AllowAnyHeader()
     .AllowAnyMethod()
-    .AllowCredentials() // to support a SignalR
-    .WithOrigins("http://localhost:5173"));
+    //.AllowCredentials()
+    .AllowAnyOrigin());
+    //.WithOrigins("http://localhost:5173","https://note-now.website", "https://quik-jet.vercel.app/"));
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
+    // Apply database migrations in Development environment
     await using (var scope = app.Services.CreateAsyncScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<QuikDbContext>();
-        //await dbContext.Database.MigrateAsync();
+        // Uncomment to apply migrations if needed
+        // await dbContext.Database.MigrateAsync();
     }
-
-    app.UseSwagger();
-    app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Enable Swagger UI in development
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseHttpsRedirection(); // Use HTTPS if necessary
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseRouting();
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers(); 
-});
-
-//await app.CreateDbIfNotExists();
 
 app.Run();
