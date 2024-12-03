@@ -2,21 +2,20 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
-EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Quik_BookingApp/Quik_BookingApp.csproj", "Quik_BookingApp/"]
-RUN dotnet restore "./Quik_BookingApp/./Quik_BookingApp.csproj"
+RUN dotnet restore "./Quik_BookingApp/Quik_BookingApp.csproj"
 COPY . .
 WORKDIR "/src/Quik_BookingApp"
 RUN dotnet build "./Quik_BookingApp.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Quik_BookingApp.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Quik_BookingApp.csproj" -c $BUILD_CONFIGURATION -o /app/publish 
 
 FROM base AS final
 WORKDIR /app

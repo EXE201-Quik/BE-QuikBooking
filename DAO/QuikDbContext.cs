@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Quik_BookingApp.DAO.Models;
 
 namespace Quik_BookingApp.DAO
@@ -8,9 +10,23 @@ namespace Quik_BookingApp.DAO
     {
         public QuikDbContext() { }
 
-        public QuikDbContext(DbContextOptions<QuikDbContext> options) : base(options) { }
+        public QuikDbContext(DbContextOptions<QuikDbContext> options) : base(options) 
+        {
+            try
+            {
+                var databaseCreator = Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
+                if(databaseCreator != null)
+                {
+                    if (!databaseCreator.CanConnect()) databaseCreator.Create();
+                    if (!databaseCreator.HasTables()) databaseCreator.CreateTables();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
 
-        // Định nghĩa các DbSet cho các thực thể trong hệ thống
         public DbSet<User> Users { get; set; }
         public DbSet<Business> Businesses { get; set; }
         public DbSet<WorkingSpace> WorkingSpaces { get; set; }
@@ -162,37 +178,36 @@ namespace Quik_BookingApp.DAO
             modelBuilder.Entity<Business>().HasData(
                 new Business
                 {
-                    BusinessId = "business002",
-                    BusinessName = "Workspace Deluxe",
-                    PhoneNumber = "987654321",
-                    Email = "contact@workspace-deluxe.com",
-                    Password = "hashedpassword",
-                    Location = "456 Elm Street",
-                    Description = "A deluxe workspace offering premium services.",
+                    BusinessId = "business001",
+                    BusinessName = "Deer Coffee",
+                    PhoneNumber = "1234567890",
+                    Email = "contact@deercoffee.com",
+                    Password = "hashedpassword001",
+                    Location = "Quận 9 - Thủ Đức, S202 Vinhomes Grand Park",
+                    Description = "Working cafe",
                     Rating = 4
+                },
+                new Business
+                {
+                    BusinessId = "business002",
+                    BusinessName = "Ori Working",
+                    PhoneNumber = "0987654321",
+                    Email = "info@oriworking.com",
+                    Password = "hashedpassword002",
+                    Location = "Quận 9 - Thủ Đức, S802 Vinhomes Grand Park",
+                    Description = "Coworking space",
+                    Rating = 5
                 },
                 new Business
                 {
                     BusinessId = "business003",
-                    BusinessName = "Startup Hub",
-                    PhoneNumber = "123456987",
-                    Email = "info@startup-hub.com",
-                    Password = "hashedpassword123",
-                    Location = "789 Startup Blvd",
-                    Description = "An energetic space for young startups.",
-                    Rating = 5
-                    
-                },
-                new Business
-                {
-                    BusinessId = "business004",
-                    BusinessName = "Freelancers Corner",
-                    PhoneNumber = "654321987",
-                    Email = "freelancers@corner.com",
-                    Password = "hashedpassword789",
-                    Location = "101 Freelance Road",
-                    Description = "A cozy spot for freelancers.",
-                    Rating = 4
+                    BusinessName = "Work flow",
+                    PhoneNumber = "1122334455",
+                    Email = "contact@workflow.com",
+                    Password = "hashedpassword003",
+                    Location = "Quận 3, 193 Hai Bà Trưng, Phường 6",
+                    Description = "Working cafe",
+                    Rating = 4.5f
                 }
             );
 
@@ -200,41 +215,41 @@ namespace Quik_BookingApp.DAO
             modelBuilder.Entity<WorkingSpace>().HasData(
                 new WorkingSpace
                 {
-                    SpaceId = "space006",
-                    ImageId = "img_space006",
+                    SpaceId = "space001",
+                    ImageId = "img_space001",
+                    BusinessId = "business001",
+                    Title = "Deer Coffee Workspace",
+                    Description = "Cozy workspace with a productive atmosphere and excellent coffee.",
+                    PricePerHour = 50000,
+                    RoomType = "Working Cafe",
+                    Capacity = 20,
+                    Location = "S202 Vinhomes Grand Park, Quận 9 - Thủ Đức",
+                    Rating = 4.2f
+                },
+                new WorkingSpace
+                {
+                    SpaceId = "space002",
+                    ImageId = "img_space002",
                     BusinessId = "business002",
-                    Title = "VIP Executive Office",
-                    Description = "An executive office with all luxury amenities, including high-speed internet, ergonomic furniture, and personalized services to enhance productivity and comfort. Ideal for high-stakes meetings and presentations.",
-                    PricePerHour = 100000,
-                    RoomType = "Executive",
-                    Capacity = 3,
-                    Location = "456 Elm Street, Room 101",
-                    Rating = 4.5f
+                    Title = "Ori Coworking Space",
+                    Description = "Modern coworking space with high-speed internet and collaborative atmosphere.",
+                    PricePerHour = 80000,
+                    RoomType = "Coworking Space",
+                    Capacity = 50,
+                    Location = "S802 Vinhomes Grand Park, Quận 9 - Thủ Đức",
+                    Rating = 4.8f
                 },
                 new WorkingSpace
                 {
-                    SpaceId = "space007",
-                    ImageId = "img_space007",
+                    SpaceId = "space003",
+                    ImageId = "img_space003",
                     BusinessId = "business003",
-                    Title = "Startup Lab",
-                    Description = "Perfect for innovative teams, this lab offers a vibrant atmosphere with collaborative spaces, whiteboards, and high-speed internet. It's designed to foster creativity and teamwork, helping your startup thrive.",
-                    PricePerHour = 20000,
-                    RoomType = "Lab",
-                    Capacity = 5,
-                    Location = "789 Startup Blvd, Room 303",
-                    Rating = 4.5f
-                },
-                new WorkingSpace
-                {
-                    SpaceId = "space008",
-                    ImageId = "img_space008",
-                    BusinessId = "business004",
-                    Title = "Freelance Studio",
-                    Description = "An open studio designed for remote workers, featuring a relaxed environment with natural light, comfortable seating, and high-speed internet. It's the perfect place for freelancers to get work done efficiently.",
-                    PricePerHour = 15000,
-                    RoomType = "Studio",
-                    Capacity = 6,
-                    Location = "101 Freelance Road, Room 102",
+                    Title = "Flow Workspace",
+                    Description = "Conveniently located workspace with ample seating and natural lighting.",
+                    PricePerHour = 60000,
+                    RoomType = "Working Cafe",
+                    Capacity = 30,
+                    Location = "193 Hai Bà Trưng, Phường 6, Quận 3",
                     Rating = 4.3f
                 }
             );

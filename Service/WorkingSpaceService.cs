@@ -180,23 +180,30 @@ namespace Quik_BookingApp.Service
 
 
 
-
-
-
-        public async Task<List<WorkingSpaceRequestRatingMode>> GetAll()
+        public async Task<List<WorkingSpaceRequestRatingMode>> GetAll(string? location = null, string? type =null)
         {
             List<WorkingSpaceRequestRatingMode> _response = new List<WorkingSpaceRequestRatingMode>();
 
-            // Get all working spaces with their average rating, business name, and associated images
-            var _data = await context.WorkingSpaces
+            var query = context.WorkingSpaces
                 .Select(ws => new
                 {
                     WorkingSpace = ws,
                     AverageRating = ws.Reviews.Any() ? ws.Reviews.Average(r => r.Rating) : 0,
                     BusinessName = ws.Business.BusinessName,
-                    ImageUrls = ws.Images.Select(img => img.ImageUrl).ToList() 
-                })
-                .ToListAsync();
+                    ImageUrls = ws.Images.Select(img => img.ImageUrl).ToList()
+                });
+
+            // Apply location filter if location parameter is provided
+            if (!string.IsNullOrEmpty(location))
+            {
+                query = query.Where(ws => EF.Functions.Like(ws.WorkingSpace.Location, $"%{location}%"));
+            }
+            if (!string.IsNullOrEmpty(type))
+            {
+                query = query.Where(ws => EF.Functions.Like(ws.WorkingSpace.RoomType, $"%{type}%"));
+            }
+
+            var _data = await query.ToListAsync();
 
             if (_data != null)
             {
@@ -205,13 +212,79 @@ namespace Quik_BookingApp.Service
                     var workingSpaceModel = mapper.Map<WorkingSpaceRequestRatingMode>(item.WorkingSpace);
                     workingSpaceModel.Rating = item.AverageRating;
                     workingSpaceModel.BusinessName = item.BusinessName;
-                    workingSpaceModel.ImageUrls = item.ImageUrls; // Gán danh sách URL ảnh vào model
+                    workingSpaceModel.ImageUrls = item.ImageUrls;
                     return workingSpaceModel;
                 }).ToList();
             }
 
             return _response;
         }
+
+        //public async Task<List<WorkingSpaceRequestRatingMode>> GetAllType(string? type = null)
+        //{
+        //    List<WorkingSpaceRequestRatingMode> _response = new List<WorkingSpaceRequestRatingMode>();
+
+        //    var query = context.WorkingSpaces
+        //        .Select(ws => new
+        //        {
+        //            WorkingSpace = ws,
+        //            AverageRating = ws.Reviews.Any() ? ws.Reviews.Average(r => r.Rating) : 0,
+        //            BusinessName = ws.Business.BusinessName,
+        //            ImageUrls = ws.Images.Select(img => img.ImageUrl).ToList()
+        //        });
+
+        //    // Apply location filter if location parameter is provided
+        //    if (!string.IsNullOrEmpty(type))
+        //    {
+        //        query = query.Where(ws => EF.Functions.Like(ws.WorkingSpace.RoomType, $"%{type}%"));
+        //    }
+
+        //    var _data = await query.ToListAsync();
+
+        //    if (_data != null)
+        //    {
+        //        _response = _data.Select(item =>
+        //        {
+        //            var workingSpaceModel = mapper.Map<WorkingSpaceRequestRatingMode>(item.WorkingSpace);
+        //            workingSpaceModel.Rating = item.AverageRating;
+        //            workingSpaceModel.BusinessName = item.BusinessName;
+        //            workingSpaceModel.ImageUrls = item.ImageUrls;
+        //            return workingSpaceModel;
+        //        }).ToList();
+        //    }
+
+        //    return _response;
+        //}
+
+        //public async Task<List<WorkingSpaceRequestRatingMode>> GetAll()
+        //{
+        //    List<WorkingSpaceRequestRatingMode> _response = new List<WorkingSpaceRequestRatingMode>();
+
+        //    // Get all working spaces with their average rating, business name, and associated images
+        //    var _data = await context.WorkingSpaces
+        //        .Select(ws => new
+        //        {
+        //            WorkingSpace = ws,
+        //            AverageRating = ws.Reviews.Any() ? ws.Reviews.Average(r => r.Rating) : 0,
+        //            BusinessName = ws.Business.BusinessName,
+        //            ImageUrls = ws.Images.Select(img => img.ImageUrl).ToList() 
+        //        })
+        //        .ToListAsync();
+
+        //    if (_data != null)
+        //    {
+        //        _response = _data.Select(item =>
+        //        {
+        //            var workingSpaceModel = mapper.Map<WorkingSpaceRequestRatingMode>(item.WorkingSpace);
+        //            workingSpaceModel.Rating = item.AverageRating;
+        //            workingSpaceModel.BusinessName = item.BusinessName;
+        //            workingSpaceModel.ImageUrls = item.ImageUrls; // Gán danh sách URL ảnh vào model
+        //            return workingSpaceModel;
+        //        }).ToList();
+        //    }
+
+        //    return _response;
+        //}
 
 
 
